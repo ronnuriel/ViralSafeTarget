@@ -1,7 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-viral-safe-target scan \
+if command -v vst >/dev/null 2>&1; then
+  VST=(vst)
+elif command -v viral-safe-target >/dev/null 2>&1; then
+  VST=(viral-safe-target)
+else
+  VST=(python -m viral_safe_target)
+fi
+
+"${VST[@]}" scan \
   --virus-alignment data/demo/virus_aligned.fasta \
   --reference-id HSV2_demo_ref \
   --gff data/demo/reference.gff3 \
@@ -9,7 +17,7 @@ viral-safe-target scan \
   --out-dir reports/demo \
   --min-coverage 0.80
 
-viral-safe-target simulate-pairs \
+"${VST[@]}" simulate-pairs \
   --candidates reports/demo/candidates.csv \
   --gff data/demo/reference.gff3 \
   --virus-alignment data/demo/virus_aligned.fasta \

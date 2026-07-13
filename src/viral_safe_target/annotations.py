@@ -32,22 +32,24 @@ def read_gff3(path: str | Path) -> pd.DataFrame:
                 continue
             seqid, source, feature_type, start, end, score, strand, phase, attributes = fields
             attrs = _parse_attributes(attributes)
-            rows.append({
-                "seqid": seqid,
-                "source": source,
-                "feature_type": feature_type,
-                "start": int(start),
-                "end": int(end),
-                "score": score,
-                "strand": strand,
-                "phase": phase,
-                "attributes": attrs,
-                "feature_id": attrs.get("ID") or attrs.get("gene") or attrs.get("Name") or "",
-                "parent": attrs.get("Parent", ""),
-                "name": attrs.get("Name") or attrs.get("gene") or attrs.get("locus_tag") or "",
-                "product": attrs.get("product", ""),
-                "note": attrs.get("Note", ""),
-            })
+            rows.append(
+                {
+                    "seqid": seqid,
+                    "source": source,
+                    "feature_type": feature_type,
+                    "start": int(start),
+                    "end": int(end),
+                    "score": score,
+                    "strand": strand,
+                    "phase": phase,
+                    "attributes": attrs,
+                    "feature_id": attrs.get("ID") or attrs.get("gene") or attrs.get("Name") or "",
+                    "parent": attrs.get("Parent", ""),
+                    "name": attrs.get("Name") or attrs.get("gene") or attrs.get("locus_tag") or "",
+                    "product": attrs.get("product", ""),
+                    "note": attrs.get("Note", ""),
+                }
+            )
     return pd.DataFrame(rows)
 
 
@@ -78,22 +80,26 @@ def annotate_candidates(
 
         row = candidate.to_dict()
         if selected is None:
-            row.update({
-                "feature_type": "intergenic_or_unannotated",
-                "feature_id": "",
-                "gene_name": "",
-                "product": "",
-                "feature_start": None,
-                "feature_end": None,
-            })
+            row.update(
+                {
+                    "feature_type": "intergenic_or_unannotated",
+                    "feature_id": "",
+                    "gene_name": "",
+                    "product": "",
+                    "feature_start": None,
+                    "feature_end": None,
+                }
+            )
         else:
-            row.update({
-                "feature_type": selected["feature_type"],
-                "feature_id": selected["feature_id"],
-                "gene_name": selected["name"],
-                "product": selected["product"],
-                "feature_start": int(selected["start"]),
-                "feature_end": int(selected["end"]),
-            })
+            row.update(
+                {
+                    "feature_type": selected["feature_type"],
+                    "feature_id": selected["feature_id"],
+                    "gene_name": selected["name"],
+                    "product": selected["product"],
+                    "feature_start": int(selected["start"]),
+                    "feature_end": int(selected["end"]),
+                }
+            )
         output_rows.append(row)
     return pd.DataFrame(output_rows)

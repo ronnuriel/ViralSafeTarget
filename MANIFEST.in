@@ -1,4 +1,7 @@
 include README.md README_HE.md LICENSE DISCLAIMER.md CITATION.cff
 recursive-include data/demo *
 recursive-include data/knowledge *
+recursive-include data/curated *.csv
+recursive-include configs *.yaml
+recursive-include benchmarks *.csv *.md
 recursive-include docs *.md

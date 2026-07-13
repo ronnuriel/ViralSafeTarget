@@ -4,6 +4,7 @@
 The output is a computational prioritization table only. It does not establish
 biological efficacy or safety.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -15,6 +16,7 @@ sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
 from viral_safe_target import (  # noqa: E402
     annotate_candidates,
+    rank_pre_human_candidates,
     read_fasta,
     read_gff3,
     scan_spcas9_candidates,
@@ -32,6 +34,8 @@ def main() -> None:
     parser.add_argument("--out-dir", type=Path, default=Path("reports/real_hsv2"))
     parser.add_argument("--human-fasta-directory", type=Path)
     parser.add_argument("--max-mismatches", type=int, default=3)
+    parser.add_argument("--config", type=Path, default=Path("configs/research_v0.3.yaml"))
+    parser.add_argument("--gene-evidence", type=Path)
     args = parser.parse_args()
 
     records = read_fasta(args.alignment)
@@ -39,40 +43,32 @@ def main() -> None:
     features = read_gff3(args.gff)
     candidates = annotate_candidates(candidates, features, seqid=args.reference_id)
 
-    # Pre-human prioritization: conservation dominates; annotation is only context.
-    if not candidates.empty:
-        candidates["annotation_component"] = (
-            candidates["feature_type"] != "intergenic_or_unannotated"
-        ).astype(float)
-        candidates["pre_human_score"] = (
-            0.85 * candidates["virus_site_coverage"].astype(float)
-            + 0.15 * candidates["annotation_component"]
-        )
-        candidates["decision"] = "human_off_target_screen_pending"
-        candidates = candidates.sort_values(
-            ["pre_human_score", "virus_site_coverage"], ascending=False
-        ).reset_index(drop=True)
+    candidates = rank_pre_human_candidates(candidates, args.config, args.gene_evidence)
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    csv_path = args.out_dir / "candidates_pre_human.csv"
-    html_path = args.out_dir / "report_pre_human.html"
-    candidates.to_csv(csv_path, index=False)
+    retained = candidates[candidates["rejection_reasons"].fillna("").eq("")].copy()
+    rejected = candidates[candidates["rejection_reasons"].fillna("").ne("")].copy()
+    csv_path = args.out_dir / "candidates_ranked_pre_human.csv"
+    legacy_csv_path = args.out_dir / "candidates_pre_human.csv"
+    html_path = args.out_dir / "report.html"
+    retained.to_csv(csv_path, index=False)
+    retained.to_csv(legacy_csv_path, index=False)
+    rejected.to_csv(args.out_dir / "candidates_rejected_pre_human.csv", index=False)
 
-    report_df = candidates.rename(columns={"pre_human_score": "demo_score"})
     write_html_report(
-        report_df,
+        retained,
         html_path,
         title="ViralSafeTarget — HSV-2 real-data pilot (before human screening)",
     )
 
-    print(f"Generated {len(candidates)} candidates")
+    print(f"Generated {len(retained)} retained candidates; rejected {len(rejected)}")
     print(f"CSV:  {csv_path}")
     print(f"HTML: {html_path}")
 
     if args.human_fasta_directory:
         cas_input = args.out_dir / "cas_offinder_input.txt"
         write_cas_offinder_input(
-            candidates,
+            retained,
             human_fasta_directory=args.human_fasta_directory,
             output_path=cas_input,
             max_mismatches=args.max_mismatches,
