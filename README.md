@@ -58,7 +58,9 @@ Upload an **already aligned** multi-FASTA and, optionally, a matching GFF3 annot
 jupyter lab
 ```
 
-Start with `notebooks/00_START_HERE_HE.ipynb` or the English README and documentation.
+For an English end-to-end workflow, open
+`notebooks/08_RUN_FULL_PIPELINE_EN.ipynb`. The focused multi-tool tutorial is
+`notebooks/07_HSV2_MULTITOOL_COMPARISON_EN.ipynb`.
 
 ## Run the HSV-2 pilot on public data
 
@@ -100,6 +102,12 @@ present, preserves missing stages, and writes `reports/hsv2_consensus/report.htm
 [`docs/HSV2_CONSENSUS_PILOT.md`](docs/HSV2_CONSENSUS_PILOT.md),
 [`docs/PYTHON_SDK.md`](docs/PYTHON_SDK.md), and
 [`docs/INTEGRATIONS.md`](docs/INTEGRATIONS.md).
+
+Run the complete workflow from Jupyter with:
+
+```bash
+jupyter lab notebooks/08_RUN_FULL_PIPELINE_EN.ipynb
+```
 
 ## Main outputs
 
