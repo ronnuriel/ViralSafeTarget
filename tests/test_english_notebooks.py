@@ -50,7 +50,8 @@ def test_end_to_end_notebook_executes_all_cells_in_synthetic_mode(monkeypatch):
 
 def test_genome_wide_notebook_executes_in_english_synthetic_mode(monkeypatch):
     matplotlib.use("Agg")
-    monkeypatch.chdir(ROOT)
+    # Jupyter starts kernels in the notebook directory, not necessarily repository root.
+    monkeypatch.chdir(ROOT / "notebooks")
     notebook = _load(NOTEBOOKS[2])
     namespace: dict[str, object] = {}
     for number, cell in enumerate(notebook["cells"]):
