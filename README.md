@@ -60,7 +60,8 @@ jupyter lab
 
 For an English end-to-end workflow, open
 `notebooks/08_RUN_FULL_PIPELINE_EN.ipynb`. The focused multi-tool tutorial is
-`notebooks/07_HSV2_MULTITOOL_COMPARISON_EN.ipynb`.
+`notebooks/07_HSV2_MULTITOOL_COMPARISON_EN.ipynb`, and the genome-wide discovery
+tutorial is `notebooks/09_HSV2_GENOME_WIDE_DISCOVERY_EN.ipynb`.
 
 ## Run the HSV-2 pilot on public data
 
@@ -108,6 +109,25 @@ Run the complete workflow from Jupyter with:
 ```bash
 jupyter lab notebooks/08_RUN_FULL_PIPELINE_EN.ipynb
 ```
+
+## Run HSV-2 genome-wide discovery
+
+The balanced v0.5 workflow gives every annotated gene with an eligible candidate a
+pre-human quota, adds the global leaders, and runs or resumes checksum-validated
+Cas-OFFinder batches:
+
+```bash
+bash scripts/run_hsv2_genome_wide.sh
+```
+
+To regenerate a partial report without running external tools:
+
+```bash
+vst discover genome-wide --virus hsv2 --analysis-only
+```
+
+See [`docs/GENOME_WIDE_DISCOVERY.md`](docs/GENOME_WIDE_DISCOVERY.md). A missing batch is
+never interpreted as a zero-hit result.
 
 ## Main outputs
 

@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 NOTEBOOKS = [
     ROOT / "notebooks/07_HSV2_MULTITOOL_COMPARISON_EN.ipynb",
     ROOT / "notebooks/08_RUN_FULL_PIPELINE_EN.ipynb",
+    ROOT / "notebooks/09_HSV2_GENOME_WIDE_DISCOVERY_EN.ipynb",
 ]
 
 
@@ -45,3 +46,17 @@ def test_end_to_end_notebook_executes_all_cells_in_synthetic_mode(monkeypatch):
     assert namespace["SYNTHETIC_MODE"] is True
     assert len(namespace["post_human_candidates"]) > 0
     assert namespace["tool_coverage"]["status"].eq("pending").any()
+
+
+def test_genome_wide_notebook_executes_in_english_synthetic_mode(monkeypatch):
+    matplotlib.use("Agg")
+    monkeypatch.chdir(ROOT)
+    notebook = _load(NOTEBOOKS[2])
+    namespace: dict[str, object] = {}
+    for number, cell in enumerate(notebook["cells"]):
+        if cell["cell_type"] == "code":
+            source = "".join(cell["source"])
+            exec(compile(source, f"{NOTEBOOKS[2]}:cell-{number}", "exec"), namespace)
+    assert namespace["SYNTHETIC_MODE"] is True
+    assert len(namespace["screening_panel"]) > 0
+    assert namespace["summary"]["external_tool_status"] == "pending Cas-OFFinder completion"
