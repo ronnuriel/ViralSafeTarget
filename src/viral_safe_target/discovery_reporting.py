@@ -36,6 +36,7 @@ def write_discovery_report(
     genes: pd.DataFrame,
     stability: pd.DataFrame,
     deep_panel: pd.DataFrame,
+    top_per_gene_candidates: pd.DataFrame,
     same_pairs: pd.DataFrame,
     multi_pairs: pd.DataFrame,
     genes_without_candidates: pd.DataFrame,
@@ -139,6 +140,22 @@ def write_discovery_report(
         if genes.get("evidence_coverage", pd.Series(dtype=float)).isna().all()
         or pd.to_numeric(genes.get("evidence_coverage", 0), errors="coerce").fillna(0).eq(0).all()
         else "Optional biological evidence was supplied and remains separate from computational targetability."
+    )
+    high_targetability_low_evidence = genes.sort_values(
+        ["targetability_rank", "gene_name"], na_position="last", kind="mergesort"
+    )
+    high_targetability_low_evidence = high_targetability_low_evidence[
+        pd.to_numeric(high_targetability_low_evidence["evidence_coverage"], errors="coerce")
+        .fillna(0)
+        .eq(0)
+    ]
+    high_evidence_low_targetability = genes[
+        pd.to_numeric(genes["evidence_coverage"], errors="coerce").fillna(0).gt(0)
+    ].sort_values(
+        ["targetability_rank", "gene_name"],
+        ascending=[False, True],
+        na_position="last",
+        kind="mergesort",
     )
     answer_box = (
         f"<p><strong>Did another gene rank above UL30?</strong> {html.escape(ul30_answer)}</p>"
@@ -252,6 +269,18 @@ def write_discovery_report(
                     "confidence_level",
                 ],
                 rows=100,
+            )
+            + "<h3>High-targetability, low-evidence discovery view</h3>"
+            + _table(
+                high_targetability_low_evidence,
+                ["gene_name", "targetability_rank", "evidence_coverage", "confidence_level"],
+                rows=30,
+            )
+            + "<h3>High-evidence, low-targetability view</h3>"
+            + _table(
+                high_evidence_low_targetability,
+                ["gene_name", "targetability_rank", "evidence_coverage", "confidence_level"],
+                rows=30,
             ),
         ),
         (
@@ -293,15 +322,16 @@ def write_discovery_report(
         (
             "Top candidates per gene",
             _table(
-                ranked,
+                top_per_gene_candidates,
                 [
+                    "mapped_gene_for_view",
                     "post_human_rank",
                     "candidate_id",
                     "mapped_gene_names",
                     "post_human_score",
                     "decision",
                 ],
-                rows=100,
+                rows=750,
             ),
         ),
         (

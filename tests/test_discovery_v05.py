@@ -140,6 +140,20 @@ def test_gene_ranking_uses_fraction_uncertainty_and_missing_evidence() -> None:
     assert genes.loc[genes["screened_candidate_count"].lt(10), "confidence_level"].eq("low").all()
 
 
+def test_gene_metrics_use_full_eligible_denominator_not_only_screened_panel() -> None:
+    candidates, mapping = _screened_candidates()
+    screened_panel = candidates.iloc[:2].copy()
+    genes = rank_genes(
+        screened_panel,
+        mapping,
+        _features(),
+        eligible_candidates=candidates,
+    )
+    gene_b = genes[genes["gene_name"].eq("geneB")].iloc[0]
+    assert gene_b["eligible_candidate_count"] > gene_b["screened_candidate_count"]
+    assert gene_b["screening_fraction"] < 1
+
+
 def test_stability_fields_exist_without_rerunning_external_search() -> None:
     candidates, mapping = _screened_candidates()
     stability = gene_rank_stability(candidates, mapping, _features())
@@ -189,6 +203,15 @@ def test_pair_bounds_and_cross_gene_wording() -> None:
         assert "not one physical deletion" in multi.iloc[0]["limitations"]
 
 
+def test_feature_map_has_one_cut_position_per_candidate() -> None:
+    candidates = _candidates()
+    mapping = build_candidate_feature_map(candidates, _features(), config=_settings())
+    cut_positions = mapping[["candidate_id", "cut_position"]].drop_duplicates()
+    assert not cut_positions["candidate_id"].duplicated().any()
+    joined = candidates.merge(cut_positions, on="candidate_id", validate="one_to_one")
+    assert joined["cut_position"].notna().all()
+
+
 def test_partial_report_states_answers_are_not_determinable(tmp_path: Path) -> None:
     candidates, mapping = _screened_candidates()
     candidates["screening_status"] = "pending"
@@ -204,6 +227,7 @@ def test_partial_report_states_answers_are_not_determinable(tmp_path: Path) -> N
         genes=genes,
         stability=stability,
         deep_panel=candidates.head(0),
+        top_per_gene_candidates=candidates.head(0),
         same_pairs=pd.DataFrame(),
         multi_pairs=pd.DataFrame(),
         genes_without_candidates=pd.DataFrame(),

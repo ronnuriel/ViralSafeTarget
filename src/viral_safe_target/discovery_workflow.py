@@ -453,6 +453,7 @@ def run_genome_wide_discovery(
     editor_config_path = _resolve(root, config["editor_config"]).resolve()
     settings = load_config(editor_config_path)
     candidate_path = source / "candidates_ranked_pre_human.csv"
+    rejected_candidate_path = source / "candidates_rejected_pre_human.csv"
     annotation_path = _resolve(root, config["annotation"]).resolve()
     qc_path = source / "accession_qc.csv"
     if not candidate_path.is_file() or not annotation_path.is_file():
@@ -463,6 +464,10 @@ def run_genome_wide_discovery(
 
     stage = time.monotonic()
     candidates = pd.read_csv(candidate_path)
+    rejected_candidate_count = (
+        len(pd.read_csv(rejected_candidate_path)) if rejected_candidate_path.is_file() else 0
+    )
+    initial_candidate_count = len(candidates) + rejected_candidate_count
     eligible = candidates[candidates["rejection_reasons"].fillna("").eq("")].copy()
     eligible = eligible.sort_values(
         ["pre_human_score", "candidate_id"],
@@ -528,10 +533,13 @@ def run_genome_wide_discovery(
     for column in HUMAN_COUNT_COLUMNS:
         panel_export[column] = pd.NA
     panel_export.to_csv(output / "genome_wide_screening_panel.csv", index=False)
-    selected.audit.to_csv(output / "selection_audit.csv", index=False)
-    selected.genes_without_candidates.to_csv(
-        output / "genes_without_eligible_candidates.csv", index=False
-    )
+    selection_audit = selected.audit.copy()
+    selection_audit["selection_provenance"] = str(discovery_config_path)
+    selection_audit.to_csv(output / "selection_audit.csv", index=False)
+    genes_without_candidates = selected.genes_without_candidates.copy()
+    genes_without_candidates["annotation_provenance"] = str(annotation_path)
+    genes_without_candidates.to_csv(output / "genes_without_eligible_candidates.csv", index=False)
+    print(f"Initial candidates before pre-human rejection: {initial_candidate_count:,}")
     print(f"Eligible pre-human candidates: {len(eligible):,}")
     print(f"Balanced discovery panel candidates: {len(panel):,}")
     print(f"Panel unique guides: {panel['guide_sequence'].nunique():,}")
@@ -556,6 +564,15 @@ def run_genome_wide_discovery(
     executable = _cas_executable(root)
     run_batches(batches, executable, execute=run_cas_offinder and not analysis_only)
     timings["stages"]["cas_offinder_seconds"] = time.monotonic() - stage
+    batch_records = [
+        json.loads(batch["status_path"].read_text(encoding="utf-8")) for batch in batches
+    ]
+    completed_batch_records = [
+        record for record in batch_records if record.get("status") == "completed"
+    ]
+    timings["cas_offinder_completed_batch_seconds"] = sum(
+        float(record.get("elapsed_seconds", 0.0)) for record in completed_batch_records
+    )
     _json(
         output / "combined_batch_manifest.json",
         {
@@ -576,6 +593,8 @@ def run_genome_wide_discovery(
 
     stage = time.monotonic()
     hits, post = merge_batch_results(panel, batches, settings)
+    cut_positions = feature_map[["candidate_id", "cut_position"]].drop_duplicates("candidate_id")
+    post = post.merge(cut_positions, on="candidate_id", how="left", validate="one_to_one")
     hits.to_csv(output / "genome_wide_human_hits.csv", index=False)
     post.to_csv(output / "genome_wide_candidates_post_human.csv", index=False)
     top_global = post[post["post_human_rank"].notna()].head(100)
@@ -585,12 +604,21 @@ def run_genome_wide_discovery(
 
     evidence_path = _resolve(root, config.get("gene_evidence", "data/curated/gene_evidence.tsv"))
     evidence = pd.read_csv(evidence_path, sep="\t") if evidence_path.is_file() else None
-    gene_rankings = rank_genes(post, feature_map, features, evidence=evidence)
+    gene_rankings = rank_genes(
+        post,
+        feature_map,
+        features,
+        eligible_candidates=eligible,
+        evidence=evidence,
+    )
     gene_rankings["ranking_provenance"] = str(
         (output / "genome_wide_candidates_post_human.csv").resolve()
     )
     gene_rankings.to_csv(output / "gene_rankings.csv", index=False)
     stability = gene_rank_stability(post, feature_map, features)
+    stability["ranking_provenance"] = str(
+        (output / "genome_wide_candidates_post_human.csv").resolve()
+    )
     stability.to_csv(output / "gene_rank_stability.csv", index=False)
     deep_config = config["deep_panel"]
     deep = build_deep_screening_panel(
@@ -612,12 +640,21 @@ def run_genome_wide_discovery(
         candidates_per_gene=int(pair_config["candidates_per_gene"]),
         maximum_pairs=int(pair_config["maximum_pairs"]),
     )
+    pair_provenance = str((output / "genome_wide_candidates_post_human.csv").resolve())
+    same["pair_provenance"] = pair_provenance
+    multi["pair_provenance"] = pair_provenance
+    pair_summary["pair_provenance"] = pair_provenance
     same.to_csv(output / "pair_hypotheses_same_gene.csv", index=False)
     multi.to_csv(output / "pair_hypotheses_multi_target.csv", index=False)
     pair_summary.to_csv(output / "pair_summary_by_gene.csv", index=False)
     timings["stages"]["analysis_seconds"] = time.monotonic() - stage
 
     qc = pd.read_csv(qc_path) if qc_path.is_file() else pd.DataFrame()
+    executed_batch = next(
+        (record for record in completed_batch_records if record.get("command")), {}
+    )
+    recorded_command = executed_batch.get("command", [])
+    recorded_executable = recorded_command[0] if recorded_command else "unavailable"
     provenance = {
         "schema_version": "0.5",
         "created_utc": _utc_now(),
@@ -635,12 +672,22 @@ def run_genome_wide_discovery(
         "human_fasta_size_bytes": human_fasta.stat().st_size,
         "human_assembly": config["human_assembly"],
         "human_assembly_accession": config["human_assembly_accession"],
-        "cas_offinder_executable": str(executable) if executable else "unavailable",
-        "cas_offinder_version": _tool_version(executable),
-        "opencl_device_information": _opencl_information(),
+        "cas_offinder_executable": str(executable) if executable else recorded_executable,
+        "cas_offinder_version": (
+            _tool_version(executable)
+            if executable
+            else executed_batch.get("tool_version", "unavailable")
+        ),
+        "opencl_device_information": executed_batch.get(
+            "device_information", _opencl_information()
+        ),
+        "cas_offinder_completed_batch_seconds": timings["cas_offinder_completed_batch_seconds"],
         "analysis_only": analysis_only,
         "completed_batches": sum(batch["status"] == "completed" for batch in batches),
         "total_batches": len(batches),
+        "initial_candidate_count": initial_candidate_count,
+        "eligible_candidate_count": len(eligible),
+        "screening_panel_candidate_count": len(panel),
     }
     _json(output / "provenance.json", provenance)
     timings["completed_utc"] = _utc_now()
@@ -656,12 +703,13 @@ def run_genome_wide_discovery(
         genes=gene_rankings,
         stability=stability,
         deep_panel=deep,
+        top_per_gene_candidates=top_per_gene_frame,
         same_pairs=same,
         multi_pairs=multi,
-        genes_without_candidates=selected.genes_without_candidates,
+        genes_without_candidates=genes_without_candidates,
         qc=qc,
         provenance=provenance,
-        initial_candidate_count=len(candidates),
+        initial_candidate_count=initial_candidate_count,
         eligible_candidate_count=len(eligible),
     )
     print("Output paths:")

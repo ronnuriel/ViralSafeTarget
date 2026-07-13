@@ -270,9 +270,11 @@ def rank_genes(
     feature_map: pd.DataFrame,
     annotated_features: pd.DataFrame,
     *,
+    eligible_candidates: pd.DataFrame | None = None,
     evidence: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
     """Compute separate targetability and evidence metrics for every annotated gene feature."""
+    eligible_pool = candidates if eligible_candidates is None else eligible_candidates
     gene_features = annotated_features[annotated_features["feature_type"].eq("gene")].copy()
     rows = []
     for _, gene in gene_features.sort_values(["start", "end", "feature_id"]).iterrows():
@@ -281,8 +283,11 @@ def rank_genes(
         member_ids = feature_map.loc[
             feature_map["feature_id"].eq(feature_id), "candidate_id"
         ].drop_duplicates()
-        gene_candidates = candidates[candidates["candidate_id"].isin(member_ids)].copy()
-        screened = gene_candidates[gene_candidates["screening_status"].eq("completed")]
+        gene_candidates = eligible_pool[eligible_pool["candidate_id"].isin(member_ids)].copy()
+        screened = candidates[
+            candidates["candidate_id"].isin(member_ids)
+            & candidates["screening_status"].eq("completed")
+        ]
         ranked = screened[screened["post_human_rank"].notna()].sort_values(
             ["post_human_rank", "candidate_id"], kind="mergesort"
         )
