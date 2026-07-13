@@ -222,7 +222,7 @@ def read_cas_offinder_output(path: str | Path) -> pd.DataFrame:
                 continue
             fields = line.rstrip("\n").split("\t")
             if len(fields) == 6:
-                query, observed, chromosome, location, direction, mismatches = fields
+                query, chromosome, location, observed, direction, mismatches = fields
                 bulge_type, bulge_size = "none", 0
             elif len(fields) >= 8 and fields[1] in {"DNA", "RNA", "X", "none"}:
                 (
