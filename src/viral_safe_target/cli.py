@@ -7,6 +7,7 @@ import json
 import shutil
 import subprocess
 import sys
+import webbrowser
 from pathlib import Path
 
 import pandas as pd
@@ -345,6 +346,27 @@ def _crispresso_import(args: argparse.Namespace) -> None:
     print(f"Wrote measured metrics to {measurements}; provenance: {manifest}")
 
 
+def _discover_genome_wide(args: argparse.Namespace) -> None:
+    from .discovery_workflow import run_genome_wide_discovery
+
+    result = run_genome_wide_discovery(
+        virus=args.virus,
+        run_dir=args.run_dir,
+        config_path=args.config,
+        out_dir=args.out_dir,
+        top_per_gene=args.top_per_gene,
+        global_top=args.global_top,
+        batch_size=args.batch_size,
+        run_cas_offinder=args.run_cas_offinder,
+        analysis_only=args.analysis_only,
+        exhaustive=args.exhaustive,
+        confirm_exhaustive=args.confirm_exhaustive,
+    )
+    print(json.dumps(result["answers"], indent=2, sort_keys=True))
+    if args.open_report:
+        webbrowser.open((result["output_dir"] / "report.html").as_uri())
+
+
 def _add_config(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--config", default=str(DEFAULT_CONFIG_PATH))
 
@@ -355,6 +377,25 @@ def build_parser() -> argparse.ArgumentParser:
         description="Virus-first computational target discovery for research use",
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
+
+    discover = subparsers.add_parser("discover", help="balanced genome-wide discovery workflows")
+    discover_commands = discover.add_subparsers(dest="discover_command", required=True)
+    genome_wide = discover_commands.add_parser(
+        "genome-wide", help="run or resume balanced HSV-2 genome-wide discovery"
+    )
+    genome_wide.add_argument("--virus", default="hsv2")
+    genome_wide.add_argument("--run-dir")
+    genome_wide.add_argument("--config", default="configs/hsv2_genome_wide.yaml")
+    genome_wide.add_argument("--out-dir", default="reports/hsv2_genome_wide")
+    genome_wide.add_argument("--top-per-gene", type=int)
+    genome_wide.add_argument("--global-top", type=int)
+    genome_wide.add_argument("--batch-size", type=int)
+    genome_wide.add_argument("--run-cas-offinder", action="store_true")
+    genome_wide.add_argument("--analysis-only", action="store_true")
+    genome_wide.add_argument("--exhaustive", action="store_true")
+    genome_wide.add_argument("--confirm-exhaustive", action="store_true")
+    genome_wide.add_argument("--open-report", action="store_true")
+    genome_wide.set_defaults(func=_discover_genome_wide)
 
     scan = subparsers.add_parser("scan", help="scan and rank an aligned viral genome collection")
     scan.add_argument("--virus-alignment", required=True)
