@@ -1,10 +1,21 @@
 # Known limitations
 
-- The current core supports SpCas9/NGG only. Editor profiles should become configurable before claiming generality.
-- Exact 23-nt coverage is intentionally strict and does not model mismatch tolerance at the viral target.
-- The built-in host screen is a small-FASTA teaching implementation, not a GRCh38 engine.
-- Whole HSV genomes contain repeats and alternative isomer orientations. Input genomes should be normalized and alignment quality inspected; a naive whole-genome alignment may create false conservation or false variation.
-- GFF annotation indicates location and known feature names, not gene essentiality or target accessibility.
-- The pair simulator assumes canonical cut coordinates and an idealized deletion. It does not predict repair distributions.
-- The demo ranking is transparent but not experimentally calibrated.
-- Population-representative sampling, human pangenome variation and clinically relevant diversity require dedicated study designs.
+- SpCas9/NGG is the only tested editor profile. The schema is extensible, but other
+  profiles are not claimed as supported.
+- Exact protospacer-plus-PAM coverage is intentionally strict, sensitive to viral
+  sampling, and dependent on alignment quality.
+- HSV repeats and genome isomers can create misleading whole-genome alignments.
+- Viral occurrence counting is exact-string based and does not model functional
+  equivalence or mismatch-tolerant viral editing.
+- GFF3 overlap indicates location, not essentiality, accessibility, or effectiveness.
+- Curated evidence is absent unless a researcher supplies source-linked rows; unknown
+  evidence remains null and supplies no positive score.
+- Cas-OFFinder enumerates sequence matches under a configured model. It does not
+  establish cleavage probability or safety, and a reference-only human search omits
+  population variation unless a separate variant-aware design is used.
+- Pair deletion coordinates assume two canonical cuts and an idealized intervening
+  deletion. Repair distributions and cleavage co-occurrence are not modeled.
+- The transparent scores are not experimentally calibrated probabilities.
+- Delivery, latent infection, chromatin accessibility, editing efficiency, repair
+  outcomes, toxicity, immune effects, viral reactivation, and clinical outcomes are
+  outside the model.

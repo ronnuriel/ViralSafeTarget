@@ -36,7 +36,9 @@ It does **not** answer whether delivery succeeds, whether chromatin is accessibl
 ```bash
 conda env create -f environment.yml
 conda activate viral-safe-target
-pytest
+python -m pip install -e .
+pytest -q
+ruff check .
 bash scripts/run_demo.sh
 ```
 
@@ -64,7 +66,9 @@ Start with `notebooks/00_START_HERE_HE.ipynb` or the English README and document
 bash scripts/run_real_hsv2.sh --sample-size 25
 ```
 
-This downloads public NCBI records, selects a deterministic pilot sample, aligns it with MAFFT, scans conserved SpCas9-compatible sites, maps them to the HSV-2 reference annotation, and generates an idealized two-cut sequence report.
+This validates or downloads public NCBI records, resumes checksum-cached stages,
+selects a deterministic pilot sample, aligns it with MAFFT, and produces explainable
+pre-human rankings plus corrected pair hypotheses.
 
 To also download GRCh38 and prepare a Cas-OFFinder input file:
 
@@ -74,10 +78,22 @@ bash scripts/run_real_hsv2.sh --with-human --sample-size 25
 
 The human genome is intentionally not committed to Git.
 
+For the focused UL19/UL30 workflow, including deterministic Cas-OFFinder selection:
+
+```bash
+bash scripts/run_hsv2_pilot.sh
+```
+
+See [`docs/HSV2_PILOT.md`](docs/HSV2_PILOT.md) for the two-stage off-target run.
+
 ## Main outputs
 
-- `candidates.csv`: individual candidate sites and traceable component fields.
-- `simulated_pairs.csv`: idealized reference deletions between candidate pairs.
+- `candidates_ranked_pre_human.csv`: retained candidates with visible score components.
+- `candidates_rejected_pre_human.csv`: rejected candidates and explicit reasons.
+- `candidates_ranked_post_human.csv`: separate post-human score when results exist.
+- `predicted_human_hits.csv`: parsed predicted hits when results exist.
+- `pair_hypotheses_same_gene.csv`: bounded same-gene deletion hypotheses.
+- `pair_hypotheses_multi_target.csv`: independent cross-gene target hypotheses.
 - `report.html`: human-readable summary.
 - `run_manifest.json`: input checksums, parameters, environment and Git commit.
 
@@ -88,6 +104,14 @@ The included simulator calculates canonical SpCas9 cut coordinates and the seque
 This is a sequence transformation, not a cell or organism simulator. To measure real editing, researchers need sequencing data and tools such as CRISPResso2. To evaluate potential host off-target sites at genome scale, use a validated engine such as Cas-OFFinder or CRISPRitz. To establish viral inactivation, appropriate virology experiments are required.
 
 See [`docs/SIMULATION_LIMITS.md`](docs/SIMULATION_LIMITS.md) and [`docs/KNOWN_LIMITATIONS.md`](docs/KNOWN_LIMITATIONS.md).
+
+## Curated evidence
+
+The schema is `data/curated/viral_gene_evidence.schema.csv`. Add only source-linked,
+reviewed rows to a virus-specific table and pass it with `--gene-evidence`. Supported
+status vocabulary includes `supported`, `suggested`, `unknown`, and `conflicting`.
+Unknown or missing evidence remains missing and never silently receives a positive
+score. See [`docs/OUTPUT_INTERPRETATION.md`](docs/OUTPUT_INTERPRETATION.md).
 
 ## Repository structure
 
