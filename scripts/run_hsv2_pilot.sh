@@ -34,6 +34,13 @@ if [[ -z "$HUMAN_DIR" ]]; then
   echo "  bash scripts/run_real_hsv2.sh --with-human --sample-size ${VST_SAMPLE_SIZE:-25}" >&2
   exit 1
 fi
+if [[ -z "${HUMAN_FASTA:-}" ]]; then
+  HUMAN_FASTA=$(find "$HUMAN_DIR" -type f -name '*_genomic.fna' -print -quit 2>/dev/null || true)
+fi
+if [[ -z "$HUMAN_FASTA" ]]; then
+  echo "Human FASTA not found beneath $HUMAN_DIR" >&2
+  exit 1
+fi
 
 "${VST[@]}" build-offtarget-input \
   --candidates "$RANKED" \
@@ -129,6 +136,23 @@ if [[ -s "$REPORTS/predicted_human_hits.csv" ]]; then
     --predicted-hits "$REPORTS/predicted_human_hits.csv"
 else
   "${VST[@]}" report "${REPORT_ARGS[@]}"
+fi
+
+if [[ -n "${HUMAN_GFF:-}" && -s "${HUMAN_GFF:-}" ]]; then
+  python scripts/write_hsv2_pilot_manifest.py \
+    --config "$CONFIG" \
+    --reports "$REPORTS" \
+    --alignment "$ALIGNMENT" \
+    --human-fasta "$HUMAN_FASTA" \
+    --human-gff "$HUMAN_GFF" \
+    --qc-report "$REAL_REPORTS/accession_qc.csv"
+else
+  python scripts/write_hsv2_pilot_manifest.py \
+    --config "$CONFIG" \
+    --reports "$REPORTS" \
+    --alignment "$ALIGNMENT" \
+    --human-fasta "$HUMAN_FASTA" \
+    --qc-report "$REAL_REPORTS/accession_qc.csv"
 fi
 
 echo "HSV-2 pilot outputs: $REPORTS/"

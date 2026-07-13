@@ -33,8 +33,20 @@ def _command_output(command: list[str], root: Path) -> str | None:
 
 
 def _version(command: list[str], root: Path) -> str | None:
-    value = _command_output(command, root)
-    return value.splitlines()[0] if value else None
+    try:
+        completed = subprocess.run(
+            command,
+            cwd=root,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            timeout=10,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    lines = completed.stdout.strip().splitlines()
+    return lines[0] if lines else None
 
 
 def _package_versions() -> dict[str, str]:
