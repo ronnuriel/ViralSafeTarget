@@ -86,6 +86,21 @@ bash scripts/run_hsv2_pilot.sh
 
 See [`docs/HSV2_PILOT.md`](docs/HSV2_PILOT.md) for the two-stage off-target run.
 
+## Run the v0.4 multi-tool consensus
+
+The consensus pilot reuses the completed v0.3 outputs and selects only the 32 candidates with no
+predicted human hit within the configured Cas-OFFinder model and three-mismatch threshold:
+
+```bash
+bash scripts/run_hsv2_consensus.sh
+```
+
+It generates CRISPRitz inputs, imports researcher-supplied CRISPOR/CHOPCHOP/GuideScan2 exports when
+present, preserves missing stages, and writes `reports/hsv2_consensus/report.html`. See
+[`docs/HSV2_CONSENSUS_PILOT.md`](docs/HSV2_CONSENSUS_PILOT.md),
+[`docs/PYTHON_SDK.md`](docs/PYTHON_SDK.md), and
+[`docs/INTEGRATIONS.md`](docs/INTEGRATIONS.md).
+
 ## Main outputs
 
 - `candidates_ranked_pre_human.csv`: retained candidates with visible score components.

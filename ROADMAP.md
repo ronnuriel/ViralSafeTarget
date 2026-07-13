@@ -11,7 +11,26 @@
 - [x] Run manifests with file checksums and parameters
 - [x] Local upload UI, CI, contribution templates and citation metadata
 
-## v0.3 — benchmark release
+## v0.3 — research-grade HSV-2 pipeline
+
+- [x] Stable candidate identities and explicit two-stage ranking
+- [x] Cached real-data workflow and accepted-accession QC
+- [x] Native Cas-OFFinder 2.4.1 parsing and GRCh38.p14 pilot
+- [x] Corrected same-gene and multi-target pair hypotheses
+- [x] Reproducible run manifests and regression tests
+
+## v0.4 — multi-tool consensus and researcher SDK
+
+- [x] Public Python run-loading and comparison API
+- [x] Normalized external-tool schema and adapter protocol
+- [x] MAFFT, Cas-OFFinder and CRISPRitz executable/import integration
+- [x] CRISPOR, CHOPCHOP and GuideScan2 documented-export importers
+- [x] Rank aggregation, coverage, agreement and disagreement reports
+- [x] Separate CRISPResso2 measured-result import
+- [x] Custom scorer API and optional PyTorch scorer
+- [x] Cached 32-candidate HSV-2 consensus report
+
+## Future benchmark release
 
 - [ ] Curated public benchmark with experimentally active and inactive targets
 - [ ] Comparison with CRISPOR, CHOPCHOP, GuideScan2 and CRISPRitz
@@ -20,7 +39,7 @@
 - [ ] Alignment normalization for HSV repeat/isomer structure
 - [ ] English research notebooks
 
-## v0.4 — multi-editor and multi-target planning
+## Future multi-editor and multi-target planning
 
 - [ ] Configurable editor/PAM profiles beyond SpCas9
 - [ ] Pair/set optimization for strain coverage and escape resistance
