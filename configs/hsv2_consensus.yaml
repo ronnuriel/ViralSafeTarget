@@ -1,0 +1,36 @@
+schema_version: "0.4"
+project_name: hsv2_multitool_consensus
+source_run: reports/hsv2_pilot
+candidate_filter:
+  human_total_predicted_hits: 0
+  expected_total: 32
+  expected_genes:
+    UL30: 23
+    UL19: 9
+expected_tools:
+  - viral_safe_target_pre_human
+  - viral_safe_target_post_human
+  - cas-offinder
+  - crispritz
+  - crispor
+  - chopchop
+  - guidescan2
+consensus:
+  method: weighted_borda
+  weights:
+    viral_safe_target_pre_human: 1.0
+    viral_safe_target_post_human: 1.0
+    cas-offinder: 1.0
+    crispritz: 1.0
+    crispor: 1.0
+    chopchop: 1.0
+    guidescan2: 1.0
+crispritz:
+  genome_or_assembly: GRCh38.p14
+  mismatches: 3
+  dna_bulges: 1
+  rna_bulges: 1
+  variant_aware: false
+  docker_image: pinellolab/crispritz:latest
+external_exports_directory: reports/hsv2_consensus/external_exports
+random_seed: 20260713

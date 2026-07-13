@@ -16,6 +16,14 @@ from .benchmarking import run_benchmark, write_benchmark_outputs
 from .config import DEFAULT_CONFIG_PATH, get_editor, load_config
 from .crispr import scan_editor_candidates
 from .disruption import rank_candidate_pairs
+from .experimental import import_crispresso2_results
+from .integrations import (
+    CasOffinderAdapter,
+    CrispritzAdapter,
+    ExternalImportAdapter,
+    MafftAdapter,
+    load_external_results,
+)
 from .io_utils import read_fasta
 from .offtarget import (
     build_cas_offinder_input,
@@ -27,6 +35,7 @@ from .offtarget import (
 from .provenance import write_run_manifest
 from .reporting import write_html_report, write_methods_and_limitations
 from .scoring import rank_post_human_candidates, rank_pre_human_candidates
+from .sdk import load_run
 
 
 def _config(args: argparse.Namespace) -> dict:
@@ -249,6 +258,93 @@ def _doctor(args: argparse.Namespace) -> None:
         print(f"- {label}: {value}")
 
 
+def _tools_doctor(args: argparse.Namespace) -> None:
+    del args
+    adapters = [MafftAdapter(), CasOffinderAdapter(), CrispritzAdapter()]
+    adapters.extend(ExternalImportAdapter(name) for name in ("crispor", "chopchop", "guidescan2"))
+    print("ViralSafeTarget external-tool adapters")
+    for adapter in adapters:
+        status = adapter.detect()
+        label = "available" if status.available else "pending"
+        details = status.version or status.message
+        print(f"- {status.name}: {label} — {details}")
+
+
+def _crispritz_build(args: argparse.Namespace) -> None:
+    run = load_run(args.run_dir)
+    candidates = run.candidates
+    if "human_total_predicted_hits" in candidates:
+        candidates = candidates[candidates["human_total_predicted_hits"].eq(0)].copy()
+    manifest = CrispritzAdapter(args.docker_image).build_input(
+        candidates,
+        {
+            "reference_genome": args.reference_genome,
+            "genome_or_assembly": args.assembly,
+            "pam_file": args.pam_file,
+            "mismatches": args.mismatches,
+            "dna_bulges": args.dna_bulges,
+            "rna_bulges": args.rna_bulges,
+            "variant_aware": args.variant_aware,
+            "variant_file": args.variant_file,
+        },
+        args.out_dir,
+    )
+    print(f"Wrote CRISPRitz input bundle for {len(candidates)} candidates: {manifest}")
+
+
+def _crispritz_run(args: argparse.Namespace) -> None:
+    manifest = Path(args.input_dir) / "crispritz_manifest.json"
+    execution = CrispritzAdapter(args.docker_image).run(
+        manifest, args.out_dir, dry_run=args.dry_run
+    )
+    if args.dry_run:
+        print("Dry-run command:", " ".join(execution.command))
+    else:
+        print(f"CRISPRitz completed with return code {execution.returncode}")
+
+
+def _crispritz_import(args: argparse.Namespace) -> None:
+    adapter = CrispritzAdapter(args.docker_image)
+    manifest_path = Path(args.manifest)
+    settings = json.loads(manifest_path.read_text(encoding="utf-8"))
+    guides = manifest_path.parent / settings["guides_file"]
+    candidates = pd.read_csv(guides, sep="\t")
+    parsed = adapter.parse(args.results, guides)
+    normalized = adapter.normalize(
+        parsed,
+        candidates=candidates,
+        source_file=args.results,
+        assembly=settings.get("genome_or_assembly", ""),
+        command="vst tools crispritz import",
+    )
+    output = Path(args.out_dir)
+    output.mkdir(parents=True, exist_ok=True)
+    parsed.to_csv(output / "crispritz_parsed_raw.csv", index=False)
+    normalized.to_csv(output / "tool_results_long.csv", index=False)
+    print(f"Imported {len(parsed)} CRISPRitz hits for {len(candidates)} candidates")
+
+
+def _external_import(args: argparse.Namespace) -> None:
+    candidates = pd.read_csv(args.candidates)
+    imported = load_external_results(args.tool, args.input, args.mapping, candidates)
+    output = Path(args.out_dir)
+    output.mkdir(parents=True, exist_ok=True)
+    imported.results.dataframe.to_csv(output / "tool_results_long.csv", index=False)
+    imported.raw_rows.to_csv(output / "raw_external_rows.csv", index=False)
+    unmatched = pd.concat([imported.unmatched_rows, imported.ambiguous_rows], ignore_index=True)
+    unmatched.to_csv(output / "unmatched_external_rows.csv", index=False)
+    print(
+        f"Imported {len(imported.results)} normalized metric rows; "
+        f"{len(imported.unmatched_rows)} unmatched and {len(imported.ambiguous_rows)} ambiguous"
+    )
+
+
+def _crispresso_import(args: argparse.Namespace) -> None:
+    imported = import_crispresso2_results(args.input, args.candidate_map)
+    measurements, manifest = imported.write(args.out_dir)
+    print(f"Wrote measured metrics to {measurements}; provenance: {manifest}")
+
+
 def _add_config(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--config", default=str(DEFAULT_CONFIG_PATH))
 
@@ -335,6 +431,69 @@ def build_parser() -> argparse.ArgumentParser:
     report.add_argument("--out-dir", required=True)
     report.add_argument("--title", default="ViralSafeTarget research report")
     report.set_defaults(func=_report)
+
+    tools = subparsers.add_parser("tools", help="external-tool adapters and imports")
+    tool_commands = tools.add_subparsers(dest="tools_command", required=True)
+    tools_doctor = tool_commands.add_parser("doctor", help="detect supported external tools")
+    tools_doctor.set_defaults(func=_tools_doctor)
+
+    crispritz = tool_commands.add_parser("crispritz", help="CRISPRitz integration")
+    crispritz_commands = crispritz.add_subparsers(dest="crispritz_command", required=True)
+    crispritz_build = crispritz_commands.add_parser(
+        "build-input", help="build a resumable CRISPRitz input bundle"
+    )
+    crispritz_build.add_argument("--run-dir", required=True)
+    crispritz_build.add_argument("--out-dir", required=True)
+    crispritz_build.add_argument("--reference-genome")
+    crispritz_build.add_argument("--assembly", default="GRCh38.p14")
+    crispritz_build.add_argument("--pam-file")
+    crispritz_build.add_argument("--mismatches", type=int, default=3)
+    crispritz_build.add_argument("--dna-bulges", type=int, default=0)
+    crispritz_build.add_argument("--rna-bulges", type=int, default=0)
+    crispritz_build.add_argument("--variant-aware", action="store_true")
+    crispritz_build.add_argument("--variant-file")
+    crispritz_build.add_argument("--docker-image", default="pinellolab/crispritz:latest")
+    crispritz_build.set_defaults(func=_crispritz_build)
+
+    crispritz_run = crispritz_commands.add_parser("run", help="run native or Docker CRISPRitz")
+    crispritz_run.add_argument("--input-dir", required=True)
+    crispritz_run.add_argument("--out-dir", required=True)
+    crispritz_run.add_argument("--docker-image", default="pinellolab/crispritz:latest")
+    crispritz_run.add_argument("--dry-run", action="store_true")
+    crispritz_run.set_defaults(func=_crispritz_run)
+
+    crispritz_import = crispritz_commands.add_parser(
+        "import", help="import an existing CRISPRitz output"
+    )
+    crispritz_import.add_argument("--results", required=True)
+    crispritz_import.add_argument("--manifest", required=True)
+    crispritz_import.add_argument("--out-dir", required=True)
+    crispritz_import.add_argument("--docker-image", default="pinellolab/crispritz:latest")
+    crispritz_import.set_defaults(func=_crispritz_import)
+
+    external_import = tool_commands.add_parser(
+        "import", help="import CRISPOR, CHOPCHOP, or GuideScan2 exports"
+    )
+    external_import.add_argument(
+        "--tool", required=True, choices=["crispor", "chopchop", "guidescan2"]
+    )
+    external_import.add_argument("--input", required=True)
+    external_import.add_argument("--mapping", required=True)
+    external_import.add_argument("--candidates", required=True)
+    external_import.add_argument("--out-dir", required=True)
+    external_import.set_defaults(func=_external_import)
+
+    experimental = subparsers.add_parser(
+        "experimental", help="measured-result imports kept separate from predictions"
+    )
+    experimental_commands = experimental.add_subparsers(dest="experimental_command", required=True)
+    crispresso = experimental_commands.add_parser(
+        "import-crispresso2", help="import an existing CRISPResso2 result directory"
+    )
+    crispresso.add_argument("--input", required=True)
+    crispresso.add_argument("--candidate-map", required=True)
+    crispresso.add_argument("--out-dir", required=True)
+    crispresso.set_defaults(func=_crispresso_import)
 
     doctor = subparsers.add_parser("doctor", help="inspect the local research environment")
     _add_config(doctor)
