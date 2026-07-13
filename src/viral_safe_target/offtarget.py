@@ -2,14 +2,16 @@
 
 from __future__ import annotations
 
+import bisect
+import gzip
 import json
 from collections.abc import Iterable, Mapping, Sequence
 from pathlib import Path
 from typing import Any
+from urllib.parse import unquote
 
 import pandas as pd
 
-from .annotations import read_gff3
 from .config import EditorProfile, get_editor, load_config
 from .crispr import reverse_complement
 
@@ -272,27 +274,56 @@ def read_cas_offinder_output(path: str | Path) -> pd.DataFrame:
 
 
 def annotate_human_hits(hits: pd.DataFrame, human_gff: str | Path | None) -> pd.DataFrame:
+    """Annotate hit coordinates with a single streaming pass over a potentially large GFF."""
     output = hits.copy()
     output["human_annotation"] = ""
     if human_gff is None or output.empty:
         return output
-    features = read_gff3(human_gff)
-    annotations: list[str] = []
-    for _, hit in output.iterrows():
+
+    positions: dict[str, list[tuple[int, object]]] = {}
+    for index, hit in output.iterrows():
         coordinate = int(hit["location_0based"]) + 1
-        overlaps = features[
-            (features["seqid"].astype(str) == str(hit["chromosome"]))
-            & (features["start"] <= coordinate)
-            & (features["end"] >= coordinate)
-        ]
-        labels = sorted(
-            {
-                str(row.get("name") or row.get("feature_id") or row["feature_type"])
-                for _, row in overlaps.iterrows()
-            }
-        )
-        annotations.append(";".join(labels))
-    output["human_annotation"] = annotations
+        hit_seqid = str(hit["chromosome"]).split()[0]
+        positions.setdefault(hit_seqid, []).append((coordinate, index))
+    for values in positions.values():
+        values.sort()
+    coordinate_values = {
+        seqid: [coordinate for coordinate, _ in values] for seqid, values in positions.items()
+    }
+
+    annotations: dict[object, set[str]] = {index: set() for index in output.index}
+    path = Path(human_gff)
+    opener = gzip.open if path.suffix == ".gz" else open
+    with opener(path, "rt", encoding="utf-8") as handle:
+        for line in handle:
+            if not line.strip() or line.startswith("#"):
+                continue
+            fields = line.rstrip("\n").split("\t")
+            if len(fields) != 9 or fields[0] not in positions:
+                continue
+            start, end = int(fields[3]), int(fields[4])
+            coordinate_rows = positions[fields[0]]
+            coordinates = coordinate_values[fields[0]]
+            left = bisect.bisect_left(coordinates, start)
+            right = bisect.bisect_right(coordinates, end)
+            if left == right:
+                continue
+            attributes: dict[str, str] = {}
+            for item in fields[8].strip().strip(";").split(";"):
+                if "=" in item:
+                    key, value = item.split("=", 1)
+                    attributes[key] = unquote(value)
+            label = (
+                attributes.get("Name")
+                or attributes.get("gene")
+                or attributes.get("ID")
+                or fields[2]
+            )
+            for _, row_index in coordinate_rows[left:right]:
+                annotations[row_index].add(str(label))
+    output["human_annotation"] = [
+        ";".join(sorted(annotations[index])) for index in output.index
+    ]
     return output
 
 

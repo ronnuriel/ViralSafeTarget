@@ -174,20 +174,33 @@ else
   stage_done "candidate scan and rank" "completed"
 fi
 
-"${VST[@]}" simulate-pairs \
-  --candidates "$RANKED" \
-  --gff "$GFF" \
-  --virus-alignment "$ALIGNMENT" \
-  --reference-id NC_001798.2 \
-  --out-dir reports/real_hsv2 \
-  --config "$CONFIG"
-stage_done "pair hypotheses" "completed"
+PAIR_STAMP=reports/real_hsv2/.cache/pairs_${SAMPLE_SIZE}.json
+PAIR_SAME=reports/real_hsv2/pair_hypotheses_same_gene.csv
+PAIR_MULTI=reports/real_hsv2/pair_hypotheses_multi_target.csv
+if python scripts/cache_stage.py check --stamp "$PAIR_STAMP" \
+  --input "$RANKED" --input "$GFF" --input "$ALIGNMENT" --input "$CONFIG" \
+  --output "$PAIR_SAME" --output "$PAIR_MULTI" \
+  --parameter "reference=NC_001798.2"; then
+  stage_done "pair hypotheses" "cached"
+else
+  "${VST[@]}" simulate-pairs \
+    --candidates "$RANKED" \
+    --gff "$GFF" \
+    --virus-alignment "$ALIGNMENT" \
+    --reference-id NC_001798.2 \
+    --out-dir reports/real_hsv2 \
+    --config "$CONFIG"
+  python scripts/cache_stage.py stamp --stamp "$PAIR_STAMP" \
+    --input "$RANKED" --input "$GFF" --input "$ALIGNMENT" --input "$CONFIG" \
+    --parameter "reference=NC_001798.2"
+  stage_done "pair hypotheses" "completed"
+fi
 
 "${VST[@]}" report \
   --candidates "$RANKED" \
   --rejected "$REJECTED" \
-  --pairs reports/real_hsv2/pair_hypotheses_same_gene.csv \
-  --multi-pairs reports/real_hsv2/pair_hypotheses_multi_target.csv \
+  --pairs "$PAIR_SAME" \
+  --multi-pairs "$PAIR_MULTI" \
   --out-dir reports/real_hsv2 \
   --title "HSV-2 real-data computational target-discovery report"
 stage_done "research report" "completed"

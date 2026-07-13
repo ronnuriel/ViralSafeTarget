@@ -76,6 +76,19 @@ def test_output_parsing_mismatch_counts_and_post_human_ranking(tmp_path):
     )
 
 
+def test_missing_rejection_reason_does_not_exclude_zero_hit_candidate():
+    candidate = _candidates().iloc[:1].copy()
+    candidate["rejection_reasons"] = pd.NA
+    candidate["human_exact_hit_count"] = 0
+    candidate["human_one_mismatch_hit_count"] = 0
+    candidate["human_two_mismatch_hit_count"] = 0
+    candidate["human_three_mismatch_hit_count"] = 0
+    candidate["human_total_predicted_hits"] = 0
+    ranked = rank_post_human_candidates(candidate)
+    assert ranked.iloc[0]["decision"] == "retain_computational_candidate"
+    assert "no predicted human hit" in ranked.iloc[0]["decision_reason"]
+
+
 def test_empty_and_bulge_enabled_outputs_are_supported(tmp_path):
     empty_path = tmp_path / "empty.tsv"
     empty_path.write_text("", encoding="utf-8")
@@ -91,3 +104,29 @@ def test_empty_and_bulge_enabled_outputs_are_supported(tmp_path):
     bulge = read_cas_offinder_output(bulge_path)
     assert bulge.iloc[0]["bulge_type"] == "DNA"
     assert bulge.iloc[0]["bulge_size"] == 1
+
+
+def test_human_annotation_matches_accession_when_fasta_header_has_description(tmp_path):
+    manifest_path = tmp_path / "manifest.csv"
+    candidates = _candidates().iloc[:1].copy()
+    selected = candidates.copy()
+    selected["cas_offinder_query"] = selected["guide_sequence"] + "NNN"
+    selected.to_csv(manifest_path, index=False)
+    output_path = tmp_path / "cas.tsv"
+    output_path.write_text(
+        "TACGATGCTAACCGGTTAACNNN\tNC_000001.11 Homo sapiens chromosome 1\t100\t"
+        "TACGATGCTAACCGGTTAACAGG\t+\t0\n",
+        encoding="utf-8",
+    )
+    gff_path = tmp_path / "human.gff3"
+    gff_path.write_text(
+        "##gff-version 3\nNC_000001.11\ttest\tgene\t50\t150\t.\t+\t.\tID=GENE1;Name=GENE1\n",
+        encoding="utf-8",
+    )
+    summarized = summarize_cas_offinder_hits(
+        candidates,
+        read_cas_offinder_output(output_path),
+        selected_manifest=manifest_path,
+        human_gff=gff_path,
+    )
+    assert summarized.iloc[0]["human_annotation"] == "GENE1"

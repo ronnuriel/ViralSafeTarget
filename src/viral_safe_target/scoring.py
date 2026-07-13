@@ -210,8 +210,9 @@ def rank_post_human_candidates(
     threshold = int(settings["editor"]["mismatch_search_threshold"])
 
     def decision(row: pd.Series) -> tuple[str, str]:
-        if row.get("rejection_reasons", ""):
-            return "exclude_pre_human", str(row["rejection_reasons"])
+        rejection_reasons = row.get("rejection_reasons", "")
+        if pd.notna(rejection_reasons) and str(rejection_reasons).strip():
+            return "exclude_pre_human", str(rejection_reasons)
         if int(row.get("human_exact_hit_count", 0)) > 0:
             return (
                 "exclude_or_expert_review",
