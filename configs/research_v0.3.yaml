@@ -1,8 +1,8 @@
-# Copy configs/research_v0.3.yaml for a complete runnable configuration.
-# This abbreviated file documents the required top-level contract.
 schema_version: "0.3"
-project_name: example_project
+project_name: viral_safe_target_research_pipeline
 random_seed: 20260713
+
+# SpCas9 is the only profile covered by scanner and coordinate tests in v0.3.
 editor:
   name: SpCas9
   protospacer_length: 20
@@ -11,6 +11,8 @@ editor:
   cut_offset: 3
   mismatch_search_threshold: 3
   tested: true
+  notes: Canonical NGG profile; cut coordinate is an idealized sequence-model boundary.
+
 ranking:
   weights:
     conservation: 0.30
@@ -19,11 +21,33 @@ ranking:
     sequence_complexity: 0.15
     annotation: 0.10
     gene_evidence: 0.15
-  gc: {preferred_min: 0.40, preferred_max: 0.65, accepted_min: 0.25, accepted_max: 0.80}
-  complexity: {minimum_score: 0.55, maximum_homopolymer: 4}
-  rejection: {minimum_conservation: 0.80, maximum_ambiguous_bases: 0}
-  annotation_scores: {CDS: 1.0, intergenic_or_unannotated: 0.0}
-  evidence_scores: {strong: 1.0, unknown: null}
+  gc:
+    preferred_min: 0.40
+    preferred_max: 0.65
+    accepted_min: 0.25
+    accepted_max: 0.80
+  complexity:
+    minimum_score: 0.55
+    maximum_homopolymer: 4
+  rejection:
+    minimum_conservation: 0.80
+    maximum_ambiguous_bases: 0
+  annotation_scores:
+    CDS: 1.0
+    gene: 0.8
+    mRNA: 0.7
+    ncRNA: 0.7
+    regulatory: 0.5
+    repeat_region: 0.25
+    misc_feature: 0.25
+    intergenic_or_unannotated: 0.0
+  evidence_scores:
+    strong: 1.0
+    moderate: 0.75
+    limited: 0.5
+    conflicting: 0.25
+    unknown: null
+
 pair_selection:
   genes: []
   feature_types: []
@@ -37,6 +61,7 @@ pair_selection:
   minimum_distance_bp: 20
   maximum_deletion_distance_bp: 10000
   same_region_distance_bp: 10000
+
 pair_scoring:
   weights:
     joint_strain_coverage: 0.45
@@ -44,9 +69,18 @@ pair_scoring:
     feature_fraction_removed: 0.20
     distance_component: 0.10
   distance_saturation_bp: 1000
+
 off_target:
   human_assembly: GRCh38.p14
   human_assembly_accession: GCF_000001405.40
   maximum_candidates: 200
   stratify_by_gene: true
-  risk_weights: {exact: 1.0, one_mismatch: 0.75, two_mismatch: 0.45, three_mismatch: 0.20}
+  risk_weights:
+    exact: 1.0
+    one_mismatch: 0.75
+    two_mismatch: 0.45
+    three_mismatch: 0.20
+
+reporting:
+  top_candidates: 50
+  top_pairs: 50
