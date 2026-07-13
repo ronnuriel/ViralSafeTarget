@@ -109,7 +109,7 @@ class TorchScorer:
             torch.manual_seed(0)
             torch.use_deterministic_algorithms(True, warn_only=True)
         features = self.feature_extractor(candidates.copy())
-        tensor = torch.as_tensor(np.asarray(features), dtype=torch.float32, device="cpu")
+        tensor = torch.as_tensor(np.array(features, copy=True), dtype=torch.float32, device="cpu")
         self.model.to("cpu")
         self.model.eval()
         predictions = []
