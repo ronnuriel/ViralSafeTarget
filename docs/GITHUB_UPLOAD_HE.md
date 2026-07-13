@@ -14,7 +14,7 @@ git init
 git add .
 git commit -m "Initial public research release"
 git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/ViralSafeTarget.git
+git remote add origin https://github.com/ronnuriel/ViralSafeTarget.git
 git push -u origin main
 ```
 
@@ -25,7 +25,7 @@ cd ViralSafeTarget
 git init
 git add .
 git commit -m "Initial public research release"
-gh repo create ViralSafeTarget --public --source=. --remote=origin --push
+gh repo create ronnuriel/ViralSafeTarget --public --source=. --remote=origin --push
 ```
 
 ## לפני פרסום ציבורי

@@ -3,11 +3,10 @@ title: ViralSafeTarget
 message: "If you use this software, please cite the archived release and the underlying tools."
 type: software
 authors:
-  - family-names: "TODO"
-    given-names: "TODO"
+  - name: "ronnuriel"
 version: 0.2.0
 date-released: 2026-07-13
-repository-code: "https://github.com/YOUR_USERNAME/ViralSafeTarget"
+repository-code: "https://github.com/ronnuriel/ViralSafeTarget"
 license: MIT
 keywords:
   - viral genomics

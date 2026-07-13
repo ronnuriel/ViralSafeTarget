@@ -55,9 +55,9 @@ all = [
 viral-safe-target = "viral_safe_target.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/YOUR_USERNAME/ViralSafeTarget"
-Documentation = "https://github.com/YOUR_USERNAME/ViralSafeTarget/tree/main/docs"
-Issues = "https://github.com/YOUR_USERNAME/ViralSafeTarget/issues"
+Homepage = "https://github.com/ronnuriel/ViralSafeTarget"
+Documentation = "https://github.com/ronnuriel/ViralSafeTarget/tree/main/docs"
+Issues = "https://github.com/ronnuriel/ViralSafeTarget/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
