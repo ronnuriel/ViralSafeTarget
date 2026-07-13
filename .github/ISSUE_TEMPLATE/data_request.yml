@@ -1,0 +1,23 @@
+name: Dataset / benchmark request
+description: Suggest a public dataset or published benchmark
+title: "[data] "
+labels: [data]
+body:
+  - type: input
+    attributes:
+      label: Dataset or publication URL / accession
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Why it is useful
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: Data conditions
+      options:
+        - label: The data are public and may be redistributed or downloaded by users.
+          required: true
+        - label: The dataset does not contain identifiable patient information.
+          required: true

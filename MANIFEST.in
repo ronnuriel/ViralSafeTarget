@@ -1,0 +1,4 @@
+include README.md README_HE.md LICENSE DISCLAIMER.md CITATION.cff
+recursive-include data/demo *
+recursive-include data/knowledge *
+recursive-include docs *.md

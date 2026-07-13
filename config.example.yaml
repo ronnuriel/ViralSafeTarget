@@ -1,0 +1,13 @@
+project_name: hsv2_spcas9_pilot
+reference_id: HSV2_reference
+min_site_coverage: 0.95
+max_demo_human_mismatches: 3
+editor:
+  name: SpCas9
+  guide_length: 20
+  pam: NGG
+paths:
+  virus_alignment: data/processed/virus_aligned.fasta
+  reference_gff: data/raw/reference.gff3
+  human_reference_directory: data/raw/GRCh38_fasta
+  output_directory: reports/run_001

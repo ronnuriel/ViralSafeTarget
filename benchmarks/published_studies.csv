@@ -1,0 +1,5 @@
+study_id,year,virus,editor_or_intervention,model,evidence_level,high_level_result,doi_or_url,benchmark_status
+van_diemen_2016,2016,HSV-1 and other herpesviruses,CRISPR-Cas9,cell culture,in_vitro,"Genome editing limited productive and latent infection in the reported models",https://doi.org/10.1371/journal.ppat.1005701,metadata_only
+Aubert_2020,2020,HSV-1,AAV-delivered meganucleases,mouse,in_vivo,"Substantial reduction of latent HSV in selected ganglia",https://doi.org/10.1038/s41467-020-17936-5,metadata_only
+Yin_2021,2021,HSV-1,CRISPR-Cas9,mouse ocular model,in_vivo,"Reported therapeutic editing in herpetic stromal keratitis model",https://doi.org/10.1038/s41587-020-00781-8,metadata_only
+Aubert_2024,2024,HSV-1,AAV-delivered meganucleases,mouse genital and orofacial models,in_vivo,"Reduced latent viral load and shedding in reported mouse models",https://doi.org/10.1038/s41467-024-47940-y,metadata_only

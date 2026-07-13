@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ViralSafeTarget scan</title>
+<style>
+body { font-family: Arial, sans-serif; max-width: 1400px; margin: 30px auto; line-height: 1.5; }
+table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; }
+th, td { border: 1px solid #ddd; padding: 7px; text-align: left; white-space: nowrap; }
+th { background: #f2f2f2; }
+.notice { padding: 12px; border: 1px solid #a76; background: #fff8e8; }
+</style>
+</head>
+<body>
+<h1>ViralSafeTarget scan</h1>
+<p>Generated: 2026-07-13T17:07:47.082525+00:00</p>
+<div class="notice"><strong>Scope:</strong> Computational research only: scores do not establish editing, viral inactivation, safety, or clinical efficacy.</div>
+<h2>Candidates</h2>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>candidate_id</th>
+      <th>gene_name</th>
+      <th>product</th>
+      <th>strand</th>
+      <th>guide_sequence</th>
+      <th>pam</th>
+      <th>virus_site_coverage</th>
+      <th>host_exact_matches</th>
+      <th>host_min_mismatches</th>
+      <th>demo_score</th>
+      <th>decision</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>T00002</td>
+      <td>DEMO_A</td>
+      <td>demo replication protein</td>
+      <td>+</td>
+      <td>TACGATGCTAACCGGTTAAC</td>
+      <td>CGG</td>
+      <td>1.000</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>1.000</td>
+      <td>prioritize_for_literature_review</td>
+    </tr>
+    <tr>
+      <td>T00007</td>
+      <td>DEMO_A</td>
+      <td>demo replication protein</td>
+      <td>-</td>
+      <td>ATCGATCGTACCTGGTTAAC</td>
+      <td>CGG</td>
+      <td>1.000</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>1.000</td>
+      <td>prioritize_for_literature_review</td>
+    </tr>
+    <tr>
+      <td>T00008</td>
+      <td>DEMO_A</td>
+      <td>demo replication protein</td>
+      <td>-</td>
+      <td>TAGCTAGCATCGATCGTACC</td>
+      <td>TGG</td>
+      <td>1.000</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>1.000</td>
+      <td>prioritize_for_literature_review</td>
+    </tr>
+    <tr>
+      <td>T00001</td>
+      <td>DEMO_A</td>
+      <td>demo replication protein</td>
+      <td>+</td>
+      <td>TACGATCGTACGATGCTAAC</td>
+      <td>CGG</td>
+      <td>0.800</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>0.880</td>
+      <td>review</td>
+    </tr>
+    <tr>
+      <td>T00005</td>
+      <td>DEMO_A</td>
+      <td>demo replication protein</td>
+      <td>-</td>
+      <td>GCATCGTACGATCGTAGCTA</td>
+      <td>AGG</td>
+      <td>0.800</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>0.880</td>
+      <td>review</td>
+    </tr>
+    <tr>
+      <td>T00006</td>
+      <td>DEMO_A</td>
+      <td>demo replication protein</td>
+      <td>-</td>
+      <td>TACCTGGTTAACCGGTTAAC</td>
+      <td>CGG</td>
+      <td>1.000</td>
+      <td>0</td>
+      <td>1.000</td>
+      <td>0.812</td>
+      <td>review</td>
+    </tr>
+    <tr>
+      <td>T00004</td>
+      <td>DEMO_B</td>
+      <td>demo structural protein</td>
+      <td>+</td>
+      <td>TTGCAACGTTGCAACGTTGC</td>
+      <td>TGG</td>
+      <td>0.800</td>
+      <td>0</td>
+      <td>2.000</td>
+      <td>0.755</td>
+      <td>review</td>
+    </tr>
+    <tr>
+      <td>T00003</td>
+      <td>DEMO_A</td>
+      <td>demo replication protein</td>
+      <td>+</td>
+      <td>AACCGGTTAACCGGTTAACC</td>
+      <td>AGG</td>
+      <td>1.000</td>
+      <td>1</td>
+      <td>0.000</td>
+      <td>0.750</td>
+      <td>reject_demo_exact_host_match</td>
+    </tr>
+  </tbody>
+</table>
+</body>
+</html>

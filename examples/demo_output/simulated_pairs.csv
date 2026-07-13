@@ -1,0 +1,7 @@
+candidate_a,candidate_b,cut_a_after_1based,cut_b_after_1based,deletion_start_1based,deletion_end_1based,deletion_length_bp,deletion_length_mod_3,pair_same_annotated_feature,individual_coverage_lower_bound,overlapping_feature_count,overlapping_features,max_feature_fraction_removed,exact_pair_coverage,exact_pair_genome_count,genome_count,sequence_disruption_score,interpretation
+T00008,T00005,52,10,11,52,42,0,True,0.8,2,DEMO_A:gene:42bp; DEMO_A:CDS:42bp,0.56,0.8,4,5,0.6642,sequence_level_candidate_only_not_viability_prediction
+T00005,T00003,10,45,11,45,35,2,True,0.8,2,DEMO_A:gene:35bp; DEMO_A:CDS:35bp,0.4666666666666667,0.8,4,5,0.6401666666666667,sequence_level_candidate_only_not_viability_prediction
+T00007,T00005,44,10,11,44,34,1,True,0.8,2,DEMO_A:gene:34bp; DEMO_A:CDS:34bp,0.4533333333333333,0.8,4,5,0.6367333333333333,sequence_level_candidate_only_not_viability_prediction
+T00002,T00005,36,10,11,36,26,2,True,0.8,2,DEMO_A:gene:26bp; DEMO_A:CDS:26bp,0.3466666666666667,0.8,4,5,0.6092666666666667,sequence_level_candidate_only_not_viability_prediction
+T00005,T00006,10,36,11,36,26,2,True,0.8,2,DEMO_A:gene:26bp; DEMO_A:CDS:26bp,0.3466666666666667,0.8,4,5,0.6092666666666667,sequence_level_candidate_only_not_viability_prediction
+T00008,T00001,52,28,29,52,24,0,True,0.8,2,DEMO_A:gene:24bp; DEMO_A:CDS:24bp,0.32,0.8,4,5,0.6023999999999999,sequence_level_candidate_only_not_viability_prediction

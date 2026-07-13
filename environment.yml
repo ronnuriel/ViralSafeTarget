@@ -1,0 +1,21 @@
+name: viral-safe-target
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.11
+  - jupyterlab
+  - biopython
+  - pandas
+  - numpy
+  - matplotlib
+  - pyyaml
+  - pytest
+  - ruff
+  - streamlit
+  - mafft
+  - ncbi-datasets-cli
+  - pip
+  - pip:
+      - -e .

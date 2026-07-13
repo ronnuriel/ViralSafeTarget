@@ -1,0 +1,27 @@
+name: Bug report
+description: Report a reproducible software or coordinate issue
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: "Do not include private genomic or patient data."
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Include commands, accession versions and a synthetic fixture when possible.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: ViralSafeTarget version or commit
+    validations:
+      required: true

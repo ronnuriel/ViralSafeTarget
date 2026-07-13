@@ -1,0 +1,9 @@
+candidate_id,reference_start_1based,reference_end_1based,site_start_1based,site_end_1based,strand,guide_sequence,pam,reference_site_plus_strand,virus_site_coverage,exact_genome_count,genome_count,feature_type,feature_id,gene_name,product,feature_start,feature_end,host_exact_matches,host_matches_le_3_mismatches,host_min_mismatches,host_best_location,host_best_pam,annotation_component,human_safety_component,demo_score,decision
+T00002,20,39,20,42,+,TACGATGCTAACCGGTTAAC,CGG,TACGATGCTAACCGGTTAACCGG,1.0,5,5,CDS,cdsA,DEMO_A,demo replication protein,1,75,0,0,,,,1.0,1.0,1.0,prioritize_for_literature_review
+T00007,42,61,39,61,-,ATCGATCGTACCTGGTTAAC,CGG,CCGGTTAACCAGGTACGATCGAT,1.0,5,5,CDS,cdsA,DEMO_A,demo replication protein,1,75,0,0,,,,1.0,1.0,1.0,prioritize_for_literature_review
+T00008,50,69,47,69,-,TAGCTAGCATCGATCGTACC,TGG,CCAGGTACGATCGATGCTAGCTA,1.0,5,5,CDS,cdsA,DEMO_A,demo replication protein,1,75,0,0,,,,1.0,1.0,1.0,prioritize_for_literature_review
+T00001,12,31,12,34,+,TACGATCGTACGATGCTAAC,CGG,TACGATCGTACGATGCTAACCGG,0.8,4,5,CDS,cdsA,DEMO_A,demo replication protein,1,75,0,0,,,,1.0,1.0,0.88,review
+T00005,8,27,5,27,-,GCATCGTACGATCGTAGCTA,AGG,CCTTAGCTACGATCGTACGATGC,0.8,4,5,CDS,cdsA,DEMO_A,demo replication protein,1,75,0,0,,,,1.0,1.0,0.88,review
+T00006,34,53,31,53,-,TACCTGGTTAACCGGTTAAC,CGG,CCGGTTAACCGGTTAACCAGGTA,1.0,5,5,CDS,cdsA,DEMO_A,demo replication protein,1,75,0,1,1.0,chrDemo1:42-61(-),CGG,1.0,0.25,0.8125,review
+T00004,88,107,88,110,+,TTGCAACGTTGCAACGTTGC,TGG,TTGCAACGTTGCAACGTTGCTGG,0.8,4,5,CDS,cdsB,DEMO_B,demo structural protein,76,170,0,1,2.0,chrDemo2:47-66(+),TGG,1.0,0.5,0.755,review
+T00003,29,48,29,51,+,AACCGGTTAACCGGTTAACC,AGG,AACCGGTTAACCGGTTAACCAGG,1.0,5,5,CDS,cdsA,DEMO_A,demo replication protein,1,75,1,1,0.0,chrDemo1:37-56(+),AGG,1.0,0.0,0.75,reject_demo_exact_host_match

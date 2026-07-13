@@ -1,0 +1,26 @@
+name: Feature request
+description: Propose a research or engineering enhancement
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Research question
+      description: What decision should the feature improve?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence and baselines
+      description: Link primary literature or existing tools that should be compared.
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Proposed validation
+      description: How will we know the feature is correct and useful?
+    validations:
+      required: true

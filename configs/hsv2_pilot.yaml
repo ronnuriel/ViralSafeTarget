@@ -1,0 +1,15 @@
+project_name: hsv2_spcas9_pilot
+virus_taxon_id: 10310
+reference_accession: NC_001798.2
+sample_size: 25
+minimum_genome_length: 140000
+maximum_genome_length: 170000
+maximum_ambiguous_fraction: 0.01
+minimum_exact_site_coverage: 0.95
+editor:
+  name: SpCas9
+  guide_length: 20
+  pam: NGG
+human_reference:
+  assembly: GCF_000001405.40
+  name: GRCh38.p14

@@ -1,0 +1,28 @@
+{
+  "created_utc": "2026-07-13T17:07:47.084403+00:00",
+  "git_commit": null,
+  "inputs": [
+    {
+      "path": "/mnt/data/ViralSafeTarget/data/demo/virus_aligned.fasta",
+      "sha256": "e9f8cd65dbe0a93ffb980b5c458599c59b1a53a1fdca82f65b132121acad7a9e",
+      "size_bytes": 926
+    },
+    {
+      "path": "/mnt/data/ViralSafeTarget/data/demo/reference.gff3",
+      "sha256": "c22fe2e51d2fdc115f29c2ae317f80e8ef8ab5bda30085ab2dca8d4e7afcb029",
+      "size_bytes": 396
+    },
+    {
+      "path": "/mnt/data/ViralSafeTarget/data/demo/human_mini.fasta",
+      "sha256": "bc049c3eefdf5a2c6fb5b4dab21813028f8fce17ae12af60b7dd5e98fc1b883c",
+      "size_bytes": 231
+    }
+  ],
+  "parameters": {
+    "max_mismatches": 3,
+    "min_coverage": 0.8,
+    "reference_id": "HSV2_demo_ref"
+  },
+  "platform": "Linux-4.4.0-x86_64-with-glibc2.41",
+  "python": "3.13.5"
+}
