@@ -75,15 +75,19 @@ else
   echo "Run: cas-offinder $REPORTS/cas_offinder_input.txt C $CAS_OUTPUT"
 fi
 
-HIT_ARGS=()
-[[ -s "$REPORTS/predicted_human_hits.csv" ]] && HIT_ARGS=(--predicted-hits "$REPORTS/predicted_human_hits.csv")
-"${VST[@]}" report \
-  --candidates "$FINAL_CANDIDATES" \
-  --rejected "$REAL_REPORTS/candidates_rejected_pre_human.csv" \
-  --pairs "$REPORTS/pair_hypotheses_same_gene.csv" \
-  --multi-pairs "$REPORTS/pair_hypotheses_multi_target.csv" \
-  --out-dir "$REPORTS" \
-  --title "HSV-2 UL19/UL30 computational pilot" \
-  "${HIT_ARGS[@]}"
+REPORT_ARGS=(
+  --candidates "$FINAL_CANDIDATES"
+  --rejected "$REAL_REPORTS/candidates_rejected_pre_human.csv"
+  --pairs "$REPORTS/pair_hypotheses_same_gene.csv"
+  --multi-pairs "$REPORTS/pair_hypotheses_multi_target.csv"
+  --out-dir "$REPORTS"
+  --title "HSV-2 UL19/UL30 computational pilot"
+)
+if [[ -s "$REPORTS/predicted_human_hits.csv" ]]; then
+  "${VST[@]}" report "${REPORT_ARGS[@]}" \
+    --predicted-hits "$REPORTS/predicted_human_hits.csv"
+else
+  "${VST[@]}" report "${REPORT_ARGS[@]}"
+fi
 
 echo "HSV-2 pilot outputs: $REPORTS/"
