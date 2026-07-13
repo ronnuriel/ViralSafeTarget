@@ -1,0 +1,14 @@
+tool_version: researcher supplied
+editor: SpCas9
+columns:
+  guide_sequence: guide
+  pam: pam
+  strand: strand
+  coordinate: start
+metrics:
+  specificity:
+    name: predicted_specificity
+    direction: higher
+  off_targets:
+    name: predicted_offtarget_burden
+    direction: lower
