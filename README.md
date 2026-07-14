@@ -92,6 +92,10 @@ Upload an **already aligned** multi-FASTA and, optionally, a matching GFF3 annot
 jupyter lab
 ```
 
+For the Hebrew learning path, start with `notebooks/00_START_HERE.ipynb`. Notebook
+filenames are language-neutral English identifiers; the introductory notebook content
+remains in Hebrew.
+
 For an English end-to-end workflow, open
 `notebooks/08_RUN_FULL_PIPELINE_EN.ipynb`. The focused multi-tool tutorial is
 `notebooks/07_HSV2_MULTITOOL_COMPARISON_EN.ipynb`, and the genome-wide discovery

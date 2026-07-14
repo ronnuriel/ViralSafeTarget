@@ -23,8 +23,7 @@ def _load(path: Path) -> dict:
 
 
 def test_v04_notebooks_are_english_and_store_no_generated_outputs():
-    assert not (ROOT / "notebooks/07_HSV2_MULTITOOL_COMPARISON_HE.ipynb").exists()
-    assert not (ROOT / "notebooks/08_RUN_FULL_PIPELINE_HE.ipynb").exists()
+    assert not list((ROOT / "notebooks").glob("*_HE.ipynb"))
     for path in NOTEBOOKS:
         notebook = _load(path)
         assert not re.search(r"[\u0590-\u05ff]", path.read_text(encoding="utf-8"))
