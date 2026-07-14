@@ -1,55 +1,30 @@
-# ViralSafeTarget — סביבת מחקר חישובית לווירוסים
+# ViralSafeTarget — מדריך קצר בעברית
 
-נקודת הכניסה הרשמית לשחזור מחקר HSV-2 היא:
+ViralSafeTarget הוא כלי מחקר חישובי שמתחיל מגנומים של וירוס ומפיק מועמדים
+מתועדים לבחינה נוספת: שימור בין זנים, מיפוי לגנים, סריקת דמיון למארח,
+השערות שיבוש חלבון וראיות מהספרות עם ביקורת אנושית.
 
-```bash
-vst reproduce hsv2          # מציג תוכנית בלי לשנות או להוריד דבר
-vst reproduce hsv2 --execute
-```
+[README באנגלית](README.md) · [מחברות](notebooks/README.md) ·
+[תוצאות HSV-2](reports/README.md) · [כל התיעוד](docs/README.md)
 
-למחקר של וירוס חדש משתמשים בפרויקט עצמאי:
+> זהו כלי ליצירת השערות מחקריות. הוא אינו מוכיח חיתוך, בטיחות, השבתת וירוס,
+> ניקוי לטנטיות, יעילות טיפולית או ריפוי, ואינו כולל פרוטוקול מעבדה.
 
-```bash
-vst project init --id my-virus --display-name "My virus" \
-  --reference-accession REF_ACCESSION --out-dir projects/my-virus
-vst project validate --project projects/my-virus/project.yaml
-vst project run --project projects/my-virus/project.yaml
-vst project status --project projects/my-virus/project.yaml
-```
+## איפה מתחילים?
 
-ההוראות המלאות נמצאות ב־[`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md)
-וב־[`docs/NEW_VIRUS_WORKFLOW.md`](docs/NEW_VIRUS_WORKFLOW.md). המחברות מסבירות
-את התוצאות; הן אינן נקודת כניסה נסתרת שנדרשת להרצה.
+| המטרה | נקודת הכניסה |
+|---|---|
+| ללמוד בעברית | [`notebooks/00_START_HERE.ipynb`](notebooks/00_START_HERE.ipynb) |
+| לראות מה כבר מצאנו | [`reports/README.md`](reports/README.md) |
+| להריץ דמו קטן | `make demo` |
+| לשחזר את מחקר HSV-2 | `vst reproduce hsv2` |
+| לבדוק וירוס חדש | `vst project init ...` |
+| לחפש ראיות בספרות | `vst evidence discover ...` |
 
-המחברת המלאה כתובה באנגלית:
+פקודת `vst` היא הממשק הראשי לחוקר. הסקריפטים משמשים לשחזור case studies
+ולתחזוקה ומתועדים ב־[`scripts/README.md`](scripts/README.md).
 
-```bash
-jupyter lab notebooks/08_RUN_FULL_PIPELINE_EN.ipynb
-```
-
-הפרויקט מקבל אוסף גנומים של וירוס, מחפש אתרים שמורים בין הזנים, ממפה אותם למידע ביולוגי, מכין סריקת סיכון מול גנום המארח ומחשב **מה היה משתנה ברצף** אילו חיתוך אידאלי התרחש.
-
-> זהו כלי ליצירת השערות מחקריות. הוא לא מוכיח שהווירוס נשבר, לא מוכיח בטיחות, לא מסלק HSV מהגוף ואינו פרוטוקול מעבדה.
-
-## התמונה הפשוטה
-
-```text
-FASTA מיושר של הרבה זנים
-        ↓
-איפה הרצף נשמר?
-        ↓
-איפה יש guide + PAM שמתאימים לעורך?
-        ↓
-מה אומר ה-GFF על האזור הזה?
-        ↓
-האם קיימים אתרים דומים באדם?
-        ↓
-רשימת מועמדים מוסברת
-        ↓
-סימולציית רצף: מה יימחק אם שני חיתוכים אכן יתרחשו?
-```
-
-## התחלה מיידית
+## התקנה
 
 ```bash
 conda env create -f environment.yml
@@ -57,108 +32,82 @@ conda activate viral-safe-target
 python -m pip install -e .
 pytest -q
 ruff check .
-bash scripts/run_demo.sh
 ```
 
-לאחר מכן פתח את:
-
-```text
-reports/demo/report.html
-reports/demo/candidates.csv
-reports/demo/simulated_pairs.csv
-```
-
-## ממשק העלאת קבצים
+לאחר מכן:
 
 ```bash
-streamlit run app.py
+make demo
+make notebook
 ```
 
-בממשק מעלים:
-
-1. `aligned_virus.fasta` — כמה גנומי וירוס שכבר עברו alignment.
-2. `reference.gff3` — אופציונלי, מפת הגנים של גנום הייחוס.
-3. FASTA קטן של מארח — רק להדגמה. עבור כל GRCh38 משתמשים בכלי חיצוני כמו Cas-OFFinder או CRISPRitz.
-
-## הרצה על HSV-2 אמיתי
+## וירוס חדש
 
 ```bash
-bash scripts/run_real_hsv2.sh --sample-size 25
+vst project init \
+  --id my-virus \
+  --display-name "My virus" \
+  --reference-accession REF_ACCESSION \
+  --out-dir projects/my-virus
+
+vst project validate --project projects/my-virus/project.yaml
+vst project run --project projects/my-virus/project.yaml
+vst project status --project projects/my-virus/project.yaml
 ```
 
-הסקריפט:
+הפרויקט מכיל profiles נפרדים עבור הווירוס, המארח והעורך. מוסיפים FASTA,
+GFF ויישור זנים, בלי לקודד שמות גנים ספציפיים בתוך Python. מדריך מלא:
+[`docs/getting-started/NEW_VIRUS_WORKFLOW.md`](docs/getting-started/NEW_VIRUS_WORKFLOW.md).
 
-- מוריד גנומי HSV-2 ציבוריים מ-NCBI;
-- שומר את `NC_001798.2` כ-reference;
-- מסנן כפילויות ורצפים חסרים;
-- מיישר את הדגימות באמצעות MAFFT;
-- מחפש אתרי SpCas9 שמורים;
-- ממפה אותם ל-GFF;
-- מפיק טבלת מועמדים וסימולציית מחיקות אידאלית;
-- שומר `run_manifest.json` עם checksums ופרמטרים.
-
-להכנת סריקה מול האדם:
+## שחזור HSV-2
 
 ```bash
-bash scripts/run_real_hsv2.sh --with-human --sample-size 25
+vst reproduce hsv2             # מציג תוכנית בלבד
+vst reproduce hsv2 --execute   # מריץ או ממשיך מ-cache
 ```
 
-הפקודה מורידה גם GRCh38 ומכינה קלט ל-Cas-OFFinder. היא עדיין לא מריצה הוכחת בטיחות.
+התוצאות הציבוריות נמצאות ב־[`reports/`](reports/README.md). יש שם שתי ריצות
+בעלות עומק דגימה שונה: showcase מאוזן וריצה exhaustive מאוחרת. אין להשוות את
+הדירוגים בלי לקרוא את ההסבר המצורף.
 
-לפיילוט הממוקד והניתן לשחזור של UL19 ו-UL30:
+## איך מפרשים את הפלט?
+
+המערכת מפרידה בין:
+
+1. איכות הרצף כמטרה חישובית;
+2. ראיות ביולוגיות מאושרות ומצוטטות;
+3. השערת שיבוש ברמת הרצף והחלבון;
+4. כיסוי הראיות והמידע החסר.
+
+ראיה חסרה נשארת `unknown`. תוצאה של אפס פגיעות מארח חזויות תקפה רק למודל
+החיפוש שהוגדר ואינה הוכחת בטיחות. ראיית HSV-1 נשמרת כראיית ortholog ואינה
+מוצגת כהוכחה ישירה ב־HSV-2.
+
+## Evidence Agent
 
 ```bash
-bash scripts/run_hsv2_pilot.sh
+vst evidence discover --project project.yaml
 ```
 
-הבחירה נעשית אחרי דירוג, סינון כפילויות ו-stratification לפי גן, עם עד 100
-מועמדים לכל גן. פרטי ההרצה הדו-שלבית נמצאים ב-[`docs/HSV2_PILOT.md`](docs/HSV2_PILOT.md).
+הפקודה יוצרת `review_queue.tsv`. כל שורה מתחילה כ־`pending`; החוקר בודק את
+המאמר, סוג הניסוי, מודל הניסוי, מין הווירוס והמשפט הרלוונטי. רק שורות שאושרו
+עם שם בודק, תאריך ומקור נכנסות לטבלת הראיות:
 
-## פירוש הציונים
+```bash
+vst evidence apply --project project.yaml \
+  --review-queue results/evidence/review_queue.tsv
+```
 
-- `pre_human_score` משלב רכיבי שימור, ייחודיות בווירוס, GC, מורכבות רצף,
-  annotation וראיות אוצרות אם הן קיימות.
-- ראיה ביולוגית חסרה נשארת `null`; היא אינה הופכת אוטומטית ל-1.
-- `post_human_score` מחושב בנפרד רק אחרי סיכום תוצאות Cas-OFFinder.
-- היעדר פגיעה חזויה עד סף ה-mismatches שהוגדר אינו הוכחת בטיחות.
-- לזוג מטרות בגנים שונים לא מיוחסת מחיקה פיזית אחת; זו השערת multi-target בלבד.
+מדריך: [`docs/workflows/EVIDENCE_AGENT.md`](docs/workflows/EVIDENCE_AGENT.md).
 
-## מה הסימולציה כן עושה
+## מפת המאגר
 
-לכל guide היא מחשבת את נקודת החיתוך הקנונית המשוערת של SpCas9. לזוג guides היא מחשבת:
+- [`notebooks/README.md`](notebooks/README.md) — סדר המחברות ומה כל אחת עושה.
+- [`docs/README.md`](docs/README.md) — תיעוד לפי נושא.
+- [`scripts/README.md`](scripts/README.md) — entry points מול helpers פנימיים.
+- [`configs/README.md`](configs/README.md) — profiles וקונפיגורציות.
+- [`reports/README.md`](reports/README.md) — תוצאות שכבר הורצו.
 
-- מיקום שני החיתוכים;
-- אורך הקטע שהיה נמחק אילו שניהם התרחשו;
-- באילו features של ה-GFF המחיקה חופפת;
-- איזה חלק מה-feature נמחק ברמת הקואורדינטות;
-- בכמה מהזנים שני האתרים קיימים בדיוק.
-
-## מה הסימולציה לא יודעת
-
-היא אינה יודעת:
-
-- האם כלי העריכה הגיע לתא העצב;
-- האם ה-DNA הלטנטי נגיש;
-- האם באמת התרחש חיתוך;
-- מה תהיה התפלגות תיקון ה-DNA;
-- האם הפגיעה משביתה את הווירוס;
-- האם יש נזק לתא או לאדם;
-- האם הווירוס יכול להתעורר שוב.
-
-בנוסף, שימור בין רצפים אינו הוכחת יעילות ניסויית, ושיבוש מתמטי של רצף אינו
-הוכחה להשבתת הווירוס. נגישות בלטנטיות, delivery, יעילות עריכה, תיקון DNA,
-רעילות ו-reactivation נמצאים מחוץ למודל.
-
-כדי לדעת מה התרחש בפועל משתמשים בנתוני sequencing ובכלים כמו CRISPResso2. כדי להוכיח פגיעה בווירוס צריך ניסויי וירולוגיה מתאימים.
-
-## איך מעלים ל-GitHub
-
-הוראות מדויקות נמצאות ב-[`docs/GITHUB_UPLOAD_HE.md`](docs/GITHUB_UPLOAD_HE.md). הכנתי גם CI, קובץ citation, תבניות Issues, רישיון ומסמכי תרומה.
-
-## איפה מתחילים ללמוד
-
-- [`docs/CONCEPTS_HE.md`](docs/CONCEPTS_HE.md) — FASTA, GFF, guide, PAM ו-off-target.
-- [`docs/DATA_FORMATS.md`](docs/DATA_FORMATS.md) — חוזה הקלט והפלט.
-- [`docs/SIMULATION_LIMITS.md`](docs/SIMULATION_LIMITS.md) — מה אפשר להסיק ומה לא.
-- [`docs/EXISTING_TOOLS.md`](docs/EXISTING_TOOLS.md) — כלים קיימים ומה אנחנו מוסיפים.
-- [`docs/RESEARCH_PLAN.md`](docs/RESEARCH_PLAN.md) — מסלול להפיכת הפרויקט למאמר.
+למגבלות המדעיות קראו את
+[`docs/research/KNOWN_LIMITATIONS.md`](docs/research/KNOWN_LIMITATIONS.md), את
+[`DISCLAIMER.md`](DISCLAIMER.md) ואת [`SECURITY.md`](SECURITY.md).
