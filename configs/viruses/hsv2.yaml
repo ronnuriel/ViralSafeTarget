@@ -2,6 +2,20 @@ schema_version: "1.0"
 profile_type: virus
 id: hsv2
 display_name: Human alphaherpesvirus 2
+scientific_name: Human alphaherpesvirus 2
+tax_id: 10310
+literature_search_names:
+  - Human alphaherpesvirus 2
+  - Human herpesvirus 2
+  - Herpes simplex virus 2
+  - Herpes simplex virus type 2
+  - HSV-2
+ortholog_search_names:
+  - Human alphaherpesvirus 1
+  - Human herpesvirus 1
+  - Herpes simplex virus 1
+  - Herpes simplex virus type 1
+  - HSV-1
 reference_accession: NC_001798.2
 reference_fasta: data/raw/hsv2_reference/ncbi_dataset/data/genomic.fna
 reference_genbank: data/raw/hsv2_reference.gb

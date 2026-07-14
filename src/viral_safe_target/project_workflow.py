@@ -43,6 +43,7 @@ PROJECT_TYPE = "viral_safe_target_project"
 STAGE_ORDER = ("validate", "discover", "host_screen", "pairs", "report")
 
 SOURCE_LINKED_EVIDENCE_COLUMNS = [
+    "proposal_id",
     "gene_name",
     "virus_type",
     "reference_accession",
@@ -55,6 +56,10 @@ SOURCE_LINKED_EVIDENCE_COLUMNS = [
     "source_identifier",
     "source_title",
     "source_url",
+    "quoted_evidence_span",
+    "reviewer",
+    "review_date",
+    "review_notes",
     "directness_notes",
 ]
 
@@ -175,6 +180,10 @@ def initialize_project(
         "profile_type": "virus",
         "id": project_id,
         "display_name": display_name,
+        "scientific_name": display_name,
+        "tax_id": None,
+        "literature_search_names": [display_name, project_id],
+        "ortholog_search_names": [],
         "reference_accession": reference_accession,
         "reference_fasta": "data/reference.fasta",
         "reference_genbank": None,
@@ -233,7 +242,9 @@ def initialize_project(
         "3. Run `vst project validate --project project.yaml`.\n"
         "4. Run `vst project run --project project.yaml`.\n"
         "5. If the host stage is external, run Cas-OFFinder and then use "
-        "`vst project resume --project project.yaml`.\n\n"
+        "`vst project resume --project project.yaml`.\n"
+        "6. Run `vst evidence discover --project project.yaml`, review "
+        "`results/evidence/review_queue.tsv`, and explicitly apply approved rows.\n\n"
         "Outputs are computational hypotheses, not validated interventions.\n",
         encoding="utf-8",
     )
@@ -497,8 +508,17 @@ def run_project(
         discovery_dir / "discovery_panel.csv",
         discovery_dir / "selection_audit.csv",
     ]
+    evidence_path = context.profiles.resolve(context.profiles.virus.get("evidence_table"))
+    discovery_signature_paths = [
+        alignment_path,
+        gff_path,
+        context.ranking_config,
+        context.profiles.source_paths[2],
+    ]
+    if evidence_path and evidence_path.is_file():
+        discovery_signature_paths.append(evidence_path)
     discovery_signature = _signature(
-        [alignment_path, gff_path, context.ranking_config, context.profiles.source_paths[2]],
+        discovery_signature_paths,
         {
             "minimum_strain_coverage": workflow.get("minimum_strain_coverage", 0.95),
             "balanced_top_per_gene": workflow.get("balanced_top_per_gene", 50),
@@ -516,7 +536,7 @@ def run_project(
             float(workflow.get("minimum_strain_coverage", 0.95)),
         )
         primary = annotate_candidates(raw, features, reference_id)
-        ranked = rank_pre_human_candidates(primary, settings, evidence_path=None)
+        ranked = rank_pre_human_candidates(primary, settings, evidence_path=evidence_path)
         retained = ranked[ranked["rejection_reasons"].fillna("").eq("")].copy()
         rejected = ranked[ranked["rejection_reasons"].fillna("").ne("")].copy()
         feature_map = build_candidate_feature_map(
@@ -684,14 +704,21 @@ def run_project(
         report_dir / "report.html",
         report_dir / "methods.md",
         report_dir / "limitations.md",
+        report_dir / "approved_gene_evidence.tsv",
+        report_dir / "evidence_review_report.html",
         context.output_root / "run_manifest.json",
     ]
+    evidence_review_source = context.output_root / "evidence" / "evidence_review_report.html"
     report_inputs = [
         post_host if post_host.is_file() else discovery_outputs[3],
         *pair_outputs,
         context.source,
         *context.profiles.source_paths,
     ]
+    if evidence_path and evidence_path.is_file():
+        report_inputs.append(evidence_path)
+    if evidence_review_source.is_file():
+        report_inputs.append(evidence_review_source)
     report_signature = _signature(report_inputs, {"project_id": context.values["id"]})
 
     def report() -> None:
@@ -699,6 +726,22 @@ def run_project(
         same = _read_optional_csv(pair_outputs[0])
         multi = _read_optional_csv(pair_outputs[1])
         hits = _read_optional_csv(predicted_hits_path)
+        approved_evidence = (
+            pd.read_csv(evidence_path, sep="\t", dtype=str).fillna("")
+            if evidence_path and evidence_path.is_file()
+            else pd.DataFrame(columns=SOURCE_LINKED_EVIDENCE_COLUMNS)
+        )
+        approved_evidence.to_csv(report_outputs[3], sep="\t", index=False)
+        if evidence_review_source.is_file():
+            shutil.copyfile(evidence_review_source, report_outputs[4])
+        else:
+            report_outputs[4].write_text(
+                "<!doctype html><html lang='en'><meta charset='utf-8'>"
+                "<title>Evidence review not run</title><h1>Evidence review not run</h1>"
+                "<p>Run <code>vst evidence discover</code>; review the queue; then explicitly "
+                "apply approved rows. No biological claim was inferred from missing evidence.</p>",
+                encoding="utf-8",
+            )
         write_methods_and_limitations(report_dir)
         write_html_report(
             candidates,
@@ -707,7 +750,8 @@ def run_project(
             rejected=pd.read_csv(discovery_outputs[1]),
             pairs=pd.concat([same, multi], ignore_index=True),
             predicted_hits=hits,
-            output_links=[path.name for path in report_outputs[:3]],
+            approved_evidence=approved_evidence,
+            output_links=[path.name for path in report_outputs[:5]],
         )
         manifest = {
             "schema_version": "1.0",
@@ -732,7 +776,7 @@ def run_project(
                 "editing, safety, efficacy, delivery, or therapeutic claim."
             ),
         }
-        report_outputs[3].write_text(
+        report_outputs[5].write_text(
             json.dumps(manifest, indent=2, sort_keys=True), encoding="utf-8"
         )
 

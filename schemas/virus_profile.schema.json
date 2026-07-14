@@ -9,6 +9,18 @@
     "profile_type": {"const": "virus"},
     "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_-]*$"},
     "display_name": {"type": "string", "minLength": 1},
+    "scientific_name": {"type": "string", "minLength": 1},
+    "tax_id": {"type": ["integer", "string", "null"]},
+    "literature_search_names": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "ortholog_search_names": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
     "reference_accession": {"type": "string", "minLength": 1},
     "reference_fasta": {"type": "string", "minLength": 1},
     "reference_genbank": {"type": ["string", "null"]},

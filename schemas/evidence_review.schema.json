@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://viralsafetarget.local/schemas/evidence_review.schema.json",
+  "title": "ViralSafeTarget human evidence review",
+  "description": "A reviewed evidence proposal. Approval requires reviewer identity, date, and a source URL.",
+  "allOf": [
+    {"$ref": "evidence_proposal.schema.json"},
+    {
+      "type": "object",
+      "required": ["review_status", "reviewer", "review_date", "source_url"],
+      "properties": {
+        "review_status": {"enum": ["pending", "approved", "rejected"]},
+        "reviewer": {"type": "string"},
+        "review_date": {"type": "string", "format": "date"},
+        "source_url": {"type": "string", "format": "uri"},
+        "review_notes": {"type": "string"}
+      }
+    }
+  ]
+}

@@ -251,6 +251,16 @@ status vocabulary includes `supported`, `suggested`, `unknown`, and `conflicting
 Unknown or missing evidence remains missing and never silently receives a positive
 score. See [`docs/OUTPUT_INTERPRETATION.md`](docs/OUTPUT_INTERPRETATION.md).
 
+### Evidence Agent (human review required)
+
+`vst evidence discover --project project.yaml` builds an alias-aware gene catalog,
+queries PubMed, Europe PMC, UniProt and NCBI reference metadata, and writes a linked
+`review_queue.tsv`. Every discovered row is `pending` and has no effect on scoring.
+After source review, `vst evidence apply --project project.yaml` exports only rows
+explicitly marked `approved`; reviewer identity, review date and source URL are required.
+Direct target-virus evidence and ortholog evidence remain separate. See
+[`docs/EVIDENCE_AGENT.md`](docs/EVIDENCE_AGENT.md).
+
 ## Repository structure
 
 ```text

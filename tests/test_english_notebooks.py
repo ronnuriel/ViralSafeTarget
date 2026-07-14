@@ -14,6 +14,7 @@ NOTEBOOKS = [
     ROOT / "notebooks/10_HSV2_GENE_FUNCTION_AND_DISRUPTION_EN.ipynb",
     ROOT / "notebooks/11_HSV2_RESEARCH_SHOWCASE_EN.ipynb",
     ROOT / "notebooks/12_HSV2_HELDOUT_POPULATION_VALIDATION_EN.ipynb",
+    ROOT / "notebooks/13_EVIDENCE_AGENT_HUMAN_REVIEW_EN.ipynb",
 ]
 
 
@@ -64,3 +65,16 @@ def test_genome_wide_notebook_executes_in_english_synthetic_mode(monkeypatch):
     assert namespace["SYNTHETIC_MODE"] is True
     assert len(namespace["screening_panel"]) > 0
     assert namespace["summary"]["external_tool_status"] == "pending Cas-OFFinder completion"
+
+
+def test_evidence_agent_notebook_executes_without_network_or_automatic_approval(monkeypatch):
+    monkeypatch.chdir(ROOT / "notebooks")
+    notebook = _load(NOTEBOOKS[-1])
+    namespace: dict[str, object] = {}
+    for number, cell in enumerate(notebook["cells"]):
+        if cell["cell_type"] == "code":
+            source = "".join(cell["source"])
+            exec(compile(source, f"{NOTEBOOKS[-1]}:cell-{number}", "exec"), namespace)
+    assert namespace["RUN_NETWORK"] is False
+    assert len(namespace["gene_catalog"]) > 0
+    assert namespace["review_checks"]["automatic_approval"] is False

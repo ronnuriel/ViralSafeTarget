@@ -35,6 +35,7 @@ def write_html_report(
     rejected: pd.DataFrame | None = None,
     pairs: pd.DataFrame | None = None,
     predicted_hits: pd.DataFrame | None = None,
+    approved_evidence: pd.DataFrame | None = None,
     output_links: list[str] | None = None,
 ) -> Path:
     output = Path(output_path)
@@ -42,6 +43,7 @@ def write_html_report(
     rejected = rejected if rejected is not None else pd.DataFrame()
     pairs = pairs if pairs is not None else pd.DataFrame()
     predicted_hits = predicted_hits if predicted_hits is not None else pd.DataFrame()
+    approved_evidence = approved_evidence if approved_evidence is not None else pd.DataFrame()
     gene_counts = (
         candidates.get("gene_name", pd.Series(dtype=str))
         .fillna("unannotated")
@@ -129,8 +131,11 @@ th {{ background:#f2f2f2; }} .notice {{ padding:12px; background:#fff4df; border
 <h2>8. Human off-target summary</h2><p>Predicted hits reported: {len(predicted_hits):,}. Absence of a predicted hit within the configured threshold does not establish safety.</p>{_table(predicted_hits, ["candidate_id", "chromosome", "human_coordinate_1based", "direction", "mismatches", "off_target_sequence", "human_annotation"], 50)}
 <h2>9. Top candidates with explanations</h2>{_table(candidates, candidate_columns, 50)}
 <h2>10. Pair hypotheses</h2>{_table(pairs, pair_columns, 50)}
-<h2>11. Limitations and non-clinical-use warning</h2><p>{html.escape(NOTICE)} The model excludes delivery, accessibility, editing efficiency, repair outcomes, toxicity, latent infection biology, and reactivation.</p>
-<h2>12. Machine-readable outputs</h2><ul>{links}</ul>
+<h2>11. Human-approved biological evidence</h2>
+<p>Only explicitly approved rows are shown. Missing evidence remains unknown and is not evidence of non-essentiality.</p>
+{_table(approved_evidence, ["gene_name", "virus_type", "evidence_category", "essentiality_call", "evidence_strength", "experimental_system", "finding", "source_identifier", "source_url", "reviewer", "review_date"], 100)}
+<h2>12. Limitations and non-clinical-use warning</h2><p>{html.escape(NOTICE)} The model excludes delivery, accessibility, editing efficiency, repair outcomes, toxicity, latent infection biology, and reactivation.</p>
+<h2>13. Machine-readable outputs</h2><ul>{links}</ul>
 </body></html>"""
     output.write_text(html_text, encoding="utf-8")
     return output

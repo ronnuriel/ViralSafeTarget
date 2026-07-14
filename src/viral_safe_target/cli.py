@@ -533,6 +533,55 @@ def _reproduce_hsv2(args: argparse.Namespace) -> None:
             webbrowser.open(report.resolve().as_uri())
 
 
+def _evidence_discover(args: argparse.Namespace) -> None:
+    from .evidence_agent import discover_evidence
+    from .project_workflow import load_project
+
+    context = load_project(args.project)
+    gff_path = context.profiles.resolve(context.profiles.virus.get("annotation_gff"))
+    if gff_path is None or not gff_path.is_file():
+        raise FileNotFoundError("The project virus annotation GFF is missing")
+    out_dir = Path(args.out_dir).resolve() if args.out_dir else context.output_root / "evidence"
+    result = discover_evidence(
+        gff_path=gff_path,
+        virus_profile=context.profiles.virus,
+        out_dir=out_dir,
+        sources=args.sources,
+        maximum_results_per_query=args.max_results_per_query,
+        email=args.email,
+        api_key=args.api_key,
+        offline=args.offline,
+        genes=args.genes,
+    )
+    print(json.dumps({key: str(value) for key, value in result.items()}, indent=2))
+    if args.open_report:
+        webbrowser.open((Path(result["output_dir"]) / "evidence_review_report.html").as_uri())
+
+
+def _evidence_apply(args: argparse.Namespace) -> None:
+    from .evidence_agent import apply_reviewed_evidence
+    from .project_workflow import load_project
+
+    context = load_project(args.project)
+    review_queue = (
+        Path(args.review_queue).resolve()
+        if args.review_queue
+        else context.output_root / "evidence" / "review_queue.tsv"
+    )
+    configured = context.profiles.resolve(context.profiles.virus.get("evidence_table"))
+    output_table = Path(args.output).resolve() if args.output else configured
+    if output_table is None:
+        raise ValueError("No evidence output is configured; pass --output")
+    result = apply_reviewed_evidence(
+        review_queue,
+        output_table,
+        append=args.append,
+        reference_accession=str(context.profiles.virus.get("reference_accession", "")),
+    )
+    print(json.dumps(result, indent=2, sort_keys=True))
+    print("Only approved rows were exported. Re-run the project to refresh evidence-aware outputs.")
+
+
 def _add_config(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--config", default=str(DEFAULT_CONFIG_PATH))
 
@@ -610,6 +659,42 @@ def build_parser() -> argparse.ArgumentParser:
     reproduce_hsv2.add_argument("--skip-population", action="store_true")
     reproduce_hsv2.add_argument("--open-report", action="store_true")
     reproduce_hsv2.set_defaults(func=_reproduce_hsv2)
+
+    evidence = subparsers.add_parser(
+        "evidence", help="discover source-linked gene evidence with mandatory human review"
+    )
+    evidence_commands = evidence.add_subparsers(dest="evidence_command", required=True)
+    evidence_discover = evidence_commands.add_parser(
+        "discover", help="query official sources and create a review-pending evidence queue"
+    )
+    evidence_discover.add_argument("--project", required=True)
+    evidence_discover.add_argument("--out-dir")
+    evidence_discover.add_argument(
+        "--sources",
+        nargs="+",
+        choices=["pubmed", "europepmc", "uniprot", "ncbi_refseq"],
+        default=["pubmed", "europepmc", "uniprot", "ncbi_refseq"],
+    )
+    evidence_discover.add_argument("--max-results-per-query", type=int, default=5)
+    evidence_discover.add_argument(
+        "--genes", nargs="*", help="optional annotated gene subset; default: all genes"
+    )
+    evidence_discover.add_argument("--email", default="")
+    evidence_discover.add_argument("--api-key", default="")
+    evidence_discover.add_argument(
+        "--offline", action="store_true", help="use only previously cached API responses"
+    )
+    evidence_discover.add_argument("--open-report", action="store_true")
+    evidence_discover.set_defaults(func=_evidence_discover)
+
+    evidence_apply = evidence_commands.add_parser(
+        "apply", help="export only researcher-approved proposals to gene_evidence.tsv"
+    )
+    evidence_apply.add_argument("--project", required=True)
+    evidence_apply.add_argument("--review-queue")
+    evidence_apply.add_argument("--output")
+    evidence_apply.add_argument("--append", action="store_true")
+    evidence_apply.set_defaults(func=_evidence_apply)
 
     discover = subparsers.add_parser(
         "discover", help="advanced case-study discovery commands; prefer `vst project`"

@@ -1,6 +1,6 @@
 """ViralSafeTarget computational research package."""
 
-__version__ = "0.7.0"
+__version__ = "0.8.0"
 
 from .annotations import annotate_candidates, read_gff3
 from .config import EditorProfile, load_config
@@ -24,6 +24,7 @@ from .disruption import (
     simulate_candidate_pair,
     spcas9_cut_after_1based,
 )
+from .evidence_agent import apply_reviewed_evidence, discover_evidence
 from .integrations import ToolAdapter, load_external_results
 from .io_utils import read_fasta, write_fasta
 from .offtarget import (
@@ -77,6 +78,8 @@ __all__ = [
     "simulate_candidate_pair",
     "rank_candidate_pairs",
     "exact_pair_coverage",
+    "discover_evidence",
+    "apply_reviewed_evidence",
     "sha256_file",
     "write_run_manifest",
     "ResearchProfileBundle",
