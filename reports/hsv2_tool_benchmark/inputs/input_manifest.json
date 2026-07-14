@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "candidate_count": 257,
+  "guide_sequence_length": [
+    20
+  ],
+  "files": {
+    "common": {
+      "path": "frozen_panel.csv",
+      "sha256": "f75fe011eda3d1bc67c49bafe0594618e695f6c482ea4db2a6cb88f0288eeda7"
+    },
+    "identity": {
+      "path": "candidate_identity.tsv",
+      "sha256": "d7de71fa5510569ed765d86725c7b0c4003696dca881971094d330d867e34c2d"
+    },
+    "crispritz": {
+      "path": "crispritz_guides.txt",
+      "sha256": "0bdc33fc18678aed2ed66cb8e461044637177ae83c07827ec4c5f35bc98f8254"
+    },
+    "guidescan2": {
+      "path": "guidescan2_guides.txt",
+      "sha256": "7faa6bacccd714e892531d9eb3a31a36d2d55c04c5fa04b22eb9f6c7f0c33d6a"
+    },
+    "crispor": {
+      "path": "crispor_batch.tsv",
+      "sha256": "8eef6e50cad5dea6fb48457bfcb2f49fbad4f9f63a729cac550f70f8719f848e"
+    },
+    "chopchop": {
+      "path": "chopchop_targets.fasta",
+      "sha256": "ba8ef943adad4c31b06a5b7936a8daf5ef027e16e6f8c01b1ce35ff6534f16dd"
+    }
+  },
+  "interpretation": "Input preparation only. A tool is completed only after its raw output is committed and normalized; missing output remains pending."
+}

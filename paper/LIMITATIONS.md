@@ -16,3 +16,9 @@
 - HSV-1 or other-virus evidence cannot be treated as direct HSV-2 evidence.
 - Generic architecture has not yet been demonstrated with a completed second-virus
   public case study.
+- Web-tool exports that are not committed remain `export_required`; capability evidence
+  is not executable performance.
+- Runtime values from different guide counts, genomes, hardware, or search models are
+  not directly comparable.
+- Multi-tool rank agreement cannot identify the biologically correct ranking without
+  independent experimental ground truth.

@@ -1,0 +1,15 @@
+capability,CHOPCHOP,CRISPOR,CRISPRitz,Cas-OFFinder,GuideScan2,ViralSafeTarget
+biological_evidence_provenance,not_assessed,not_assessed,no,no,no,yes
+bulge_search,not_assessed,not_assessed,yes,no,not_assessed,partial
+cli,yes,yes,yes,yes,yes,yes
+escape_robustness,not_assessed,not_assessed,no,no,no,yes
+gene_annotation,yes,yes,partial,no,partial,yes
+guide_design,yes,yes,no,no,yes,yes
+host_offtarget_search,yes,yes,yes,yes,yes,yes
+mechanism_aware_multiplex,not_assessed,not_assessed,no,no,no,yes
+mismatch_search,yes,yes,yes,yes,yes,yes
+multi_strain_viral_conservation,not_assessed,not_assessed,not_assessed,no,not_assessed,yes
+on_target_scoring,yes,yes,partial,no,partial,partial
+population_variant_host_risk,not_assessed,not_assessed,yes,no,not_assessed,partial
+protein_disruption,partial,partial,no,no,no,yes
+user_supplied_genome,partial,partial,yes,yes,yes,yes

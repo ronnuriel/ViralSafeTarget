@@ -21,3 +21,18 @@ site under the declared model. It does not establish reduced biological escape.
 Future work should compare the frozen panel with existing guide-design/off-target
 tools, complete human evidence review, execute the same project contract on a second
 virus without core-code changes, and seek independent experimental collaboration.
+
+The benchmark clarifies that the compared systems are not interchangeable. The strong
+agreement between Cas-OFFinder and CRISPRitz on the same frozen panel supports the
+reproducibility of the reference-genome host-search axis under closely matched settings.
+Their low rank agreement with the ViralSafeTarget composite score is expected because
+the composite score also retains viral-population and annotation features. It should not
+be interpreted as evidence that one system is more accurate.
+
+CRISPOR and CHOPCHOP primarily support guide design and ranking, whereas CRISPRitz,
+GuideScan2, and Cas-OFFinder emphasize different off-target or specificity tasks. The
+proposed ViralSafeTarget contribution is their reproducible integration with
+viral-population support, gene/protein context, evidence provenance, and multiplex
+escape analysis. Quantitative CRISPOR, CHOPCHOP, and GuideScan2 exports, second-virus
+validation, and experimental ground truth remain necessary before claiming broader
+generalization or predictive superiority.

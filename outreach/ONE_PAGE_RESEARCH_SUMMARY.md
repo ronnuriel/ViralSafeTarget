@@ -20,6 +20,11 @@ multiplex escape robustness.
   hypotheses, and 17,733 single-nucleotide exact-target counterfactuals.
 - Four configured three-guide strategies each had a sequence escape barrier of three
   substitutions under the exact-target model.
+- A frozen 257-guide benchmark produced complete ViralSafeTarget, Cas-OFFinder, and
+  CRISPRitz metrics. Cas-OFFinder and CRISPRitz host-search ranks correlated at 0.880413
+  and shared 49 of their top 50 guides under closely matched reference-genome settings.
+- CRISPOR, CHOPCHOP, and GuideScan2 are documented in the capability matrix but remain
+  export-required; their quantitative results were not fabricated or treated as zero.
 
 ## Why it matters
 

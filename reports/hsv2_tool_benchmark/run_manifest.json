@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "created_utc": "2026-07-14T23:11:10.073549+00:00",
+  "benchmark_id": "hsv2-frozen-257-multitool-v1",
+  "candidate_count": 257,
+  "unique_guide_count": 257,
+  "top_k": [
+    10,
+    25,
+    50
+  ],
+  "source_files": [
+    {
+      "path": "reports/hsv2_genome_wide_exhaustive/deep_screening_panel.csv",
+      "sha256": "2276effab72a80e7536b22967877f22e8b4ce38dafa4cbdd2383c3ef3ca69a66"
+    },
+    {
+      "path": "configs/benchmarks/hsv2_multitool.yaml",
+      "sha256": "f31c72b16499e86f52f5456739c7b6732e45d49225f9175bee5c23f6a7284d76"
+    },
+    {
+      "path": "data/benchmarks/tool_capability_evidence.tsv",
+      "sha256": "c4718f1d7d9e25259ae26621c187184998c1cce5abb77d58d57100ee20908823"
+    },
+    {
+      "path": "configs/hsv2_pilot.yaml",
+      "sha256": "84509d54abb3debdfef35f6f6aad0efb95e334b8dcc1d484d44a23d3b29a04cc"
+    },
+    {
+      "path": "reports/hsv2_tool_benchmark/raw/crispritz/hsv2_257_grch38p14.profile.xls",
+      "sha256": "422f1246a91f0c62c7fa800d4d20b162e725ad446440921bd28c7aec7ad3b904"
+    }
+  ],
+  "input_manifest_sha256": "cc6f0724c53f3ffa5df91021458c09c424135e48d511c5c1fa2e404632b7501d",
+  "completed_tools": [
+    "viral_safe_target_pre_human",
+    "viral_safe_target_post_human",
+    "cas-offinder",
+    "crispritz"
+  ],
+  "incomplete_tools": [
+    "crispor",
+    "chopchop",
+    "guidescan2"
+  ],
+  "raw_scores_directly_averaged": false,
+  "ablation_baseline_maximum_absolute_difference": 1.1102230246251565e-16,
+  "ablation_rank_precision_decimals": 12,
+  "missing_output_interpretation": "pending_or_export_required; never zero",
+  "claims_boundary": "Computational coverage/agreement/sensitivity only; no safety, efficacy, viral inactivation, treatment, cure, or repair-frequency claim."
+}

@@ -44,3 +44,36 @@ candidate, while its exhaustive gene-level portfolio rank remained 21.
 
 These observations prioritize questions for review; they do not establish viral
 phenotype or therapeutic relevance.
+
+## Multi-tool benchmark
+
+The systematic benchmark froze 257 unique candidate identities before comparison.
+Primary metrics were complete for the ViralSafeTarget pre-host and post-host rankings,
+Cas-OFFinder, and an independently executed CRISPRitz 2.6.6 reference-genome search.
+CRISPOR, CHOPCHOP, and GuideScan2 remained export-required because no raw output was
+committed; they were not assigned zero values or inferred ranks.
+
+The two host-search tools showed strong but incomplete agreement: Cas-OFFinder and
+CRISPRitz ranks had a Spearman correlation of 0.880413, with 9, 24, and 49 shared
+guides in their respective top 10, 25, and 50 lists. In contrast, their primary
+off-target-burden ranks had low agreement with the composite ViralSafeTarget ranks
+(Spearman 0.085008-0.296323, depending on the comparison). This does not identify a
+superior tool: the host-search metric and the composite virus-first score represent
+different decision axes. ViralSafeTarget pre-host and post-host ranks remained highly
+correlated (Spearman 0.961975), with identical top 10, 25, and 50 membership on this
+enriched panel.
+
+The CRISPRitz run used the official version 2.6.6 Docker image against GRCh38.p14,
+through three mismatches, without bulges or population variants. It reported all 257
+guides in 709.78 wall-clock seconds. Runtime was not compared with the recorded
+Cas-OFFinder source runtime because the latter covered 23,108 candidates rather than
+the frozen 257-guide panel.
+
+Leave-one-component-out analysis quantified the sensitivity of ViralSafeTarget ranks
+within the enriched deep-screening panel. Removing sequence complexity caused the
+largest change (median absolute rank shift 75; maximum 230; top-10 overlap 0), whereas
+removing GC changed at most nine rank positions and preserved the top 10, 25, and 50.
+Conservation, viral uniqueness, annotation, and gene-evidence components produced no
+rank change in this selected panel because those columns were constant there. The
+ablation therefore diagnoses the panel and scoring configuration; it does not establish
+which ranking better predicts editing or viral phenotype.

@@ -10,6 +10,9 @@
 6. Four configured multiplex strategies and exact-target sequence barriers.
 7. Focus-gene heatmap with targetability, coding position, domain context, host-model
    output, population support, and evidence provenance as separate columns.
+8. Multi-tool result coverage with pending/export-required tools shown explicitly.
+9. Pairwise rank agreement and top-K overlap on the frozen panel.
+10. Leave-one-component-out rank sensitivity.
 
 Captions must state that disruption grids are not repair probabilities and escape
 barriers are not evolutionary probabilities.

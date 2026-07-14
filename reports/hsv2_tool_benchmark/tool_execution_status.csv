@@ -1,0 +1,8 @@
+tool_name,tool_version,execution_mode,status,candidate_count,reported_candidates,missing_candidates,coverage_fraction,runtime_seconds,runtime_scope,reason,official_source
+viral_safe_target_pre_human,0.9.0,internal ranking,completed,257,257,0,1.0,,not isolated from the source workflow,,https://github.com/ronnuriel/ViralSafeTarget
+viral_safe_target_post_human,0.9.0,internal ranking after configured host-risk layer,completed,257,257,0,1.0,,not isolated from the source workflow,,https://github.com/ronnuriel/ViralSafeTarget
+cas-offinder,2.4.1,GRCh38.p14 reference search through three mismatches,completed,257,257,0,1.0,18821.56043375563,"exhaustive 23,108-candidate source run; not a same-panel runtime comparison",,https://github.com/snugel/cas-offinder
+crispritz,2.6.6 Docker image digest sha256:8a6c8212621ee6cc467e7a5bc7ff4405cbb83bfa7c0487c232977f4a09ff0273,GRCh38.p14 reference search through three mismatches; no bulges or variants,completed,257,257,0,1.0,709.78,frozen 257-guide panel,official Docker raw profile and runtime record are committed,https://github.com/pinellolab/CRISPRitz
+crispor,web/CLI capability assessed 2026-07-15,documented researcher export,export_required,257,0,257,0.0,,not assessed,no raw export is committed; public web interfaces are not scraped,https://github.com/maximilianh/crisporWebsite
+chopchop,v3 web/CLI capability assessed 2026-07-15,documented researcher export,export_required,257,0,257,0.0,,not assessed,no raw export is committed; public web interfaces are not scraped,https://chopchop.cbu.uib.no/about
+guidescan2,GuideScan2 capability assessed 2026-07-15,documented researcher export,export_required,257,0,257,0.0,,not assessed,no raw export is committed; public web interfaces are not scraped,https://guidescan.com/

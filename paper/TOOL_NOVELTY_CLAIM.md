@@ -23,6 +23,12 @@ provenance and an exact set-cover sequence barrier for configured panels.
 
 ## Validation still required
 
-A systematic capability matrix with primary sources, a frozen cross-tool benchmark,
-ablation analysis, a second-virus case study, external users, and experimental results
-are needed before making a stronger comparative or predictive claim.
+A systematic capability matrix linked to official sources, a frozen 257-guide benchmark,
+and leave-one-component-out analysis are now committed. The executable comparison
+contains complete ViralSafeTarget, Cas-OFFinder, and CRISPRitz metrics; CRISPOR,
+CHOPCHOP, and GuideScan2 remain export-required and therefore absent from quantitative
+rank comparisons.
+
+Committed exports from those three tools, a second-virus case study, external users,
+and experimental results are still required before making a stronger comparative,
+generalization, or predictive claim.

@@ -54,3 +54,27 @@ essential/replication-focused, targetability-focused, and mechanism-diverse. Hos
 counts, observed population support, bounded disruption summaries, biological context,
 and escape barrier remained separate columns. No combined therapeutic score was
 computed.
+
+## Systematic multi-tool benchmark
+
+We froze the 257 unique guides in the HSV-2 deep-screening panel before comparison.
+ViralSafeTarget pre-host and post-host ranks and completed Cas-OFFinder hit counts were
+normalized as within-tool ranks. CRISPRitz profiles were parsed only when a raw profile
+was available. The committed CRISPRitz 2.6.6 run used the official Docker image
+(`sha256:8a6c8212621ee6cc467e7a5bc7ff4405cbb83bfa7c0487c232977f4a09ff0273`),
+GRCh38.p14 (`GCF_000001405.40`), an NGG PAM, up to three mismatches, eight threads,
+and no bulge or population-variant options. Its 257-row profile, target list, extended
+profile, command, runtime, and hashes were retained. CRISPOR, CHOPCHOP, and GuideScan2
+were treated as documented-export
+integrations and remained export-required when no raw export was committed. Missing
+output was retained as missing and was never interpreted as zero predicted risk.
+
+We calculated candidate coverage, pairwise Spearman rank agreement for non-constant
+shared rankings, and top-10, top-25, and top-50 overlap. Raw scores from different
+tools were not averaged. Runtime was considered comparable only when hardware,
+assembly, guide count, and search parameters were equivalent.
+
+For sensitivity analysis, each configured ViralSafeTarget score component was omitted
+in turn and the transparent weighted score was recomputed on the frozen panel. This
+leave-one-component-out procedure was not treated as model retraining or biological
+validation.

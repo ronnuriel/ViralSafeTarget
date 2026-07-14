@@ -1,0 +1,8 @@
+variant,spearman_vs_all_components,median_absolute_rank_shift,maximum_absolute_rank_shift,top_10_overlap,top_25_overlap,top_50_overlap
+all_components,0.9999999999999998,0.0,0.0,10,25,50
+without_conservation,0.9999999999999998,0.0,0.0,10,25,50
+without_viral_uniqueness,0.9999999999999998,0.0,0.0,10,25,50
+without_gc,0.9999370814858384,0.0,9.0,10,25,50
+without_sequence_complexity,0.1791233542213374,75.0,230.0,0,4,10
+without_annotation,0.9999999999999998,0.0,0.0,10,25,50
+without_gene_evidence,0.9999999999999998,0.0,0.0,10,25,50

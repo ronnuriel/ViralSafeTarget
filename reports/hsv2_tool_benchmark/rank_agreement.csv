@@ -1,0 +1,7 @@
+tool_a,tool_b,shared_candidates,spearman_rank_correlation,status
+cas-offinder,crispritz,257,0.8804128188049333,completed
+cas-offinder,viral_safe_target_post_human,257,0.28967510619972786,completed
+cas-offinder,viral_safe_target_pre_human,257,0.08500792354851998,completed
+crispritz,viral_safe_target_post_human,257,0.2963225105260472,completed
+crispritz,viral_safe_target_pre_human,257,0.11729768650823515,completed
+viral_safe_target_post_human,viral_safe_target_pre_human,257,0.9619751745996609,completed
