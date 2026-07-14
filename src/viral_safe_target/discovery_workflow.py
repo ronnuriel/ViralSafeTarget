@@ -87,9 +87,10 @@ def _tool_version(executable: Path | None) -> str:
 
 
 def _opencl_information() -> str:
+    device = os.environ.get("CAS_OFFINDER_DEVICE", "C").upper()
     executable = shutil.which("clinfo")
     if not executable:
-        return "clinfo unavailable; Cas-OFFinder device selector requested: C"
+        return f"clinfo unavailable; Cas-OFFinder device selector requested: {device}"
     result = subprocess.run(
         [executable, "--raw"], capture_output=True, text=True, timeout=15, check=False
     )
@@ -237,12 +238,21 @@ def run_batches(
     if executable is None:
         print("Cas-OFFinder is unavailable; leaving pending batches incomplete.")
         return
+    device = os.environ.get("CAS_OFFINDER_DEVICE", "C").upper()
+    if device not in {"C", "G", "A"}:
+        raise ValueError("CAS_OFFINDER_DEVICE must be C (CPU), G (GPU), or A (all devices).")
+    print(f"Cas-OFFinder device selector: {device}")
     started = time.monotonic()
     total = len(batches)
     for index, batch in enumerate(batches, start=1):
         if batch["status"] == "completed":
             continue
-        command = [str(executable), str(batch["input_path"]), "C", str(batch["raw_path"])]
+        command = [
+            str(executable),
+            str(batch["input_path"]),
+            device,
+            str(batch["raw_path"]),
+        ]
         batch_started = time.monotonic()
         started_utc = _utc_now()
         print(f"Batch {index}/{total} ({100 * (index - 1) / max(total, 1):.1f}% complete)")

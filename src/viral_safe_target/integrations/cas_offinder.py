@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
@@ -49,7 +50,15 @@ class CasOffinderAdapter:
     ) -> ToolExecution:
         availability = self.detect()
         output = Path(output_dir) / "cas_offinder_output.tsv"
-        command = (availability.executable or "cas-offinder", str(input_path), "C", str(output))
+        device = os.environ.get("CAS_OFFINDER_DEVICE", "C").upper()
+        if device not in {"C", "G", "A"}:
+            raise AdapterError("CAS_OFFINDER_DEVICE must be C (CPU), G (GPU), or A (all devices).")
+        command = (
+            availability.executable or "cas-offinder",
+            str(input_path),
+            device,
+            str(output),
+        )
         if dry_run:
             return ToolExecution(command, 0, "", "", output)
         if not availability.available:

@@ -428,8 +428,11 @@ def _host_reference_available(path: Path | None) -> bool:
 
 
 def _run_cas_offinder(executable: str, input_path: Path, output_path: Path) -> None:
+    device = os.environ.get("CAS_OFFINDER_DEVICE", "C").upper()
+    if device not in {"C", "G", "A"}:
+        raise ValueError("CAS_OFFINDER_DEVICE must be C (CPU), G (GPU), or A (all devices).")
     completed = subprocess.run(
-        [executable, str(input_path), "C", str(output_path)],
+        [executable, str(input_path), device, str(output_path)],
         capture_output=True,
         text=True,
         check=False,
