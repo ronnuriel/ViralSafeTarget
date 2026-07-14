@@ -24,6 +24,7 @@ Documentation is grouped by the question a researcher is trying to answer. The r
 - [`HSV2_PILOT.md`](workflows/HSV2_PILOT.md)
 - [`HSV2_CONSENSUS_PILOT.md`](workflows/HSV2_CONSENSUS_PILOT.md)
 - [`MULTITOOL_COMPARISON.md`](workflows/MULTITOOL_COMPARISON.md)
+- [`SYSTEMATIC_TOOL_BENCHMARK.md`](workflows/SYSTEMATIC_TOOL_BENCHMARK.md)
 - [`PRESENTATION_WORKFLOW.md`](workflows/PRESENTATION_WORKFLOW.md)
 - [`CRISPRITZ_WORKFLOW.md`](workflows/CRISPRITZ_WORKFLOW.md)
 - [`CRISPRESSO2_IMPORT.md`](workflows/CRISPRESSO2_IMPORT.md)

@@ -1,0 +1,73 @@
+schema_version: "1.0"
+benchmark_id: hsv2-frozen-257-multitool-v1
+project_root: ../..
+candidate_table: reports/hsv2_genome_wide_exhaustive/deep_screening_panel.csv
+expected_candidate_count: 257
+output_dir: reports/hsv2_tool_benchmark
+capability_evidence_table: data/benchmarks/tool_capability_evidence.tsv
+top_k: [10, 25, 50]
+
+tools:
+  - id: viral_safe_target_pre_human
+    version: "0.9.0"
+    mode: internal ranking
+    status: completed
+    official_source: https://github.com/ronnuriel/ViralSafeTarget
+    runtime_scope: not isolated from the source workflow
+  - id: viral_safe_target_post_human
+    version: "0.9.0"
+    mode: internal ranking after configured host-risk layer
+    status: completed
+    official_source: https://github.com/ronnuriel/ViralSafeTarget
+    runtime_scope: not isolated from the source workflow
+  - id: cas-offinder
+    version: "2.4.1"
+    mode: GRCh38.p14 reference search through three mismatches
+    status: completed
+    runtime_seconds: 18821.56043375563
+    runtime_scope: exhaustive 23,108-candidate source run; not a same-panel runtime comparison
+    official_source: https://github.com/snugel/cas-offinder
+  - id: crispritz
+    version: "2.6.6 Docker image digest sha256:8a6c8212621ee6cc467e7a5bc7ff4405cbb83bfa7c0487c232977f4a09ff0273"
+    mode: GRCh38.p14 reference search through three mismatches; no bulges or variants
+    status: completed
+    result_file: reports/hsv2_tool_benchmark/raw/crispritz/hsv2_257_grch38p14.profile.xls
+    runtime_seconds: 709.78
+    runtime_scope: frozen 257-guide panel
+    official_source: https://github.com/pinellolab/CRISPRitz
+    reason: official Docker raw profile and runtime record are committed
+  - id: crispor
+    version: "web/CLI capability assessed 2026-07-15"
+    mode: documented researcher export
+    status: export_required
+    official_source: https://github.com/maximilianh/crisporWebsite
+    reason: no raw export is committed; public web interfaces are not scraped
+  - id: chopchop
+    version: "v3 web/CLI capability assessed 2026-07-15"
+    mode: documented researcher export
+    status: export_required
+    official_source: https://chopchop.cbu.uib.no/about
+    reason: no raw export is committed; public web interfaces are not scraped
+  - id: guidescan2
+    version: "GuideScan2 capability assessed 2026-07-15"
+    mode: documented researcher export
+    status: export_required
+    official_source: https://guidescan.com/
+    reason: no raw export is committed; public web interfaces are not scraped
+
+ablation:
+  ranking_config: configs/hsv2_pilot.yaml
+  baseline_score_column: pre_human_score
+  baseline_tolerance: 1.0e-12
+  rank_precision_decimals: 12
+  components:
+    conservation: conservation_score
+    viral_uniqueness: viral_uniqueness_score
+    gc: gc_score
+    sequence_complexity: sequence_complexity_score
+    annotation: annotation_score
+    gene_evidence: gene_evidence_score
+  penalty_columns:
+    - low_complexity_penalty
+    - homopolymer_penalty
+    - ambiguous_base_penalty

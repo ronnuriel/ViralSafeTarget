@@ -15,6 +15,10 @@ Configuration is split between reusable profiles and versioned case-study settin
 Add a new virus by creating a project with `vst project init`; do not add gene-name
 conditionals to Python code.
 
+`benchmarks/` contains frozen-panel multi-tool benchmark definitions. These configs
+record expected candidate identity, tool versions/status, raw-output locations,
+official sources, and ablation components.
+
 ## Case-study and compatibility settings
 
 - `hsv2_pilot.yaml`

@@ -30,7 +30,8 @@ clean:
 	find . -name '.DS_Store' -delete
 
 # Remove disposable workflow outputs while preserving the checked-in public snapshots
-# under reports/hsv2_{showcase,genome_wide_exhaustive,evidence_agent,virtual_knockout_escape}.
+# under reports/hsv2_{showcase,genome_wide_exhaustive,evidence_agent,
+# virtual_knockout_escape,tool_benchmark}.
 clean-generated: clean
 	rm -rf reports/demo reports/real_hsv2 reports/hsv2_consensus
 	rm -rf reports/hsv2_genome_wide reports/hsv2_gene_function reports/hsv2_project

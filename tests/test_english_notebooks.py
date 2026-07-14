@@ -16,6 +16,7 @@ NOTEBOOKS = [
     ROOT / "notebooks/12_HSV2_HELDOUT_POPULATION_VALIDATION_EN.ipynb",
     ROOT / "notebooks/13_EVIDENCE_AGENT_HUMAN_REVIEW_EN.ipynb",
     ROOT / "notebooks/14_VIRTUAL_KNOCKOUT_AND_ESCAPE_EN.ipynb",
+    ROOT / "notebooks/15_SYSTEMATIC_MULTITOOL_BENCHMARK_EN.ipynb",
 ]
 
 
@@ -69,12 +70,13 @@ def test_genome_wide_notebook_executes_in_english_synthetic_mode(monkeypatch):
 
 def test_evidence_agent_notebook_executes_without_network_or_automatic_approval(monkeypatch):
     monkeypatch.chdir(ROOT / "notebooks")
-    notebook = _load(NOTEBOOKS[-2])
+    path = ROOT / "notebooks/13_EVIDENCE_AGENT_HUMAN_REVIEW_EN.ipynb"
+    notebook = _load(path)
     namespace: dict[str, object] = {}
     for number, cell in enumerate(notebook["cells"]):
         if cell["cell_type"] == "code":
             source = "".join(cell["source"])
-            exec(compile(source, f"{NOTEBOOKS[-2]}:cell-{number}", "exec"), namespace)
+            exec(compile(source, f"{path}:cell-{number}", "exec"), namespace)
     assert namespace["RUN_NETWORK"] is False
     assert len(namespace["gene_catalog"]) > 0
     assert namespace["review_checks"]["automatic_approval"] is False
@@ -82,12 +84,30 @@ def test_evidence_agent_notebook_executes_without_network_or_automatic_approval(
 
 def test_virtual_knockout_escape_notebook_executes_from_clean_synthetic_inputs(monkeypatch):
     monkeypatch.chdir(ROOT / "notebooks")
-    notebook = _load(NOTEBOOKS[-1])
+    path = ROOT / "notebooks/14_VIRTUAL_KNOCKOUT_AND_ESCAPE_EN.ipynb"
+    notebook = _load(path)
     namespace: dict[str, object] = {}
     for number, cell in enumerate(notebook["cells"]):
         if cell["cell_type"] == "code":
             source = "".join(cell["source"])
-            exec(compile(source, f"{NOTEBOOKS[-1]}:cell-{number}", "exec"), namespace)
+            exec(compile(source, f"{path}:cell-{number}", "exec"), namespace)
     assert namespace["MODE"] == "synthetic"
     assert namespace["summary"]["guide_count"] > 0
     assert namespace["strategy_comparison"]["combined_therapeutic_score"].isna().all()
+
+
+def test_systematic_benchmark_notebook_executes_in_synthetic_mode(monkeypatch):
+    monkeypatch.chdir(ROOT / "notebooks")
+    path = ROOT / "notebooks/15_SYSTEMATIC_MULTITOOL_BENCHMARK_EN.ipynb"
+    notebook = _load(path)
+    namespace: dict[str, object] = {}
+    for number, cell in enumerate(notebook["cells"]):
+        if cell["cell_type"] == "code":
+            source = "".join(cell["source"])
+            exec(compile(source, f"{path}:cell-{number}", "exec"), namespace)
+    assert namespace["MODE"] == "synthetic"
+    assert set(namespace["ablation"]["variant"]) == {
+        "all_components",
+        "without_conservation",
+        "without_uniqueness",
+    }

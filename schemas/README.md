@@ -11,6 +11,8 @@ Schemas define the generic project and human-review contracts:
 - `gene_evidence.schema.json` — curated source-linked gene evidence.
 - `evidence_proposal.schema.json` — machine-proposed, review-pending evidence row.
 - `evidence_review.schema.json` — researcher review decision and provenance.
+- `tool_benchmark.schema.json` — frozen-panel tool comparison, execution status, and
+  ablation configuration.
 
 The Python workflow validates the profiles it consumes. Missing biological evidence
 must remain explicit and must not be converted to zero or a positive score.

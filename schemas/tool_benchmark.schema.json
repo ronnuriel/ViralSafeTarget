@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ViralSafeTarget multi-tool benchmark configuration",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "benchmark_id",
+    "candidate_table",
+    "expected_candidate_count",
+    "output_dir",
+    "capability_evidence_table",
+    "tools",
+    "ablation"
+  ],
+  "properties": {
+    "schema_version": {"type": "string"},
+    "benchmark_id": {"type": "string", "minLength": 1},
+    "project_root": {"type": "string"},
+    "candidate_table": {"type": "string"},
+    "expected_candidate_count": {"type": "integer", "minimum": 1},
+    "output_dir": {"type": "string"},
+    "capability_evidence_table": {"type": "string"},
+    "top_k": {"type": "array", "items": {"type": "integer", "minimum": 1}},
+    "tools": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "version", "mode", "status", "official_source"],
+        "properties": {
+          "id": {"type": "string"},
+          "version": {"type": "string"},
+          "mode": {"type": "string"},
+          "status": {"enum": ["completed", "partial", "pending", "export_required"]},
+          "result_file": {"type": "string"},
+          "official_source": {"type": "string"},
+          "reason": {"type": "string"}
+        }
+      }
+    },
+    "ablation": {
+      "type": "object",
+      "required": ["ranking_config", "components"],
+      "properties": {
+        "ranking_config": {"type": "string"},
+        "baseline_score_column": {"type": "string"},
+        "baseline_tolerance": {"type": "number", "minimum": 0},
+        "rank_precision_decimals": {"type": "integer", "minimum": 0, "maximum": 15},
+        "components": {"type": "object", "additionalProperties": {"type": "string"}},
+        "penalty_columns": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}

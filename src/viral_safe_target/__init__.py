@@ -49,6 +49,7 @@ from .scorers import CandidateScorer, ExampleRuleScorer
 from .scoring import rank_candidates, rank_post_human_candidates, rank_pre_human_candidates
 from .sdk import ResearchRun, load_run
 from .tables import CandidateTable, ToolResultTable
+from .tool_benchmark import run_tool_benchmark
 
 __all__ = [
     "__version__",
@@ -103,4 +104,5 @@ __all__ = [
     "build_consensus",
     "candidate_metrics_as_tool_results",
     "load_external_results",
+    "run_tool_benchmark",
 ]

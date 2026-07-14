@@ -17,6 +17,7 @@ case-study runs, data preparation, and maintenance operations.
 | `run_hsv2_population_validation.sh` | Held-out population workflow |
 | `build_hsv2_showcase.sh` | Presentation-ready result bundle |
 | `finalize_hsv2_exhaustive.sh` | Resume/finalize the long exhaustive run |
+| `run_hsv2_tool_benchmark.sh` | Frozen 257-guide systematic multi-tool benchmark |
 | `doctor.sh` | Environment and external-tool diagnostics |
 
 ## Data and reference preparation helpers

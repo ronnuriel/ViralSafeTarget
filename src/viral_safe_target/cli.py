@@ -463,6 +463,15 @@ def _analyze_multiplex(args: argparse.Namespace) -> None:
         webbrowser.open(Path(result["report"]).as_uri())
 
 
+def _tool_benchmark(args: argparse.Namespace) -> None:
+    from .tool_benchmark import run_tool_benchmark
+
+    result = run_tool_benchmark(args.config)
+    print(json.dumps(result, indent=2, default=str))
+    if args.open_report:
+        webbrowser.open(Path(result["report"]).resolve().as_uri())
+
+
 def _profiles_validate(args: argparse.Namespace) -> None:
     from .profiles import load_profile_bundle, validate_profile_bundle
 
@@ -913,6 +922,14 @@ def build_parser() -> argparse.ArgumentParser:
     tool_commands = tools.add_subparsers(dest="tools_command", required=True)
     tools_doctor = tool_commands.add_parser("doctor", help="detect supported external tools")
     tools_doctor.set_defaults(func=_tools_doctor)
+
+    tools_benchmark = tool_commands.add_parser(
+        "benchmark",
+        help="run a frozen-panel multi-tool benchmark with explicit missingness",
+    )
+    tools_benchmark.add_argument("--config", required=True)
+    tools_benchmark.add_argument("--open-report", action="store_true")
+    tools_benchmark.set_defaults(func=_tool_benchmark)
 
     crispritz = tool_commands.add_parser("crispritz", help="CRISPRitz integration")
     crispritz_commands = crispritz.add_subparsers(dest="crispritz_command", required=True)

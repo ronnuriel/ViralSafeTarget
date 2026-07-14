@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- Added a publication-facing frozen-panel benchmark for ViralSafeTarget,
+  Cas-OFFinder, CRISPRitz, CRISPOR, CHOPCHOP, and GuideScan2.
+- Added explicit execution status, raw-output provenance, rank agreement, top-K
+  overlap, missingness, and official-source capability evidence.
+- Added leave-one-component-out sensitivity analysis without a combined therapeutic
+  score, plus an English canonical notebook and an HSV-2 benchmark snapshot.
+
 ## 0.9.0 — 2026-07-14
 
 - Added generic virtual-knockout mapping from guide cut boundaries to every overlapping

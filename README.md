@@ -17,6 +17,7 @@ robustness, and source-linked evidence review.**
 |---|---|
 | Inspect the completed HSV-2 results | [`reports/README.md`](reports/README.md) |
 | Inspect virtual knockout and escape results | [`reports/hsv2_virtual_knockout_escape/FINDINGS.md`](reports/hsv2_virtual_knockout_escape/FINDINGS.md) |
+| Inspect the systematic tool benchmark | [`docs/workflows/SYSTEMATIC_TOOL_BENCHMARK.md`](docs/workflows/SYSTEMATIC_TOOL_BENCHMARK.md) |
 | Learn the workflow in Hebrew | [`notebooks/00_START_HERE.ipynb`](notebooks/00_START_HERE.ipynb) |
 | Run a small synthetic example | `make demo` |
 | Reproduce the HSV-2 case study | `vst reproduce hsv2` |
@@ -102,11 +103,16 @@ escape outputs after pair analysis. The same analyses can be run directly:
 vst analyze virtual-knockout --project projects/my-virus/project.yaml
 vst analyze escape --project projects/my-virus/project.yaml
 vst analyze multiplex --project projects/my-virus/project.yaml
+vst tools benchmark --config configs/benchmarks/hsv2_multitool.yaml
 ```
 
 The indel grid is not a repair-frequency model, and the multiplex barrier is not an
 evolutionary probability. See
 [`docs/workflows/VIRTUAL_KNOCKOUT_ESCAPE.md`](docs/workflows/VIRTUAL_KNOCKOUT_ESCAPE.md).
+
+The benchmark freezes candidate identity, records versions and raw-output hashes,
+compares only commensurable within-tool ranks, and keeps unavailable external outputs
+explicitly pending. Missing output is never converted into zero predicted risk.
 
 Inputs and profiles are documented in
 [`docs/getting-started/NEW_VIRUS_WORKFLOW.md`](docs/getting-started/NEW_VIRUS_WORKFLOW.md).
