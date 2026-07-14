@@ -31,6 +31,40 @@ It does **not** answer whether delivery succeeds, whether chromatin is accessibl
 
 ## Quick start
 
+### One researcher-facing workflow
+
+For the complete HSV-2 computational reproduction plan:
+
+```bash
+vst reproduce hsv2
+```
+
+After reviewing external requirements, execute or resume it with:
+
+```bash
+vst reproduce hsv2 --execute
+```
+
+For a new virus, create a self-contained project instead of copying an HSV-specific
+script:
+
+```bash
+vst project init \
+  --id my-virus \
+  --display-name "My virus" \
+  --reference-accession REF_ACCESSION \
+  --out-dir projects/my-virus
+
+vst project validate --project projects/my-virus/project.yaml
+vst project run --project projects/my-virus/project.yaml
+vst project status --project projects/my-virus/project.yaml
+```
+
+See [`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md) and
+[`docs/NEW_VIRUS_WORKFLOW.md`](docs/NEW_VIRUS_WORKFLOW.md). The scripts and notebooks
+below remain as auditable case-study components; the `vst project` and
+`vst reproduce` commands are the canonical entry points.
+
 ### Conda (recommended)
 
 ```bash

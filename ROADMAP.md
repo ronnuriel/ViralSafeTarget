@@ -47,6 +47,15 @@
 - [x] Discovery-excluded, locus-aware validation against independent public HSV-2 records
 - [x] English research notebooks
 
+## v0.7 — researcher workflow and reproducibility
+
+- [x] Single-entry project initialization, validation, execution, resume and status
+- [x] Frozen HSV-2 discovery accessions and an auditable reproduction plan
+- [x] Explicit external-stage state without missing-result optimism
+- [x] New-virus project schema, generated profiles and source-linked evidence template
+- [x] Synthetic end-to-end regression test for the generic project interface
+- [ ] Generalize protein/domain/ortholog analysis beyond the HSV case-study adapter
+
 ## Future benchmark release
 
 - [ ] Curated public benchmark with experimentally active and inactive targets

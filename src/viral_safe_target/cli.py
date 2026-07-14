@@ -473,6 +473,64 @@ def _showcase_build(args: argparse.Namespace) -> None:
         webbrowser.open((result["output_dir"] / "FINAL_REPORT.html").as_uri())
 
 
+def _project_init(args: argparse.Namespace) -> None:
+    from .project_workflow import initialize_project
+
+    project_file = initialize_project(
+        args.out_dir,
+        project_id=args.id,
+        display_name=args.display_name or args.id,
+        reference_accession=args.reference_accession,
+        force=args.force,
+    )
+    print(f"Created research project: {project_file}")
+    print(f"Next: add inputs, then run `vst project validate --project {project_file}`")
+
+
+def _project_validate(args: argparse.Namespace) -> None:
+    from .project_workflow import validate_project
+
+    checks = validate_project(args.project, require_host_reference=args.require_host_reference)
+    print(checks.to_string(index=False))
+    if checks["status"].eq("fail").any():
+        raise SystemExit(2)
+
+
+def _project_run(args: argparse.Namespace) -> None:
+    from .project_workflow import run_project
+
+    result = run_project(
+        args.project,
+        run_external=args.run_external,
+        restart=args.restart,
+        stop_after=args.stop_after,
+    )
+    print(json.dumps(result, indent=2, sort_keys=True))
+    if args.open_report and Path(result["report"]).is_file():
+        webbrowser.open(Path(result["report"]).resolve().as_uri())
+
+
+def _project_status(args: argparse.Namespace) -> None:
+    from .project_workflow import project_status
+
+    print(json.dumps(project_status(args.project), indent=2, sort_keys=True))
+
+
+def _reproduce_hsv2(args: argparse.Namespace) -> None:
+    from .reproduction import reproduce_hsv2
+
+    result = reproduce_hsv2(
+        args.project_root,
+        execute=args.execute,
+        skip_population=args.skip_population,
+    )
+    print(json.dumps(result, indent=2, sort_keys=True))
+    if args.open_report and result.get("final_report"):
+        report = Path(result["final_report"])
+        if report.is_file():
+            webbrowser.open(report.resolve().as_uri())
+
+
 def _add_config(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--config", default=str(DEFAULT_CONFIG_PATH))
 
@@ -484,7 +542,76 @@ def build_parser() -> argparse.ArgumentParser:
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    discover = subparsers.add_parser("discover", help="balanced genome-wide discovery workflows")
+    project = subparsers.add_parser(
+        "project", help="single-entry workflows for reproducible virus projects"
+    )
+    project_commands = project.add_subparsers(dest="project_command", required=True)
+    project_init = project_commands.add_parser(
+        "init", help="create a self-contained new-virus research project"
+    )
+    project_init.add_argument("--id", required=True)
+    project_init.add_argument("--display-name")
+    project_init.add_argument("--reference-accession", default="CHANGE_ME")
+    project_init.add_argument("--out-dir", required=True)
+    project_init.add_argument("--force", action="store_true")
+    project_init.set_defaults(func=_project_init)
+
+    project_validate = project_commands.add_parser(
+        "validate", help="validate project inputs, profiles, and coordinate identity"
+    )
+    project_validate.add_argument("--project", required=True)
+    project_validate.add_argument("--require-host-reference", action="store_true")
+    project_validate.set_defaults(func=_project_validate)
+
+    for command, help_text in (
+        ("run", "run the project and cache each completed stage"),
+        ("resume", "resume a project without repeating valid completed stages"),
+    ):
+        project_run = project_commands.add_parser(command, help=help_text)
+        project_run.add_argument("--project", required=True)
+        project_run.add_argument(
+            "--run-external",
+            action="store_true",
+            help="run Cas-OFFinder when available; otherwise preserve external_required status",
+        )
+        project_run.add_argument(
+            "--restart",
+            action="store_true",
+            help="discard workflow state and recompute stages",
+        )
+        project_run.add_argument(
+            "--stop-after",
+            choices=["validate", "discover", "host_screen", "pairs", "report"],
+        )
+        project_run.add_argument("--open-report", action="store_true")
+        project_run.set_defaults(func=_project_run)
+
+    project_status = project_commands.add_parser(
+        "status", help="show completed, pending, failed, and external stages"
+    )
+    project_status.add_argument("--project", required=True)
+    project_status.set_defaults(func=_project_status)
+
+    reproduce = subparsers.add_parser(
+        "reproduce", help="plan or execute a versioned computational case-study reproduction"
+    )
+    reproduce_commands = reproduce.add_subparsers(dest="reproduce_command", required=True)
+    reproduce_hsv2 = reproduce_commands.add_parser(
+        "hsv2", help="plan or run the complete public-data HSV-2 case study"
+    )
+    reproduce_hsv2.add_argument("--project-root", default=".")
+    reproduce_hsv2.add_argument(
+        "--execute",
+        action="store_true",
+        help="perform downloads and long external computations; without this flag print a plan",
+    )
+    reproduce_hsv2.add_argument("--skip-population", action="store_true")
+    reproduce_hsv2.add_argument("--open-report", action="store_true")
+    reproduce_hsv2.set_defaults(func=_reproduce_hsv2)
+
+    discover = subparsers.add_parser(
+        "discover", help="advanced case-study discovery commands; prefer `vst project`"
+    )
     discover_commands = discover.add_subparsers(dest="discover_command", required=True)
     genome_wide = discover_commands.add_parser(
         "genome-wide", help="run or resume balanced HSV-2 genome-wide discovery"
@@ -506,7 +633,8 @@ def build_parser() -> argparse.ArgumentParser:
     analyze = subparsers.add_parser("analyze", help="post-discovery biological analyses")
     analyze_commands = analyze.add_subparsers(dest="analyze_command", required=True)
     gene_function = analyze_commands.add_parser(
-        "gene-function", help="map top HSV-2 candidates to protein disruption hypotheses"
+        "gene-function",
+        help="HSV-2 case-study protein adapter; generic projects do not infer this stage",
     )
     gene_function.add_argument("--genome-wide-dir", default="reports/hsv2_genome_wide")
     gene_function.add_argument("--hsv2-genbank", default="data/raw/hsv2_reference.gb")

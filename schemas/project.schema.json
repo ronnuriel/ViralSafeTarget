@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://viral-safe-target.example/schemas/project.schema.json",
+  "title": "ViralSafeTarget research project",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "project_type",
+    "id",
+    "display_name",
+    "profiles",
+    "workflow"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "project_type": {"const": "viral_safe_target_project"},
+    "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_-]*$"},
+    "display_name": {"type": "string", "minLength": 1},
+    "project_root": {"type": "string", "default": "."},
+    "profiles": {
+      "type": "object",
+      "required": ["virus", "host", "nuclease"],
+      "properties": {
+        "virus": {"type": "string", "minLength": 1},
+        "host": {"type": "string", "minLength": 1},
+        "nuclease": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "workflow": {
+      "type": "object",
+      "required": ["ranking_config", "output_root"],
+      "properties": {
+        "ranking_config": {"type": "string", "minLength": 1},
+        "output_root": {"type": "string", "minLength": 1},
+        "minimum_strain_coverage": {"type": "number", "minimum": 0, "maximum": 1},
+        "balanced_top_per_gene": {"type": "integer", "minimum": 1},
+        "global_top": {"type": "integer", "minimum": 0},
+        "maximum_host_candidates": {"type": ["integer", "null"], "minimum": 1}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

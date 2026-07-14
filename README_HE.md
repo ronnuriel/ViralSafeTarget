@@ -1,6 +1,27 @@
 # ViralSafeTarget — סביבת מחקר חישובית לווירוסים
 
-המחברת המלאה החדשה כתובה באנגלית:
+נקודת הכניסה הרשמית לשחזור מחקר HSV-2 היא:
+
+```bash
+vst reproduce hsv2          # מציג תוכנית בלי לשנות או להוריד דבר
+vst reproduce hsv2 --execute
+```
+
+למחקר של וירוס חדש משתמשים בפרויקט עצמאי:
+
+```bash
+vst project init --id my-virus --display-name "My virus" \
+  --reference-accession REF_ACCESSION --out-dir projects/my-virus
+vst project validate --project projects/my-virus/project.yaml
+vst project run --project projects/my-virus/project.yaml
+vst project status --project projects/my-virus/project.yaml
+```
+
+ההוראות המלאות נמצאות ב־[`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md)
+וב־[`docs/NEW_VIRUS_WORKFLOW.md`](docs/NEW_VIRUS_WORKFLOW.md). המחברות מסבירות
+את התוצאות; הן אינן נקודת כניסה נסתרת שנדרשת להרצה.
+
+המחברת המלאה כתובה באנגלית:
 
 ```bash
 jupyter lab notebooks/08_RUN_FULL_PIPELINE_EN.ipynb

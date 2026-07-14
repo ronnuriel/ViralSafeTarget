@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.7.0 — 2026-07-14
+
+- Added the canonical `vst project init/validate/run/resume/status` workflow for a
+  self-contained new-virus project.
+- Added checksum-aware stage reuse and explicit `external_required` state so a
+  missing host-screen result is never treated as zero predicted hits.
+- Added `vst reproduce hsv2` plan and guarded `--execute` mode for the complete
+  public-data case study.
+- Froze the HSV-2 discovery accession cohort and added automatic acquisition and
+  validation of the declared HSV-1 ortholog reference.
+- Added dedicated reproducibility and new-virus guides plus an end-to-end synthetic
+  regression test for the researcher-facing interface.
+
 ## 0.6.0 — 2026-07-14
 
 - Added configuration-driven virus, host, and nuclease profiles plus generic schemas.

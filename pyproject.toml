@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "viral-safe-target"
-version = "0.6.0"
+version = "0.7.0"
 description = "Reproducible research toolkit for conserved viral genome target prioritization and sequence-level disruption simulation"
 readme = "README.md"
 requires-python = ">=3.10"

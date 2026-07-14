@@ -1,4 +1,4 @@
-.PHONY: install test lint demo ui notebook real-hsv2 clean
+.PHONY: install test lint demo ui notebook real-hsv2 reproduce-hsv2 clean
 
 install:
 	python -m pip install -e .[all]
@@ -20,6 +20,9 @@ notebook:
 
 real-hsv2:
 	bash scripts/run_real_hsv2.sh --sample-size 25
+
+reproduce-hsv2:
+	vst reproduce hsv2
 
 clean:
 	rm -rf reports/* data/processed/* .pytest_cache .ruff_cache

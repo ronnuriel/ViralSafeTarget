@@ -11,6 +11,7 @@ WITH_HUMAN=0
 SAMPLE_SIZE=25
 MIN_COVERAGE=0.95
 CONFIG=configs/research_v0.3.yaml
+ACCESSIONS_FILE=data/curated/hsv2_discovery_accessions.txt
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -18,6 +19,7 @@ while [[ $# -gt 0 ]]; do
     --sample-size) SAMPLE_SIZE="$2"; shift 2 ;;
     --min-coverage) MIN_COVERAGE="$2"; shift 2 ;;
     --config) CONFIG="$2"; shift 2 ;;
+    --accessions-file) ACCESSIONS_FILE="$2"; shift 2 ;;
     -h|--help)
       sed -n '1,28p' "$0"
       exit 0
@@ -86,12 +88,32 @@ else
   stage_done "extract HSV-2 reference" "cached"
 fi
 
-download_dataset data/raw/hsv2_complete.zip virus genome taxon 10310 \
-  --complete-only --include genome
-if [[ ! -d data/raw/hsv2_complete ]] || \
-   [[ -z "$(find data/raw/hsv2_complete -type f -name 'genomic.fna' -print -quit 2>/dev/null)" ]]; then
-  rm -rf data/raw/hsv2_complete
-  unzip -q data/raw/hsv2_complete.zip -d data/raw/hsv2_complete
+if [[ -n "$ACCESSIONS_FILE" ]]; then
+  [[ -s "$ACCESSIONS_FILE" ]] || {
+    echo "Frozen accession file is missing or empty: $ACCESSIONS_FILE" >&2
+    exit 2
+  }
+  COLLECTION_ZIP=data/raw/hsv2_discovery_frozen.zip
+  COLLECTION_DIR=data/raw/hsv2_discovery_frozen
+  COLLECTION_REQUEST_STAMP=data/raw/hsv2_discovery_frozen.request.json
+  if ! python scripts/cache_stage.py check --stamp "$COLLECTION_REQUEST_STAMP" \
+    --input "$ACCESSIONS_FILE" --output "$COLLECTION_ZIP"; then
+    rm -rf "$COLLECTION_ZIP" "$COLLECTION_DIR" "$COLLECTION_REQUEST_STAMP"
+  fi
+  download_dataset "$COLLECTION_ZIP" virus genome accession \
+    --inputfile "$ACCESSIONS_FILE" --include genome
+  python scripts/cache_stage.py stamp --stamp "$COLLECTION_REQUEST_STAMP" \
+    --input "$ACCESSIONS_FILE"
+else
+  COLLECTION_ZIP=data/raw/hsv2_complete.zip
+  COLLECTION_DIR=data/raw/hsv2_complete
+  download_dataset "$COLLECTION_ZIP" virus genome taxon 10310 \
+    --complete-only --include genome
+fi
+if [[ ! -d "$COLLECTION_DIR" ]] || \
+   [[ -z "$(find "$COLLECTION_DIR" -type f -name 'genomic.fna' -print -quit 2>/dev/null)" ]]; then
+  rm -rf "$COLLECTION_DIR"
+  unzip -q "$COLLECTION_ZIP" -d "$COLLECTION_DIR"
   stage_done "extract HSV-2 collection" "completed"
 else
   stage_done "extract HSV-2 collection" "cached"
@@ -107,16 +129,21 @@ else
 fi
 
 REFERENCE_FASTA=$(find data/raw/hsv2_reference -type f -name 'genomic.fna' -print -quit)
-ALL_FASTA=$(find data/raw/hsv2_complete -type f -name 'genomic.fna' -print -quit)
+ALL_FASTA=$(find "$COLLECTION_DIR" -type f -name 'genomic.fna' -print -quit)
 SAMPLE=data/processed/hsv2_sample_${SAMPLE_SIZE}.fasta
 ALIGNMENT=data/processed/hsv2_aligned_${SAMPLE_SIZE}.fasta
 GFF=data/processed/hsv2_reference.gff3
 QC_REPORT=reports/real_hsv2/accession_qc.csv
 ACCESSIONS=reports/real_hsv2/accessions_used.txt
+ACCESSION_CACHE_INPUT=()
+if [[ -n "$ACCESSIONS_FILE" ]]; then
+  ACCESSION_CACHE_INPUT=(--input "$ACCESSIONS_FILE")
+fi
 
 PREPARE_STAMP=reports/real_hsv2/.cache/prepare_${SAMPLE_SIZE}.json
 if python scripts/cache_stage.py check --stamp "$PREPARE_STAMP" \
   --input "$REFERENCE_FASTA" --input data/raw/hsv2_reference.gb --input "$ALL_FASTA" \
+  "${ACCESSION_CACHE_INPUT[@]}" \
   --output "$SAMPLE" --output "$GFF" --output "$QC_REPORT" --output "$ACCESSIONS" \
   --parameter "sample_size=${SAMPLE_SIZE}"; then
   stage_done "prepare and QC" "cached"
@@ -132,6 +159,7 @@ else
     --accessions-used "$ACCESSIONS"
   python scripts/cache_stage.py stamp --stamp "$PREPARE_STAMP" \
     --input "$REFERENCE_FASTA" --input data/raw/hsv2_reference.gb --input "$ALL_FASTA" \
+    "${ACCESSION_CACHE_INPUT[@]}" \
     --parameter "sample_size=${SAMPLE_SIZE}"
   stage_done "prepare and QC" "completed"
 fi
@@ -223,7 +251,7 @@ if [[ "$WITH_HUMAN" -eq 1 ]]; then
   stage_done "human off-target input" "completed"
 fi
 
-python - "$CONFIG" "$SAMPLE_SIZE" "$MIN_COVERAGE" "$WITH_HUMAN" <<'PY'
+python - "$CONFIG" "$SAMPLE_SIZE" "$MIN_COVERAGE" "$WITH_HUMAN" "$ACCESSIONS_FILE" <<'PY'
 import json
 import sys
 from pathlib import Path
@@ -232,7 +260,7 @@ import pandas as pd
 
 from viral_safe_target import load_config, write_run_manifest
 
-config_path, sample_size, minimum_coverage, with_human = sys.argv[1:]
+config_path, sample_size, minimum_coverage, with_human, accessions_file = sys.argv[1:]
 config = load_config(config_path)
 qc = pd.read_csv("reports/real_hsv2/accession_qc.csv")
 accepted = qc.loc[qc["decision"] == "accepted", "accession"].astype(str).tolist()
@@ -247,10 +275,12 @@ write_run_manifest(
         f"data/processed/hsv2_sample_{sample_size}.fasta",
         f"data/processed/hsv2_aligned_{sample_size}.fasta",
         "data/processed/hsv2_reference.gff3",
+        *([accessions_file] if accessions_file else []),
     ],
     {
         "virus_taxon_id": 10310,
         "reference_accession": "NC_001798.2",
+        "frozen_accessions_file": accessions_file or None,
         "sample_size": int(sample_size),
         "minimum_exact_site_coverage": float(minimum_coverage),
         "human_screen_prepared": bool(int(with_human)),
@@ -271,6 +301,7 @@ write_run_manifest(
         minimum_coverage,
         "--config",
         config_path,
+        *(["--accessions-file", accessions_file] if accessions_file else []),
         *(["--with-human"] if int(with_human) else []),
     ],
     random_seed=int(config["random_seed"]),

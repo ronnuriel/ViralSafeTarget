@@ -119,7 +119,15 @@ def validate_profile_bundle(
                 display_path(path),
             )
     host_root = bundle.resolve(bundle.host.get("fasta_root"))
-    host_exists = bool(host_root and host_root.exists())
+    host_exists = False
+    if host_root and host_root.is_file():
+        host_exists = host_root.stat().st_size > 0
+    elif host_root and host_root.is_dir():
+        host_exists = any(
+            path.is_file() and path.stat().st_size > 0
+            for path in host_root.rglob("*")
+            if path.suffix.lower() in {".fa", ".fna", ".fasta", ".fas"}
+        )
     add(
         "host reference",
         "pass" if host_exists else "fail" if require_large_host_reference else "external_pending",

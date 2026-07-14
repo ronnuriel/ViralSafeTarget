@@ -4,7 +4,7 @@ message: "If you use this software, please cite the archived release and the und
 type: software
 authors:
   - name: "ronnuriel"
-version: 0.6.0
+version: 0.7.0
 date-released: 2026-07-14
 repository-code: "https://github.com/ronnuriel/ViralSafeTarget"
 license: MIT

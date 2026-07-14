@@ -1,6 +1,6 @@
 """ViralSafeTarget computational research package."""
 
-__version__ = "0.6.0"
+__version__ = "0.7.0"
 
 from .annotations import annotate_candidates, read_gff3
 from .config import EditorProfile, load_config
@@ -34,6 +34,14 @@ from .offtarget import (
     write_cas_offinder_input,
 )
 from .profiles import ResearchProfileBundle, load_profile_bundle, validate_profile_bundle
+from .project_workflow import (
+    ProjectContext,
+    initialize_project,
+    load_project,
+    project_status,
+    run_project,
+    validate_project,
+)
 from .provenance import sha256_file, write_run_manifest
 from .reporting import write_html_report
 from .scorers import CandidateScorer, ExampleRuleScorer
@@ -74,6 +82,12 @@ __all__ = [
     "ResearchProfileBundle",
     "load_profile_bundle",
     "validate_profile_bundle",
+    "ProjectContext",
+    "initialize_project",
+    "load_project",
+    "validate_project",
+    "run_project",
+    "project_status",
     "ResearchRun",
     "load_run",
     "CandidateTable",
