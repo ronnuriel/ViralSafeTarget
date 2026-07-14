@@ -98,7 +98,24 @@ For an English end-to-end workflow, open
 tutorial is `notebooks/09_HSV2_GENOME_WIDE_DISCOVERY_EN.ipynb`.
 The presentation walkthrough is
 `notebooks/11_HSV2_RESEARCH_SHOWCASE_EN.ipynb`, and held-out population validation is
-explained in `notebooks/12_HSV2_HELDOUT_POPULATION_VALIDATION_EN.ipynb`.
+explained in `notebooks/12_HSV2_HELDOUT_POPULATION_VALIDATION_EN.ipynb`. Protein
+mapping and predicted disruption are covered by
+`notebooks/10_HSV2_GENE_FUNCTION_AND_DISRUPTION_EN.ipynb`, while the source-linked,
+human-reviewed literature workflow is
+`notebooks/13_EVIDENCE_AGENT_HUMAN_REVIEW_EN.ipynb`.
+
+## Published computational result snapshots
+
+Selected result tables and HTML reports from the completed HSV-2 runs are checked in
+under [`reports/`](reports/README.md). The public snapshot includes the exhaustive
+genome-wide targetability ranks, the balanced presentation analysis, and the
+review-pending Evidence Agent output. Large host-hit tables, reference genomes,
+raw Cas-OFFinder batches, and caches are intentionally excluded.
+
+The exhaustive screen completed all 109 host-screen batches for 23,108 eligible
+candidate coordinates. Its leading targetability genes are UL3, UL10, UL52, UL47,
+and UL11. These are model-bounded sequence-targetability results, not claims of
+essentiality, safety, efficacy, or therapeutic value.
 
 ## Run the HSV-2 pilot on public data
 

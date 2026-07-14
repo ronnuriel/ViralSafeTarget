@@ -1,0 +1,76 @@
+gene_name,rank_at_k10,rank_at_k25,rank_at_k50,mean_rank,rank_range,rank_std,top_5_stability,top_10_stability,stability_warning,ranking_provenance
+UL3,1.0,1.0,1.0,1.0,0.0,0.0,True,True,,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL10,3.0,3.0,2.0,2.6666666666666665,1.0,0.4714045207910317,True,True,,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL36,2.0,2.0,4.0,2.6666666666666665,2.0,0.9428090415820634,True,True,,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL20,9.0,6.0,7.0,7.333333333333333,3.0,1.247219128924647,False,True,,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL47,4.0,13.0,6.0,7.666666666666667,9.0,3.858612300930075,False,False,,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL18,10.0,5.0,11.0,8.666666666666666,6.0,2.6246692913372702,False,False,,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL11,8.0,11.0,8.0,9.0,3.0,1.4142135623730951,False,False,,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL19,7.0,8.0,12.0,9.0,5.0,2.160246899469287,False,False,,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL52,18.0,7.0,3.0,9.333333333333334,15.0,6.342099196813483,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL46,6.0,20.0,10.0,12.0,14.0,5.887840577551898,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL50,11.0,17.0,13.0,13.666666666666666,6.0,2.494438257849294,False,False,,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL12,13.0,18.0,21.0,17.333333333333332,8.0,3.299831645537222,False,False,,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL42,12.0,19.0,24.0,18.333333333333332,12.0,4.9216076867444665,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL13,26.0,15.0,18.0,19.666666666666668,11.0,4.642796092394707,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL29,23.0,27.0,9.0,19.666666666666668,18.0,7.71722460186015,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL5,41.0,4.0,14.0,19.666666666666668,37.0,15.627610892974722,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+US3,17.0,12.0,30.0,19.666666666666668,18.0,7.586537784494029,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL14,29.0,16.0,16.0,20.333333333333332,13.0,6.128258770283412,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL30,36.0,9.0,16.0,20.333333333333332,27.0,11.440668201153676,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL33,14.0,22.0,27.0,21.0,13.0,5.354126134736337,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL53,49.0,10.0,5.0,21.333333333333332,44.0,19.669491322575904,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+US10,5.0,33.0,29.0,22.333333333333332,28.0,12.364824660660938,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL15,24.0,24.0,22.0,23.333333333333332,2.0,0.9428090415820634,False,False,,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL9,39.0,14.0,20.0,24.333333333333332,25.0,10.656244908763854,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL26,16.0,43.0,32.0,30.333333333333332,27.0,11.08552609887726,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL25,19.0,39.0,37.0,31.666666666666668,20.0,8.993825042154693,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL22,51.0,26.0,19.0,32.0,32.0,13.73559851869101,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL23,50.0,21.0,26.0,32.333333333333336,29.0,12.657891697365017,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL49A,38.0,31.0,28.0,32.333333333333336,10.0,4.189935029992179,False,False,,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL34,21.0,28.0,51.0,33.333333333333336,30.0,12.814921857827391,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+US8A,22.0,44.0,34.0,33.333333333333336,22.0,8.993825042154693,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL24,27.0,31.0,44.0,34.0,17.0,7.2571803523590805,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL44,31.0,45.0,36.0,37.333333333333336,14.0,5.792715732327589,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL21,42.0,56.0,15.0,37.666666666666664,41.0,17.016332024133625,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL4,60.0,25.0,32.0,39.0,35.0,15.121728296285006,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+LAT,28.0,38.0,52.0,39.333333333333336,24.0,9.843215373488933,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL43,46.0,23.0,49.0,39.333333333333336,26.0,11.61416759345623,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+US8,33.0,51.0,39.0,41.0,18.0,7.483314773547883,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+US2,32.0,50.0,43.0,41.666666666666664,18.0,7.408703590297622,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+US5,43.0,36.0,46.0,41.666666666666664,10.0,4.189935029992179,False,False,,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL41,53.0,48.0,25.0,42.0,28.0,12.192894105447921,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+US4,35.0,29.0,64.0,42.666666666666664,35.0,15.2825245151302,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+RL1,66.0,29.0,34.0,43.0,37.0,16.391054470858997,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+US9,15.0,54.0,61.0,43.333333333333336,46.0,20.237478982214054,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL6,57.0,53.0,23.0,44.333333333333336,34.0,15.173075568988056,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+US6,43.0,40.0,50.0,44.333333333333336,10.0,4.189935029992179,False,False,,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL17,55.0,52.0,31.0,46.0,24.0,10.677078252031311,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL35,25.0,47.0,68.0,46.666666666666664,43.0,17.55625877635159,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL28,45.0,45.0,54.0,48.0,9.0,4.242640687119285,False,False,,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL26.5,19.0,61.0,65.0,48.333333333333336,46.0,20.805982045769646,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL27,48.0,37.0,61.0,48.666666666666664,24.0,9.809292646374773,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+RS1,73.0,34.0,40.0,49.0,39.0,17.146428199482248,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL37,40.0,62.0,47.0,49.666666666666664,22.0,9.177266598624136,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL45,30.0,67.0,58.0,51.666666666666664,37.0,15.755069730795299,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL8,54.0,48.0,56.0,52.666666666666664,8.0,3.39934634239519,False,False,,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL48,69.0,55.0,37.0,53.666666666666664,32.0,13.097921802925667,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL38,52.0,58.0,55.0,55.0,6.0,2.449489742783178,False,False,,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL7,62.0,64.0,45.0,57.0,19.0,8.524474568362947,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL40,64.0,66.0,48.0,59.333333333333336,18.0,8.055363982396381,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+US12,37.0,70.0,71.0,59.333333333333336,34.0,15.797327481430381,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL39,65.0,62.0,57.0,61.333333333333336,8.0,3.299831645537222,False,False,,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL2,72.0,57.0,60.0,63.0,15.0,6.48074069840786,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL55,67.0,65.0,59.0,63.666666666666664,8.0,3.39934634239519,False,False,,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+US11,46.0,72.0,73.0,63.666666666666664,27.0,12.498888839501783,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+US1,58.0,69.0,69.0,65.33333333333333,11.0,5.185449728701348,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL1,75.0,59.0,63.0,65.66666666666667,16.0,6.79869268479038,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL49,71.0,60.0,66.0,65.66666666666667,11.0,4.496912521077347,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL54,61.0,73.0,67.0,67.0,12.0,4.898979485566356,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL56,63.0,68.0,72.0,67.66666666666667,9.0,3.681787005729087,False,False,,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL31,56.0,74.0,74.0,68.0,18.0,8.48528137423857,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL32,59.0,75.0,75.0,69.66666666666667,16.0,7.542472332656507,False,False,quota-sensitive ranking,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+US7,70.0,70.0,70.0,70.0,0.0,0.0,False,False,,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL16,77.0,76.0,76.0,76.33333333333333,1.0,0.4714045207910317,False,False,,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL51,76.0,79.0,77.0,77.33333333333333,3.0,1.247219128924647,False,False,,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+RL2,78.0,77.0,78.0,77.66666666666667,1.0,0.4714045207910317,False,False,,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv

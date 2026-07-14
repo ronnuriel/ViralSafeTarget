@@ -1,0 +1,10 @@
+gene_name	feature_id	locus_tag	product	protein_id	aliases	reference_accession	target_virus	virus_tax_id
+UL10	HHV2p66		envelope glycoprotein M		HHV2p66;UL10	NC_001798.2	Human alphaherpesvirus 2	10310
+UL18	HHV2p58		capsid triplex subunit 2		HHV2p58;UL18	NC_001798.2	Human alphaherpesvirus 2	10310
+UL19	HHV2p56		major capsid protein		HHV2p56;UL19	NC_001798.2	Human alphaherpesvirus 2	10310
+UL20	HHV2p57		envelope protein UL20		HHV2p57;UL20	NC_001798.2	Human alphaherpesvirus 2	10310
+UL3	HHV2p73		nuclear protein UL3		HHV2p73;UL3	NC_001798.2	Human alphaherpesvirus 2	10310
+UL30	HHV2p45		DNA polymerase catalytic subunit		HHV2p45;UL30	NC_001798.2	Human alphaherpesvirus 2	10310
+UL36	HHV2p39		large tegument protein		HHV2p39;UL36	NC_001798.2	Human alphaherpesvirus 2	10310
+UL52	HHV2p22		helicase-primase primase subunit		HHV2p22;UL52	NC_001798.2	Human alphaherpesvirus 2	10310
+UL53	HHV2p21		envelope glycoprotein K		HHV2p21;UL53	NC_001798.2	Human alphaherpesvirus 2	10310

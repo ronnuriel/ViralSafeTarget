@@ -1,0 +1,5 @@
+strategy,candidate_count,unique_gene_count,mechanistic_category_count,minimum_exact_strain_coverage,mean_sequence_targetability,mean_predicted_disruption,mean_evidence_coverage,direct_hsv2_phenotype_gene_count,interpretation
+ranking_only,3,3,3,1.0,0.8496368824306834,0.5590341737448813,0.8571428571428571,0,"Comparison set only; no joint editing, delivery, efficacy, or safety prediction."
+predicted_disruption,3,3,3,1.0,0.7923166041392466,0.8208680439839101,0.8095238095238094,1,"Comparison set only; no joint editing, delivery, efficacy, or safety prediction."
+evidence_anchored,3,3,2,1.0,0.8492737648613667,0.596142928943955,0.7619047619047619,2,"Comparison set only; no joint editing, delivery, efficacy, or safety prediction."
+mechanistically_diverse,4,4,4,1.0,0.8070097912814225,0.6831718529751202,0.8214285714285714,1,"Comparison set only; no joint editing, delivery, efficacy, or safety prediction."

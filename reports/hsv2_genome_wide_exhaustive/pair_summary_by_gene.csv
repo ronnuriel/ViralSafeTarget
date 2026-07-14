@@ -1,0 +1,11 @@
+gene_name,pair_count,best_pair_score,pair_provenance
+UL10,45,0.8992737648613667,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL11,45,0.8992737648613667,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL15,45,0.8992737648613667,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL3,45,0.8996368824306833,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL30,45,0.8992737648613667,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL33,45,0.8986086786418174,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL46,45,0.8996368824306833,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL47,45,0.8996368824306833,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL50,45,0.8989106472920501,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+UL52,45,0.8992737648613667,${REPOSITORY_ROOT}/reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv

@@ -1,0 +1,11 @@
+{
+  "cas_offinder_completed_batch_seconds": 18821.56043375563,
+  "completed_utc": "2026-07-14T09:09:03.504168+00:00",
+  "stages": {
+    "analysis_seconds": 237.4572318749997,
+    "cas_offinder_seconds": 0.0001629579928703606,
+    "mapping_seconds": 16.186603833004483
+  },
+  "started_utc": "2026-07-14T09:04:48.111110+00:00",
+  "total_seconds": 253.64399866599706
+}
