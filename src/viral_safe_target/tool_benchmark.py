@@ -398,7 +398,8 @@ def _write_figures(
     if not agreement.empty:
         tools = sorted(set(agreement["tool_a"]) | set(agreement["tool_b"]))
         matrix = pd.DataFrame(np.nan, index=tools, columns=tools, dtype=float)
-        np.fill_diagonal(matrix.values, 1.0)
+        for tool in tools:
+            matrix.loc[tool, tool] = 1.0
         for row in agreement.itertuples(index=False):
             matrix.loc[row.tool_a, row.tool_b] = row.spearman_rank_correlation
             matrix.loc[row.tool_b, row.tool_a] = row.spearman_rank_correlation

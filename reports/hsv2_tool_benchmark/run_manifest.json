@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "created_utc": "2026-07-14T23:11:10.073549+00:00",
+  "created_utc": "2026-07-14T23:15:51.202446+00:00",
   "benchmark_id": "hsv2-frozen-257-multitool-v1",
   "candidate_count": 257,
   "unique_guide_count": 257,
@@ -20,7 +20,7 @@
     },
     {
       "path": "data/benchmarks/tool_capability_evidence.tsv",
-      "sha256": "c4718f1d7d9e25259ae26621c187184998c1cce5abb77d58d57100ee20908823"
+      "sha256": "fc6ceb5ce345f6ea0fcd9f8a10e44127131ba8ffcf0ba200af2d7adde5e078a5"
     },
     {
       "path": "configs/hsv2_pilot.yaml",
