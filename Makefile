@@ -1,4 +1,4 @@
-.PHONY: install test lint demo ui notebook real-hsv2 reproduce-hsv2 clean
+.PHONY: install test lint demo ui notebook real-hsv2 reproduce-hsv2 clean clean-generated
 
 install:
 	python -m pip install -e .[all]
@@ -25,5 +25,15 @@ reproduce-hsv2:
 	vst reproduce hsv2
 
 clean:
-	rm -rf reports/* data/processed/* .pytest_cache .ruff_cache
-	touch reports/.gitkeep data/processed/.gitkeep
+	rm -rf .pytest_cache .ruff_cache htmlcov
+	find src tests scripts -type d -name __pycache__ -prune -exec rm -rf {} +
+	find . -name '.DS_Store' -delete
+
+# Remove disposable workflow outputs while preserving the checked-in public snapshots
+# under reports/hsv2_{showcase,genome_wide_exhaustive,evidence_agent}.
+clean-generated: clean
+	rm -rf reports/demo reports/real_hsv2 reports/hsv2_consensus
+	rm -rf reports/hsv2_genome_wide reports/hsv2_gene_function reports/hsv2_project
+	rm -rf reports/hsv2_population_heldout reports/hsv2_population_report_balanced
+	rm -rf data/processed/*
+	touch data/processed/.gitkeep

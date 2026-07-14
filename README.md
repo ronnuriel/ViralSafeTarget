@@ -1,52 +1,82 @@
 # ViralSafeTarget
 
-**A reproducible, virus-first research toolkit for conserved genome target prioritization, host off-target triage, and sequence-level disruption simulation.**
+**A virus-first computational research toolkit for conserved target discovery,
+host off-target triage, protein-disruption hypotheses, and source-linked evidence
+review.**
 
-ViralSafeTarget is designed for computational researchers who want to start with a collection of viral genomes and produce an auditable table of candidate target sites. The first case study is HSV-2, but the core pipeline is intended to be reusable for other DNA viruses.
+[Hebrew overview](README_HE.md) · [Documentation](docs/README.md) ·
+[Completed result snapshots](reports/README.md) · [Notebooks](notebooks/README.md)
 
-> **Scope:** this repository produces computational hypotheses. It does not prove editing, viral inactivation, safety, latency clearance, or clinical efficacy. It contains no wet-lab protocol.
+> ViralSafeTarget produces computational hypotheses. It does not establish editing,
+> safety, viral inhibition, latency clearance, treatment efficacy, or a cure. It does
+> not provide wet-lab protocols.
 
-## What the pipeline does
+## Choose your path
+
+| Goal | Start here |
+|---|---|
+| Inspect the completed HSV-2 results | [`reports/README.md`](reports/README.md) |
+| Learn the workflow in Hebrew | [`notebooks/00_START_HERE.ipynb`](notebooks/00_START_HERE.ipynb) |
+| Run a small synthetic example | `make demo` |
+| Reproduce the HSV-2 case study | `vst reproduce hsv2` |
+| Analyze a new virus | `vst project init ...` |
+| Discover literature evidence | `vst evidence discover ...` |
+| Understand the architecture | [`docs/reference/ARCHITECTURE.md`](docs/reference/ARCHITECTURE.md) |
+
+The `vst` command is the canonical researcher interface. Files under `scripts/` are
+auditable case-study launchers and maintenance helpers; they are catalogued in
+[`scripts/README.md`](scripts/README.md).
+
+## Install and verify
+
+```bash
+conda env create -f environment.yml
+conda activate viral-safe-target
+python -m pip install -e .
+pytest -q
+ruff check .
+```
+
+Useful shortcuts:
+
+```bash
+make demo          # synthetic end-to-end smoke test
+make notebook      # start JupyterLab
+make ui            # start the local Streamlit interface
+make reproduce-hsv2
+```
+
+## Core workflow
 
 ```mermaid
 flowchart LR
-    A[Viral genomes<br/>aligned FASTA] --> B[Conservation scan]
-    B --> C[Editor-compatible sites<br/>guide + PAM]
-    C --> D[Reference annotation<br/>GFF3]
-    D --> E[Host off-target screen]
-    E --> F[Ranked candidates]
-    F --> G[Idealized cut/deletion<br/>sequence simulation]
-    G --> H[Experimental validation<br/>outside this repository]
+    A["Aligned viral genomes"] --> B["Conserved editor-compatible sites"]
+    B --> C["Reference annotation"]
+    C --> D["Host off-target screen"]
+    D --> E["Candidate and gene rankings"]
+    E --> F["Protein-disruption hypotheses"]
+    G["Literature and protein databases"] --> H["Human evidence review"]
+    H --> E
+    E --> I["Auditable reports and tables"]
 ```
 
-It answers questions such as:
+The pipeline keeps four questions separate:
 
-- Is this target sequence present across many viral strains?
-- Which annotated viral feature contains the target?
-- Does a selected editor have a compatible PAM at that location?
-- Are there similar host sites that require off-target review?
-- If two idealized cuts occurred, which reference interval would be deleted?
+1. **Sequence targetability:** is the site conserved, unique, editor-compatible, and
+   acceptable under the declared host-search model?
+2. **Biological evidence:** what experiments support a function or essentiality claim,
+   in which virus and model?
+3. **Predicted disruption:** where does the site map in the coding sequence and what
+   idealized sequence outcomes could affect?
+4. **Evidence coverage:** what is known, transferred from an ortholog, unresolved, or
+   missing?
 
-It does **not** answer whether delivery succeeds, whether chromatin is accessible, how often a repair outcome occurs, whether the virus remains viable, or whether a treatment is safe.
+Missing evidence remains unknown. A zero predicted host hit is model-bounded and is
+not proof of safety.
 
-## Quick start
+## Analyze a new virus
 
-### One researcher-facing workflow
-
-For the complete HSV-2 computational reproduction plan:
-
-```bash
-vst reproduce hsv2
-```
-
-After reviewing external requirements, execute or resume it with:
-
-```bash
-vst reproduce hsv2 --execute
-```
-
-For a new virus, create a self-contained project instead of copying an HSV-specific
-script:
+Create a self-contained project instead of copying HSV-specific code:
 
 ```bash
 vst project init \
@@ -60,275 +90,106 @@ vst project run --project projects/my-virus/project.yaml
 vst project status --project projects/my-virus/project.yaml
 ```
 
-See [`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md) and
-[`docs/NEW_VIRUS_WORKFLOW.md`](docs/NEW_VIRUS_WORKFLOW.md). The scripts and notebooks
-below remain as auditable case-study components; the `vst project` and
-`vst reproduce` commands are the canonical entry points.
+Inputs and profiles are documented in
+[`docs/getting-started/NEW_VIRUS_WORKFLOW.md`](docs/getting-started/NEW_VIRUS_WORKFLOW.md).
+The project command records stage state, configuration, checksums, missing external
+tools, and report provenance.
 
-### Conda (recommended)
+## Reproduce the HSV-2 case study
 
-```bash
-conda env create -f environment.yml
-conda activate viral-safe-target
-python -m pip install -e .
-pytest -q
-ruff check .
-bash scripts/run_demo.sh
-```
-
-Open the generated files under `reports/demo/`.
-
-### Local upload interface
+Preview the plan without downloading or changing data:
 
 ```bash
-streamlit run app.py
+vst reproduce hsv2
 ```
 
-Upload an **already aligned** multi-FASTA and, optionally, a matching GFF3 annotation. The browser interface is intended for local research use.
-
-### Jupyter
+Execute or resume the versioned workflow:
 
 ```bash
-jupyter lab
+vst reproduce hsv2 --execute
 ```
 
-For the Hebrew learning path, start with `notebooks/00_START_HERE.ipynb`. Notebook
-filenames are language-neutral English identifiers; the introductory notebook content
-remains in Hebrew.
+The public snapshots include a balanced presentation analysis and the later exhaustive
+host screen. They are labeled separately because their sampling depths differ. See
+[`reports/README.md`](reports/README.md) before comparing ranks.
 
-For an English end-to-end workflow, open
-`notebooks/08_RUN_FULL_PIPELINE_EN.ipynb`. The focused multi-tool tutorial is
-`notebooks/07_HSV2_MULTITOOL_COMPARISON_EN.ipynb`, and the genome-wide discovery
-tutorial is `notebooks/09_HSV2_GENOME_WIDE_DISCOVERY_EN.ipynb`.
-The presentation walkthrough is
-`notebooks/11_HSV2_RESEARCH_SHOWCASE_EN.ipynb`, and held-out population validation is
-explained in `notebooks/12_HSV2_HELDOUT_POPULATION_VALIDATION_EN.ipynb`. Protein
-mapping and predicted disruption are covered by
-`notebooks/10_HSV2_GENE_FUNCTION_AND_DISRUPTION_EN.ipynb`, while the source-linked,
-human-reviewed literature workflow is
-`notebooks/13_EVIDENCE_AGENT_HUMAN_REVIEW_EN.ipynb`.
+Current exhaustive snapshot:
 
-## Published computational result snapshots
+- 23,108 eligible candidate coordinates and 21,654 unique guide sequences;
+- 109/109 Cas-OFFinder batches completed against GRCh38.p14;
+- 2,668 candidate-coordinate rows with no predicted hit under the declared model;
+- leading computational targetability genes: UL3, UL10, UL52, UL47, and UL11.
 
-Selected result tables and HTML reports from the completed HSV-2 runs are checked in
-under [`reports/`](reports/README.md). The public snapshot includes the exhaustive
-genome-wide targetability ranks, the balanced presentation analysis, and the
-review-pending Evidence Agent output. Large host-hit tables, reference genomes,
-raw Cas-OFFinder batches, and caches are intentionally excluded.
+These are targetability results, not biological or therapeutic rankings.
 
-The exhaustive screen completed all 109 host-screen batches for 23,108 eligible
-candidate coordinates. Its leading targetability genes are UL3, UL10, UL52, UL47,
-and UL11. These are model-bounded sequence-targetability results, not claims of
-essentiality, safety, efficacy, or therapeutic value.
-
-## Run the HSV-2 pilot on public data
+## Evidence Agent
 
 ```bash
-bash scripts/run_real_hsv2.sh --sample-size 25
+vst evidence discover --project projects/my-virus/project.yaml
 ```
 
-This validates or downloads public NCBI records, resumes checksum-cached stages,
-selects a deterministic pilot sample, aligns it with MAFFT, and produces explainable
-pre-human rankings plus corrected pair hypotheses.
-
-To also download GRCh38 and prepare a Cas-OFFinder input file:
+The agent creates an alias-aware catalog, source queries, source-linked proposals, and
+a `review_queue.tsv`. Every proposal starts as `pending`. A researcher must inspect the
+source, virus species, experiment, model, excerpt, and interpretation.
 
 ```bash
-bash scripts/run_real_hsv2.sh --with-human --sample-size 25
+vst evidence apply \
+  --project projects/my-virus/project.yaml \
+  --review-queue results/evidence/review_queue.tsv
 ```
 
-The human genome is intentionally not committed to Git.
+Only explicitly approved rows with reviewer identity, review date, and source URL are
+exported to the curated evidence table. Direct target-virus evidence and ortholog
+evidence remain separate. See
+[`docs/workflows/EVIDENCE_AGENT.md`](docs/workflows/EVIDENCE_AGENT.md).
 
-For the focused UL19/UL30 workflow, including deterministic Cas-OFFinder selection:
-
-```bash
-bash scripts/run_hsv2_pilot.sh
-```
-
-See [`docs/HSV2_PILOT.md`](docs/HSV2_PILOT.md) for the two-stage off-target run.
-
-## Run the v0.4 multi-tool consensus
-
-The consensus pilot reuses the completed v0.3 outputs and selects only the 32 candidates with no
-predicted human hit within the configured Cas-OFFinder model and three-mismatch threshold:
-
-```bash
-bash scripts/run_hsv2_consensus.sh
-```
-
-It generates CRISPRitz inputs, imports researcher-supplied CRISPOR/CHOPCHOP/GuideScan2 exports when
-present, preserves missing stages, and writes `reports/hsv2_consensus/report.html`. See
-[`docs/HSV2_CONSENSUS_PILOT.md`](docs/HSV2_CONSENSUS_PILOT.md),
-[`docs/PYTHON_SDK.md`](docs/PYTHON_SDK.md), and
-[`docs/INTEGRATIONS.md`](docs/INTEGRATIONS.md).
-
-Run the complete workflow from Jupyter with:
-
-```bash
-jupyter lab notebooks/08_RUN_FULL_PIPELINE_EN.ipynb
-```
-
-## Run HSV-2 genome-wide discovery
-
-The balanced v0.5 workflow gives every annotated gene with an eligible candidate a
-pre-human quota, adds the global leaders, and runs or resumes checksum-validated
-Cas-OFFinder batches:
-
-```bash
-bash scripts/run_hsv2_genome_wide.sh
-```
-
-To regenerate a partial report without running external tools:
-
-```bash
-vst discover genome-wide --virus hsv2 --analysis-only
-```
-
-See [`docs/GENOME_WIDE_DISCOVERY.md`](docs/GENOME_WIDE_DISCOVERY.md). A missing batch is
-never interpreted as a zero-hit result.
-
-## Analyze gene function and predicted disruption
-
-After a completed genome-wide run, map the top candidates to coding and protein
-coordinates, import domain and disorder annotations, summarize alignment-bound
-conservation, and generate size-defined indel and paired-deletion hypotheses:
-
-```bash
-vst analyze gene-function --out-dir reports/hsv2_gene_function
-```
-
-The analysis keeps sequence targetability, cited essentiality evidence, predicted
-protein disruption, and evidence coverage separate. HSV-1 ortholog evidence is never
-presented as direct HSV-2 evidence, and missing essentiality evidence remains unknown.
-See `notebooks/10_HSV2_GENE_FUNCTION_AND_DISRUPTION_EN.ipynb`.
-
-## Validate against an independent viral population panel
-
-The population workflow excludes every discovery accession, audits all valid DNA
-IUPAC ambiguity codes, and uses a locus-specific denominator for partial public
-records. Install the optional reference mapper and run:
-
-```bash
-python -m pip install -e '.[population]'
-vst analyze population \
-  --population-fasta reports/hsv2_population_heldout/population_unique.fasta \
-  --reference-fasta data/raw/hsv2_reference/ncbi_dataset/data/genomic.fna \
-  --candidates reports/hsv2_genome_wide/genome_wide_candidates_post_human.csv \
-  --out-dir reports/hsv2_population_report_balanced
-```
-
-Held-out exact sequence/PAM support is reported separately and never added to the
-targetability, essentiality, or predicted-disruption scores. An absent target in a
-partial record remains unknown unless a high-quality reference alignment covers that
-locus.
-
-For a checksum-audited NCBI download plus the complete validation/report workflow, run
-`bash scripts/run_hsv2_population_validation.sh`. Existing downloads are reused.
-
-## Build the presentation-ready HSV-2 case study
-
-ViralSafeTarget now uses versioned virus, host and nuclease profiles instead of
-hard-coding HSV-specific biology in the Python workflow. Validate the profiles and
-build the multi-objective showcase with:
-
-```bash
-bash scripts/build_hsv2_showcase.sh
-```
-
-The report keeps sequence targetability, direct essentiality evidence, predicted
-protein disruption and evidence coverage separate. It produces a balanced deep
-panel, computational comparison sets, figures, findings, methods, limitations and
-an auditable run manifest under `reports/hsv2_showcase/`. The generated
-`research_findings.csv` keeps each potentially useful observation or hypothesis
-beside its computational support and the limitation that prevents overclaiming.
-
-See [`docs/GENERIC_PROFILES.md`](docs/GENERIC_PROFILES.md) and
-[`docs/PRESENTATION_WORKFLOW.md`](docs/PRESENTATION_WORKFLOW.md).
-
-## Main outputs
-
-- `candidates_ranked_pre_human.csv`: retained candidates with visible score components.
-- `candidates_rejected_pre_human.csv`: rejected candidates and explicit reasons.
-- `candidates_ranked_post_human.csv`: separate post-human score when results exist.
-- `predicted_human_hits.csv`: parsed predicted hits when results exist.
-- `pair_hypotheses_same_gene.csv`: bounded same-gene deletion hypotheses.
-- `pair_hypotheses_multi_target.csv`: independent cross-gene target hypotheses.
-- `report.html`: human-readable summary.
-- `run_manifest.json`: input checksums, parameters, environment and Git commit.
-
-## What “simulation” means here
-
-The included simulator calculates canonical SpCas9 cut coordinates and the sequence interval that would be removed **if** two selected cuts occurred. It can report overlap with annotated features and exact pair coverage across the input viral alignment.
-
-This is a sequence transformation, not a cell or organism simulator. To measure real editing, researchers need sequencing data and tools such as CRISPResso2. To evaluate potential host off-target sites at genome scale, use a validated engine such as Cas-OFFinder or CRISPRitz. To establish viral inactivation, appropriate virology experiments are required.
-
-See [`docs/SIMULATION_LIMITS.md`](docs/SIMULATION_LIMITS.md) and [`docs/KNOWN_LIMITATIONS.md`](docs/KNOWN_LIMITATIONS.md).
-
-## Curated evidence
-
-The schema is `data/curated/viral_gene_evidence.schema.csv`. Add only source-linked,
-reviewed rows to a virus-specific table and pass it with `--gene-evidence`. Supported
-status vocabulary includes `supported`, `suggested`, `unknown`, and `conflicting`.
-Unknown or missing evidence remains missing and never silently receives a positive
-score. See [`docs/OUTPUT_INTERPRETATION.md`](docs/OUTPUT_INTERPRETATION.md).
-
-### Evidence Agent (human review required)
-
-`vst evidence discover --project project.yaml` builds an alias-aware gene catalog,
-queries PubMed, Europe PMC, UniProt and NCBI reference metadata, and writes a linked
-`review_queue.tsv`. Every discovered row is `pending` and has no effect on scoring.
-After source review, `vst evidence apply --project project.yaml` exports only rows
-explicitly marked `approved`; reviewer identity, review date and source URL are required.
-Direct target-virus evidence and ortholog evidence remain separate. See
-[`docs/EVIDENCE_AGENT.md`](docs/EVIDENCE_AGENT.md).
-
-## Repository structure
+## Repository map
 
 ```text
 ViralSafeTarget/
-├── app.py                    # local upload UI
-├── configs/                  # example research configurations
-├── data/demo/                # synthetic smoke-test data
-├── data/knowledge/           # evidence templates, not biological truth tables
-├── docs/                     # concepts, formats, validation and tool map
-├── notebooks/                # guided research notebooks
-├── scripts/                  # demo and real-data workflows
-├── schemas/                  # generic profile and evidence contracts
-├── src/viral_safe_target/    # reusable Python package
-├── tests/                    # unit tests
-└── .github/                  # CI and contribution templates
+├── src/viral_safe_target/   reusable Python package and CLI
+├── configs/                 generic profiles and case-study configuration
+├── schemas/                 machine-readable project/evidence contracts
+├── data/demo/               tiny synthetic test inputs
+├── data/curated/            reviewed, source-linked case-study inputs
+├── notebooks/               guided learning and reproducibility notebooks
+├── scripts/                 case-study launchers and internal helpers
+├── docs/                    organized user, workflow, reference, and research docs
+├── reports/                 selected public snapshots; large generated files ignored
+├── tests/                   unit, integration, notebook, and structure checks
+└── app.py                   optional local upload interface
 ```
 
-## Research contribution target
+Directory-specific indexes:
 
-A useful paper would not claim “we found a cure” from computational scores. A credible contribution would demonstrate that ViralSafeTarget:
+- [`docs/README.md`](docs/README.md)
+- [`notebooks/README.md`](notebooks/README.md)
+- [`scripts/README.md`](scripts/README.md)
+- [`configs/README.md`](configs/README.md)
+- [`schemas/README.md`](schemas/README.md)
 
-1. recovers published viral targets without using them to tune the result;
-2. improves strain coverage or host-specificity over existing baselines;
-3. produces reproducible decisions with explicit rejection reasons;
-4. generalizes to held-out viruses or newly published genomes; and
-5. ideally prioritizes candidates later validated by an independent laboratory.
+## External tools and boundaries
 
-## Existing tools we complement
+ViralSafeTarget orchestrates and records results from mature tools; it does not replace
+them. Supported workflows include MAFFT, Cas-OFFinder, CRISPRitz, and imports from
+CRISPOR, CHOPCHOP, GuideScan2, and CRISPResso2. Missing external results remain pending
+and never become favorable scores. See
+[`docs/reference/EXISTING_TOOLS.md`](docs/reference/EXISTING_TOOLS.md) and
+[`docs/reference/INTEGRATIONS.md`](docs/reference/INTEGRATIONS.md).
 
-ViralSafeTarget is an orchestration and provenance layer, not a replacement for mature tools:
+## Development
 
-- MAFFT — multiple sequence alignment
-- Cas-OFFinder — genome-scale off-target enumeration
-- CRISPRitz — variant-aware off-target analysis
-- GuideScan2 / CRISPOR / CHOPCHOP — guide design and specificity scoring
-- CRISPResso2 — analysis of measured genome-editing sequencing data
+```bash
+python -m pip install -e .[dev]
+pytest -q
+ruff check .
+```
 
-See [`docs/EXISTING_TOOLS.md`](docs/EXISTING_TOOLS.md).
+Contributions should preserve deterministic IDs, explicit missing values, source
+provenance, direct-versus-ortholog evidence separation, and the non-clinical scope.
+Read [`CONTRIBUTING.md`](CONTRIBUTING.md), [`SECURITY.md`](SECURITY.md), and
+[`DISCLAIMER.md`](DISCLAIMER.md).
 
-## Safety and responsible use
+## Citation and license
 
-Read [`DISCLAIMER.md`](DISCLAIMER.md) and [`SECURITY.md`](SECURITY.md). The project is for legitimate computational research and education. Do not interpret rankings as treatment recommendations or use them as a substitute for institutional biosafety, ethics, clinical, or regulatory review.
-
-## Citation
-
-Use [`CITATION.cff`](CITATION.cff). Before public release, replace the placeholder repository owner and author metadata.
-
-## License
-
-MIT.
+Use [`CITATION.cff`](CITATION.cff). Licensed under the [MIT License](LICENSE).

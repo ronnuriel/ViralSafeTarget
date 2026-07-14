@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.8.0 — 2026-07-14
+
+- Added the generic Evidence Agent with alias-aware PubMed, Europe PMC, UniProt, and
+  NCBI source discovery; every proposal requires explicit human review before use.
+- Published compact, non-clinical HSV-2 result snapshots for the exhaustive host
+  screen, balanced showcase, and review-pending evidence run.
+- Added clean-clone notebook fallbacks and renamed the Hebrew notebook files with
+  language-neutral English identifiers.
+- Reorganized documentation by researcher goal, added complete script/notebook/config
+  indexes, and added regression tests for repository links and structure.
+- Made `make clean` preserve checked-in public result snapshots.
+
 ## 0.7.0 — 2026-07-14
 
 - Added the canonical `vst project init/validate/run/resume/status` workflow for a
