@@ -1,0 +1,15 @@
+component,status,detail
+virus required fields,pass,complete
+virus path: reference_fasta,pass,data/raw/hsv2_reference/ncbi_dataset/data/genomic.fna
+virus path: reference_genbank,pass,data/raw/hsv2_reference.gb
+virus path: annotation_gff,pass,data/processed/hsv2_reference.gff3
+virus path: strain_alignment,pass,data/processed/hsv2_aligned_25.fasta
+virus path: evidence_table,pass,data/curated/hsv_gene_function_evidence.tsv
+virus path: domain_table,pass,data/curated/hsv2_target_domains.tsv
+virus path: disorder_table,pass,data/curated/hsv2_target_disorder.tsv
+virus path: external_validation_table,pass,data/curated/hsv2_external_validation.tsv
+virus path: population_validation_candidates,pass,reports/hsv2_population_report_balanced/candidate_population_comparison.csv
+virus path: population_validation_genes,pass,reports/hsv2_population_report_balanced/gene_population_summary.csv
+host reference,pass,data/raw/human_GRCh38
+nuclease profile,pass,SpCas9; PAM=NGG; tested=True
+gene evidence schema,pass,rows=12; missing_columns=[]; uncited_rows=0

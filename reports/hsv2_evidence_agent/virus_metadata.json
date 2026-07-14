@@ -1,0 +1,24 @@
+{
+  "caption": "NC_001798",
+  "reference_accession": "NC_001798.2",
+  "search_provenance": {
+    "content_sha256": "1b930f948212f85a38dc38fbefad653dd1ef0b45ec7543a0b2f236bf10f73e09",
+    "content_type": "application/json; charset=UTF-8",
+    "http_status": 200,
+    "retrieved_utc": "2026-07-14T11:34:16.001957+00:00",
+    "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=nuccore&term=NC_001798.2%5BAccession%5D&retmode=json&retmax=1&tool=ViralSafeTarget"
+  },
+  "sequence_length": 154675,
+  "status": "found",
+  "summary_provenance": {
+    "content_sha256": "0499a00e17d666984d792309110568aae09c1c51e1e2843f3f673164e430e40c",
+    "content_type": "application/json; charset=UTF-8",
+    "http_status": 200,
+    "retrieved_utc": "2026-07-14T11:34:16.964931+00:00",
+    "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=nuccore&id=820945149&retmode=json&tool=ViralSafeTarget"
+  },
+  "tax_id": 10310,
+  "title": "Human herpesvirus 2 strain HG52, complete genome",
+  "uid": "820945149",
+  "updated_date": "2016/05/16"
+}

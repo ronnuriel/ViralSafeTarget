@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://viral-safe-target.example/schemas/nuclease_profile.schema.json",
+  "title": "ViralSafeTarget nuclease profile",
+  "type": "object",
+  "required": ["schema_version", "profile_type", "id", "name", "protospacer_length", "pam_pattern", "pam_orientation", "cut_offset", "mismatch_search_threshold"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "profile_type": {"const": "nuclease"},
+    "id": {"type": "string"},
+    "name": {"type": "string"},
+    "protospacer_length": {"type": "integer", "minimum": 1},
+    "pam_pattern": {"type": "string"},
+    "pam_orientation": {"enum": ["3prime", "5prime"]},
+    "cut_offset": {"type": "integer", "minimum": 0},
+    "mismatch_search_threshold": {"type": "integer", "minimum": 0},
+    "tested": {"type": "boolean"}
+  },
+  "additionalProperties": true
+}

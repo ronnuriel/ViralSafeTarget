@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "viral-safe-target"
-version = "0.2.0"
+version = "0.8.0"
 description = "Reproducible research toolkit for conserved viral genome target prioritization and sequence-level disruption simulation"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -43,16 +43,24 @@ dev = [
   "pytest>=8.0",
   "ruff>=0.6",
 ]
+torch = [
+  "torch>=2.2",
+]
+population = [
+  "mappy>=2.31",
+]
 all = [
   "jupyterlab>=4.0",
   "nbformat>=5.9",
   "streamlit>=1.38",
   "pytest>=8.0",
   "ruff>=0.6",
+  "mappy>=2.31",
 ]
 
 [project.scripts]
 viral-safe-target = "viral_safe_target.cli:main"
+vst = "viral_safe_target.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/ronnuriel/ViralSafeTarget"
@@ -61,6 +69,9 @@ Issues = "https://github.com/ronnuriel/ViralSafeTarget/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+viral_safe_target = ["data/*.yaml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -1,0 +1,11 @@
+schema_version: "1.0"
+profile_type: host
+id: human_grch38
+display_name: Homo sapiens GRCh38.p14
+assembly_name: GRCh38.p14
+assembly_accession: GCF_000001405.40
+fasta_root: data/raw/human_GRCh38
+annotation_gff: null
+notes: >-
+  Genome-scale searches require an independently obtained, checksum-recorded
+  reference. A zero predicted hit is model-bounded and is not proof of safety.

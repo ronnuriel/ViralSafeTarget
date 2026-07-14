@@ -1,0 +1,948 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>ViralSafeTarget HSV-2 showcase</title>
+<style>body{font:16px/1.5 system-ui,sans-serif;max-width:1400px;margin:auto;padding:2rem;color:#15202b}h1,h2{color:#183b56}section{margin:2.4rem 0}img{max-width:100%;height:auto;border:1px solid #d9e2ec}table{border-collapse:collapse;width:100%;font-size:.82rem;display:block;overflow:auto}th,td{padding:.45rem;border:1px solid #d9e2ec;text-align:left;vertical-align:top;white-space:normal;min-width:9rem;max-width:34rem}th{background:#eef4f8}.warning{background:#fff4e5;padding:1rem;border-left:5px solid #d97706}.unknown{color:#8a4b08}</style></head><body>
+<h1>ViralSafeTarget: HSV-2 evidence-aware case study</h1><div class="warning"><strong>Computational research showcase.</strong> No wet-lab protocol, safety conclusion, efficacy claim, or claim of cure is provided.</div><section><h2>Profile validation</h2><table class="dataframe data">
+  <thead>
+    <tr style="text-align: right;">
+      <th>component</th>
+      <th>status</th>
+      <th>detail</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>virus required fields</td>
+      <td>pass</td>
+      <td>complete</td>
+    </tr>
+    <tr>
+      <td>virus path: reference_fasta</td>
+      <td>pass</td>
+      <td>data/raw/hsv2_reference/ncbi_dataset/data/genomic.fna</td>
+    </tr>
+    <tr>
+      <td>virus path: reference_genbank</td>
+      <td>pass</td>
+      <td>data/raw/hsv2_reference.gb</td>
+    </tr>
+    <tr>
+      <td>virus path: annotation_gff</td>
+      <td>pass</td>
+      <td>data/processed/hsv2_reference.gff3</td>
+    </tr>
+    <tr>
+      <td>virus path: strain_alignment</td>
+      <td>pass</td>
+      <td>data/processed/hsv2_aligned_25.fasta</td>
+    </tr>
+    <tr>
+      <td>virus path: evidence_table</td>
+      <td>pass</td>
+      <td>data/curated/hsv_gene_function_evidence.tsv</td>
+    </tr>
+    <tr>
+      <td>virus path: domain_table</td>
+      <td>pass</td>
+      <td>data/curated/hsv2_target_domains.tsv</td>
+    </tr>
+    <tr>
+      <td>virus path: disorder_table</td>
+      <td>pass</td>
+      <td>data/curated/hsv2_target_disorder.tsv</td>
+    </tr>
+    <tr>
+      <td>virus path: external_validation_table</td>
+      <td>pass</td>
+      <td>data/curated/hsv2_external_validation.tsv</td>
+    </tr>
+    <tr>
+      <td>virus path: population_validation_candidates</td>
+      <td>pass</td>
+      <td>reports/hsv2_population_report_balanced/candidate_population_comparison.csv</td>
+    </tr>
+    <tr>
+      <td>virus path: population_validation_genes</td>
+      <td>pass</td>
+      <td>reports/hsv2_population_report_balanced/gene_population_summary.csv</td>
+    </tr>
+    <tr>
+      <td>host reference</td>
+      <td>pass</td>
+      <td>data/raw/human_GRCh38</td>
+    </tr>
+    <tr>
+      <td>nuclease profile</td>
+      <td>pass</td>
+      <td>SpCas9; PAM=NGG; tested=True</td>
+    </tr>
+    <tr>
+      <td>gene evidence schema</td>
+      <td>pass</td>
+      <td>rows=12; missing_columns=[]; uncited_rows=0</td>
+    </tr>
+  </tbody>
+</table></section><section><h2>Potentially novel computational findings</h2><p>These are auditable observations and research hypotheses generated from the completed balanced analysis. They may help prioritize independent work, but they are not claims of literature novelty, biological validation, safety, efficacy, or cure.</p><table class="dataframe data">
+  <thead>
+    <tr style="text-align: right;">
+      <th>finding_id</th>
+      <th>classification</th>
+      <th>observation</th>
+      <th>potential_research_value</th>
+      <th>computational_support</th>
+      <th>key_limitation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>genome_wide_reprioritization</td>
+      <td>computational_observation</td>
+      <td>UL3 ranks first for sequence targetability; UL30 ranks 26.</td>
+      <td>A virus-wide search can surface technically tractable genes that a benchmark-only analysis would miss.</td>
+      <td>Balanced genome-wide gene ranking after the completed GRCh38.p14 screen.</td>
+      <td>The rank measures model-bounded targetability, not gene importance, editing, or viral inhibition; exhaustive sensitivity analysis is pending.</td>
+    </tr>
+    <tr>
+      <td>targetability_evidence_divergence</td>
+      <td>evidence_gap</td>
+      <td>UL3 is technically highly targetable, while direct HSV-2 essentiality remains unknown and the curated HSV-1 ortholog evidence reports nonessentiality in the tested cell-culture context.</td>
+      <td>UL3 is a useful example of why guide quality and target biology must remain separate research questions.</td>
+      <td>Sequence targetability=0.849; HSV-2 essentiality=unknown; HSV-1 status=nonessential_in_tested_cell_culture.</td>
+      <td>HSV-1 context cannot establish HSV-2 function, and nonessentiality in one culture system does not exclude other phenotypes.</td>
+    </tr>
+    <tr>
+      <td>multi_axis_convergence</td>
+      <td>research_hypothesis</td>
+      <td>UL52, UL30, UL18 each combine at least one population-supported exact target with source-linked HSV-1 ortholog evidence and a mapped protein-disruption model.</td>
+      <td>These genes form a defensible evidence-aware shortlist for independent mechanistic assessment without claiming a therapeutic rank.</td>
+      <td>Candidate-level host-screen, held-out locus validation, protein mapping, and separately scoped ortholog evidence.</td>
+      <td>No direct HSV-2 null-essentiality result is present for these genes, and population records are mostly partial.</td>
+    </tr>
+    <tr>
+      <td>candidate_specific_population_variation</td>
+      <td>computational_observation</td>
+      <td>The leading coordinate-level candidate VST-2e9f052157f9bf29 (UL36) retained the exact target in 112/113 observable held-out loci.</td>
+      <td>Population support should be evaluated per coordinate rather than inferred from a gene-level conservation label.</td>
+      <td>Discovery-excluded, locus-aware exact guide/PAM comparison.</td>
+      <td>Exact sequence retention is not evidence of editor activity, host safety, delivery, or efficacy; unresolved partial records remain.</td>
+    </tr>
+    <tr>
+      <td>conserved_disruption_signal</td>
+      <td>research_hypothesis</td>
+      <td>UL18 has the highest predicted protein-disruption score (0.757) among the nine mapped genes and mean amino-acid conservation 1.000 in the discovery alignment.</td>
+      <td>A conserved protein with cuts mapping to disruptive sequence contexts is a useful hypothesis for deeper functional prioritization.</td>
+      <td>Coding-coordinate mapping, InterPro overlap, deterministic -10..+10 bp outcome enumeration, and cross-strain translation.</td>
+      <td>Size-enumerated outcomes are not repair-frequency predictions, and the 14-genome discovery alignment is not population representative.</td>
+    </tr>
+    <tr>
+      <td>quota_stable_gene_set</td>
+      <td>robustness_observation</td>
+      <td>UL10, UL18, UL20, UL3, UL36 remain in the top 10 at K=10, 25, and 50.</td>
+      <td>Quota-stable genes are less likely to be artifacts of one arbitrary per-gene sampling depth.</td>
+      <td>Rank sensitivity analysis across three candidate quotas.</td>
+      <td>Stability is internal to the current scoring model and balanced panel; it is not biological validation.</td>
+    </tr>
+    <tr>
+      <td>direct_hsv2_essentiality_gap</td>
+      <td>evidence_gap</td>
+      <td>Direct, scored HSV-2 essentiality evidence is available for 0/9 deeply analyzed genes.</td>
+      <td>The missing-evidence map identifies where literature curation or new functional datasets would most improve prioritization.</td>
+      <td>Source-linked evidence table with HSV-1 and HSV-2 scopes kept separate.</td>
+      <td>Absence of curated evidence is not evidence of nonessentiality and may reflect incomplete literature coverage.</td>
+    </tr>
+  </tbody>
+</table></section><section><h2>Gene landscape</h2><img src="figures/gene_landscape.png" alt="Scatter plot separating sequence targetability from predicted protein disruption"><table class="dataframe data">
+  <thead>
+    <tr style="text-align: right;">
+      <th>gene_name</th>
+      <th>sequence_targetability_score</th>
+      <th>evidence_based_essentiality_score</th>
+      <th>hsv1_ortholog_essentiality_score</th>
+      <th>predicted_protein_disruption_score</th>
+      <th>evidence_coverage_score</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>UL3</td>
+      <td>0.848911</td>
+      <td>NaN</td>
+      <td>0.00</td>
+      <td>0.500811</td>
+      <td>0.857143</td>
+    </tr>
+    <tr>
+      <td>UL10</td>
+      <td>0.846915</td>
+      <td>NaN</td>
+      <td>0.00</td>
+      <td>0.450000</td>
+      <td>0.857143</td>
+    </tr>
+    <tr>
+      <td>UL18</td>
+      <td>0.845548</td>
+      <td>NaN</td>
+      <td>1.00</td>
+      <td>0.757358</td>
+      <td>0.714286</td>
+    </tr>
+    <tr>
+      <td>UL20</td>
+      <td>0.679129</td>
+      <td>NaN</td>
+      <td>0.75</td>
+      <td>0.567568</td>
+      <td>0.714286</td>
+    </tr>
+    <tr>
+      <td>UL36</td>
+      <td>0.848911</td>
+      <td>NaN</td>
+      <td>1.00</td>
+      <td>0.630429</td>
+      <td>0.857143</td>
+    </tr>
+    <tr>
+      <td>UL52</td>
+      <td>0.679129</td>
+      <td>NaN</td>
+      <td>0.90</td>
+      <td>0.670310</td>
+      <td>0.857143</td>
+    </tr>
+    <tr>
+      <td>UL53</td>
+      <td>0.846915</td>
+      <td>NaN</td>
+      <td>0.00</td>
+      <td>0.702663</td>
+      <td>0.714286</td>
+    </tr>
+    <tr>
+      <td>UL19</td>
+      <td>0.679129</td>
+      <td>NaN</td>
+      <td>1.00</td>
+      <td>0.601310</td>
+      <td>0.714286</td>
+    </tr>
+    <tr>
+      <td>UL30</td>
+      <td>0.847913</td>
+      <td>NaN</td>
+      <td>1.00</td>
+      <td>0.691895</td>
+      <td>0.857143</td>
+    </tr>
+  </tbody>
+</table></section><section><h2>Discovery funnel</h2><img src="figures/pipeline_funnel.png" alt="HSV-2 candidate funnel"></section><section><h2>Balanced deep panel</h2><img src="figures/deep_panel_heatmap.png" alt="Heatmap of the balanced deep panel"><table class="dataframe data">
+  <thead>
+    <tr style="text-align: right;">
+      <th>primary_category</th>
+      <th>gene_name</th>
+      <th>candidate_id</th>
+      <th>post_human_rank</th>
+      <th>pareto_front</th>
+      <th>candidate_predicted_disruption_score</th>
+      <th>evidence_tier</th>
+      <th>deep_panel_selection_reason</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>DNA_replication</td>
+      <td>UL30</td>
+      <td>VST-240e20eb666f9c85</td>
+      <td>12.0</td>
+      <td>3</td>
+      <td>0.804637</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>DNA_replication</td>
+      <td>UL30</td>
+      <td>VST-9d3cc3fbfd32544e</td>
+      <td>66.0</td>
+      <td>4</td>
+      <td>0.740766</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>DNA_replication</td>
+      <td>UL30</td>
+      <td>VST-8ea21263463e6b2a</td>
+      <td>608.0</td>
+      <td>5</td>
+      <td>0.740766</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>DNA_replication</td>
+      <td>UL30</td>
+      <td>VST-37e9317a0f663727</td>
+      <td>163.0</td>
+      <td>7</td>
+      <td>0.687056</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>DNA_replication</td>
+      <td>UL52</td>
+      <td>VST-2197f2e713f87ca5</td>
+      <td>11.0</td>
+      <td>2</td>
+      <td>0.805394</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>DNA_replication</td>
+      <td>UL52</td>
+      <td>VST-05b99c897b142721</td>
+      <td>139.0</td>
+      <td>4</td>
+      <td>0.783724</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>DNA_replication</td>
+      <td>UL52</td>
+      <td>VST-069e6eb21c5e6998</td>
+      <td>628.0</td>
+      <td>4</td>
+      <td>0.784428</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>DNA_replication</td>
+      <td>UL52</td>
+      <td>VST-4a7669fd4a3ceb1e</td>
+      <td>176.0</td>
+      <td>8</td>
+      <td>0.666370</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>capsid_assembly</td>
+      <td>UL18</td>
+      <td>VST-6410c026648feec4</td>
+      <td>299.0</td>
+      <td>5</td>
+      <td>0.780660</td>
+      <td>direct_HSV2_phenotype</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>capsid_assembly</td>
+      <td>UL18</td>
+      <td>VST-e26cf3e6fbaab6ec</td>
+      <td>318.0</td>
+      <td>5</td>
+      <td>0.780660</td>
+      <td>direct_HSV2_phenotype</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>capsid_assembly</td>
+      <td>UL18</td>
+      <td>VST-3efd30b30d4b31a7</td>
+      <td>291.0</td>
+      <td>6</td>
+      <td>0.778774</td>
+      <td>direct_HSV2_phenotype</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>capsid_assembly</td>
+      <td>UL18</td>
+      <td>VST-2a439641e15afe08</td>
+      <td>289.0</td>
+      <td>13</td>
+      <td>0.580660</td>
+      <td>direct_HSV2_phenotype</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>capsid_assembly</td>
+      <td>UL19</td>
+      <td>VST-44f6ab18c9dfe145</td>
+      <td>697.0</td>
+      <td>2</td>
+      <td>0.823690</td>
+      <td>direct_HSV2_phenotype</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>capsid_assembly</td>
+      <td>UL19</td>
+      <td>VST-2ef5158024ade344</td>
+      <td>16.0</td>
+      <td>7</td>
+      <td>0.684825</td>
+      <td>direct_HSV2_phenotype</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>capsid_assembly</td>
+      <td>UL19</td>
+      <td>VST-a8fcd33fea500b1a</td>
+      <td>72.0</td>
+      <td>7</td>
+      <td>0.684825</td>
+      <td>direct_HSV2_phenotype</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>capsid_assembly</td>
+      <td>UL19</td>
+      <td>VST-bd69c6a3c5d9950d</td>
+      <td>824.0</td>
+      <td>8</td>
+      <td>0.684607</td>
+      <td>direct_HSV2_phenotype</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>exploratory_accessory</td>
+      <td>UL3</td>
+      <td>VST-5e4034e33559c37a</td>
+      <td>2.0</td>
+      <td>2</td>
+      <td>0.550000</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>exploratory_accessory</td>
+      <td>UL3</td>
+      <td>VST-0a56b550e18f154e</td>
+      <td>232.0</td>
+      <td>12</td>
+      <td>0.595270</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>exploratory_accessory</td>
+      <td>UL3</td>
+      <td>VST-1ab6bcde24624e54</td>
+      <td>9.0</td>
+      <td>14</td>
+      <td>0.550000</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>exploratory_accessory</td>
+      <td>UL3</td>
+      <td>VST-4a5cae2eb79cff92</td>
+      <td>25.0</td>
+      <td>14</td>
+      <td>0.550000</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>structural_egress</td>
+      <td>UL10</td>
+      <td>VST-89884ea3f3df2232</td>
+      <td>59.0</td>
+      <td>5</td>
+      <td>0.720557</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>structural_egress</td>
+      <td>UL10</td>
+      <td>VST-2b3568cdc187cc3a</td>
+      <td>14.0</td>
+      <td>8</td>
+      <td>0.622912</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>structural_egress</td>
+      <td>UL10</td>
+      <td>VST-1235e74e861a555f</td>
+      <td>148.0</td>
+      <td>9</td>
+      <td>0.622912</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>structural_egress</td>
+      <td>UL10</td>
+      <td>VST-969ffa1f37e1ba1a</td>
+      <td>261.0</td>
+      <td>15</td>
+      <td>0.550000</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>structural_egress</td>
+      <td>UL20</td>
+      <td>VST-6e6d74a0618023e6</td>
+      <td>43.0</td>
+      <td>8</td>
+      <td>0.643919</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>structural_egress</td>
+      <td>UL20</td>
+      <td>VST-12ab0d72e72f1a89</td>
+      <td>647.0</td>
+      <td>10</td>
+      <td>0.643919</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>structural_egress</td>
+      <td>UL20</td>
+      <td>VST-ad4ae1a5ac217515</td>
+      <td>805.0</td>
+      <td>10</td>
+      <td>0.643919</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>structural_egress</td>
+      <td>UL20</td>
+      <td>VST-b3626e384c690189</td>
+      <td>76.0</td>
+      <td>15</td>
+      <td>0.550000</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>structural_egress</td>
+      <td>UL36</td>
+      <td>VST-2e9f052157f9bf29</td>
+      <td>1.0</td>
+      <td>1</td>
+      <td>0.553603</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>structural_egress</td>
+      <td>UL36</td>
+      <td>VST-b882ce9e10c11321</td>
+      <td>79.0</td>
+      <td>1</td>
+      <td>0.833520</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>structural_egress</td>
+      <td>UL36</td>
+      <td>VST-31ef08300a9dfd1a</td>
+      <td>18.0</td>
+      <td>6</td>
+      <td>0.702931</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>structural_egress</td>
+      <td>UL36</td>
+      <td>VST-72e4a9f29fd1a303</td>
+      <td>46.0</td>
+      <td>7</td>
+      <td>0.659593</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>structural_egress</td>
+      <td>UL53</td>
+      <td>VST-3a05e8146637b989</td>
+      <td>21.0</td>
+      <td>13</td>
+      <td>0.551775</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>structural_egress</td>
+      <td>UL53</td>
+      <td>VST-7663146b5e4d027e</td>
+      <td>189.0</td>
+      <td>13</td>
+      <td>0.553107</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>structural_egress</td>
+      <td>UL53</td>
+      <td>VST-808abc5d9a92d25b</td>
+      <td>116.0</td>
+      <td>14</td>
+      <td>0.551775</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+    <tr>
+      <td>structural_egress</td>
+      <td>UL53</td>
+      <td>VST-8a1588fa1aebe584</td>
+      <td>118.0</td>
+      <td>14</td>
+      <td>0.551775</td>
+      <td>HSV1_ortholog_only</td>
+      <td>balanced gene quota; multi-objective front; coordinate-level protein context retained</td>
+    </tr>
+  </tbody>
+</table></section><section><h2>Computational comparison sets</h2><img src="figures/strategy_comparison.png" alt="Comparison of computational strategy sets"><table class="dataframe data">
+  <thead>
+    <tr style="text-align: right;">
+      <th>strategy</th>
+      <th>candidate_count</th>
+      <th>unique_gene_count</th>
+      <th>mechanistic_category_count</th>
+      <th>mean_sequence_targetability</th>
+      <th>mean_predicted_disruption</th>
+      <th>mean_evidence_coverage</th>
+      <th>interpretation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ranking_only</td>
+      <td>3</td>
+      <td>3</td>
+      <td>3</td>
+      <td>0.849637</td>
+      <td>0.559034</td>
+      <td>0.857143</td>
+      <td>Comparison set only; no joint editing, delivery, efficacy, or safety prediction.</td>
+    </tr>
+    <tr>
+      <td>predicted_disruption</td>
+      <td>3</td>
+      <td>3</td>
+      <td>3</td>
+      <td>0.792317</td>
+      <td>0.820868</td>
+      <td>0.809524</td>
+      <td>Comparison set only; no joint editing, delivery, efficacy, or safety prediction.</td>
+    </tr>
+    <tr>
+      <td>evidence_anchored</td>
+      <td>3</td>
+      <td>3</td>
+      <td>2</td>
+      <td>0.849274</td>
+      <td>0.596143</td>
+      <td>0.761905</td>
+      <td>Comparison set only; no joint editing, delivery, efficacy, or safety prediction.</td>
+    </tr>
+    <tr>
+      <td>mechanistically_diverse</td>
+      <td>4</td>
+      <td>4</td>
+      <td>4</td>
+      <td>0.807010</td>
+      <td>0.683172</td>
+      <td>0.821429</td>
+      <td>Comparison set only; no joint editing, delivery, efficacy, or safety prediction.</td>
+    </tr>
+  </tbody>
+</table><table class="dataframe data">
+  <thead>
+    <tr style="text-align: right;">
+      <th>strategy</th>
+      <th>strategy_member_order</th>
+      <th>gene_name</th>
+      <th>candidate_id</th>
+      <th>primary_category</th>
+      <th>evidence_tier</th>
+      <th>strategy_rationale</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ranking_only</td>
+      <td>1</td>
+      <td>UL36</td>
+      <td>VST-2e9f052157f9bf29</td>
+      <td>structural_egress</td>
+      <td>HSV1_ortholog_only</td>
+      <td>Top coordinate-level ranks without biological balancing</td>
+    </tr>
+    <tr>
+      <td>ranking_only</td>
+      <td>2</td>
+      <td>UL3</td>
+      <td>VST-5e4034e33559c37a</td>
+      <td>exploratory_accessory</td>
+      <td>HSV1_ortholog_only</td>
+      <td>Top coordinate-level ranks without biological balancing</td>
+    </tr>
+    <tr>
+      <td>ranking_only</td>
+      <td>3</td>
+      <td>UL52</td>
+      <td>VST-0bf1ec26dd4e63a9</td>
+      <td>DNA_replication</td>
+      <td>HSV1_ortholog_only</td>
+      <td>Top coordinate-level ranks without biological balancing</td>
+    </tr>
+    <tr>
+      <td>predicted_disruption</td>
+      <td>1</td>
+      <td>UL36</td>
+      <td>VST-b882ce9e10c11321</td>
+      <td>structural_egress</td>
+      <td>HSV1_ortholog_only</td>
+      <td>Highest size-model disruption scores across unique genes</td>
+    </tr>
+    <tr>
+      <td>predicted_disruption</td>
+      <td>2</td>
+      <td>UL19</td>
+      <td>VST-44f6ab18c9dfe145</td>
+      <td>capsid_assembly</td>
+      <td>direct_HSV2_phenotype</td>
+      <td>Highest size-model disruption scores across unique genes</td>
+    </tr>
+    <tr>
+      <td>predicted_disruption</td>
+      <td>3</td>
+      <td>UL52</td>
+      <td>VST-2197f2e713f87ca5</td>
+      <td>DNA_replication</td>
+      <td>HSV1_ortholog_only</td>
+      <td>Highest size-model disruption scores across unique genes</td>
+    </tr>
+    <tr>
+      <td>evidence_anchored</td>
+      <td>1</td>
+      <td>UL19</td>
+      <td>VST-2ef5158024ade344</td>
+      <td>capsid_assembly</td>
+      <td>direct_HSV2_phenotype</td>
+      <td>Source-linked evidence prioritized while HSV-1 and HSV-2 scopes remain explicit</td>
+    </tr>
+    <tr>
+      <td>evidence_anchored</td>
+      <td>2</td>
+      <td>UL18</td>
+      <td>VST-7ca830d5c47bd4fc</td>
+      <td>capsid_assembly</td>
+      <td>direct_HSV2_phenotype</td>
+      <td>Source-linked evidence prioritized while HSV-1 and HSV-2 scopes remain explicit</td>
+    </tr>
+    <tr>
+      <td>evidence_anchored</td>
+      <td>3</td>
+      <td>UL36</td>
+      <td>VST-2e9f052157f9bf29</td>
+      <td>structural_egress</td>
+      <td>HSV1_ortholog_only</td>
+      <td>Source-linked evidence prioritized while HSV-1 and HSV-2 scopes remain explicit</td>
+    </tr>
+    <tr>
+      <td>mechanistically_diverse</td>
+      <td>1</td>
+      <td>UL52</td>
+      <td>VST-2197f2e713f87ca5</td>
+      <td>DNA_replication</td>
+      <td>HSV1_ortholog_only</td>
+      <td>One computational representative per available category</td>
+    </tr>
+    <tr>
+      <td>mechanistically_diverse</td>
+      <td>2</td>
+      <td>UL19</td>
+      <td>VST-44f6ab18c9dfe145</td>
+      <td>capsid_assembly</td>
+      <td>direct_HSV2_phenotype</td>
+      <td>One computational representative per available category</td>
+    </tr>
+    <tr>
+      <td>mechanistically_diverse</td>
+      <td>3</td>
+      <td>UL3</td>
+      <td>VST-5e4034e33559c37a</td>
+      <td>exploratory_accessory</td>
+      <td>HSV1_ortholog_only</td>
+      <td>One computational representative per available category</td>
+    </tr>
+    <tr>
+      <td>mechanistically_diverse</td>
+      <td>4</td>
+      <td>UL36</td>
+      <td>VST-2e9f052157f9bf29</td>
+      <td>structural_egress</td>
+      <td>HSV1_ortholog_only</td>
+      <td>One computational representative per available category</td>
+    </tr>
+  </tbody>
+</table></section><section><h2>Held-out population validation</h2><img src="figures/heldout_population_support.png" alt="Held-out exact target support by focus gene"><table class="dataframe data">
+  <thead>
+    <tr style="text-align: right;">
+      <th>gene_name</th>
+      <th>locus_evaluable_unique_candidate_count</th>
+      <th>exact_in_all_observable_records_candidate_count</th>
+      <th>median_observable_locus_exact_target_coverage</th>
+      <th>minimum_observable_locus_exact_target_coverage</th>
+      <th>best_population_supported_candidate_id</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>UL10</td>
+      <td>50</td>
+      <td>32</td>
+      <td>1.00000</td>
+      <td>0.876106</td>
+      <td>VST-89884ea3f3df2232</td>
+    </tr>
+    <tr>
+      <td>UL18</td>
+      <td>50</td>
+      <td>39</td>
+      <td>1.00000</td>
+      <td>0.964602</td>
+      <td>VST-7ca830d5c47bd4fc</td>
+    </tr>
+    <tr>
+      <td>UL19</td>
+      <td>88</td>
+      <td>69</td>
+      <td>1.00000</td>
+      <td>0.964602</td>
+      <td>VST-2ef5158024ade344</td>
+    </tr>
+    <tr>
+      <td>UL20</td>
+      <td>97</td>
+      <td>78</td>
+      <td>1.00000</td>
+      <td>0.964602</td>
+      <td>VST-2ef5158024ade344</td>
+    </tr>
+    <tr>
+      <td>UL3</td>
+      <td>50</td>
+      <td>40</td>
+      <td>1.00000</td>
+      <td>0.991150</td>
+      <td>VST-5e4034e33559c37a</td>
+    </tr>
+    <tr>
+      <td>UL30</td>
+      <td>55</td>
+      <td>39</td>
+      <td>1.00000</td>
+      <td>0.938053</td>
+      <td>VST-240e20eb666f9c85</td>
+    </tr>
+    <tr>
+      <td>UL36</td>
+      <td>50</td>
+      <td>32</td>
+      <td>1.00000</td>
+      <td>0.946903</td>
+      <td>VST-31ef08300a9dfd1a</td>
+    </tr>
+    <tr>
+      <td>UL52</td>
+      <td>80</td>
+      <td>43</td>
+      <td>1.00000</td>
+      <td>0.876106</td>
+      <td>VST-0bf1ec26dd4e63a9</td>
+    </tr>
+    <tr>
+      <td>UL53</td>
+      <td>50</td>
+      <td>21</td>
+      <td>0.99115</td>
+      <td>0.876106</td>
+      <td>VST-3a05e8146637b989</td>
+    </tr>
+  </tbody>
+</table></section><section><h2>External population-genomics validation</h2><p>Independent studies provide context for strain-panel generalizability. They are not used as essentiality evidence or combined into a therapeutic score.</p><table class="dataframe data">
+  <thead>
+    <tr style="text-align: right;">
+      <th>scope</th>
+      <th>gene_name</th>
+      <th>sample_context</th>
+      <th>sample_count</th>
+      <th>finding</th>
+      <th>implication_for_project</th>
+      <th>source_identifier</th>
+      <th>source_url</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>genome_wide</td>
+      <td>NaN</td>
+      <td>Geographically diverse low-passage and laboratory strains</td>
+      <td>34</td>
+      <td>Maximum nucleotide divergence between nearly complete genomes was 0.4%; newly generated sequences were closer to SD90e than HG52.</td>
+      <td>Supports broad conservation while warning that HG52 alone is not a representative population reference.</td>
+      <td>PMID:26018166</td>
+      <td><a href="https://pubmed.ncbi.nlm.nih.gov/26018166/" target="_blank">https://pubmed.ncbi.nlm.nih.gov/26018166/</a></td>
+    </tr>
+    <tr>
+      <td>genome_wide</td>
+      <td>NaN</td>
+      <td>Genital lesion swabs from 38 people across three continents</td>
+      <td>46</td>
+      <td>The study found 1,468 intragenic substitutions; maximum concatenated UL/US nucleotide distance was 0.4%, and even the most variable proteins had nonsynonymous changes in less than 3% of amino acids.</td>
+      <td>Provides an independent clinical-sample benchmark for the convenience strain panel and protein-conservation estimates.</td>
+      <td>PMID:28711653</td>
+      <td><a href="https://pubmed.ncbi.nlm.nih.gov/28711653/" target="_blank">https://pubmed.ncbi.nlm.nih.gov/28711653/</a></td>
+    </tr>
+    <tr>
+      <td>gene_specific</td>
+      <td>UL30</td>
+      <td>Retrospective clinical-isolate screen for a divergent HSV-2 variant</td>
+      <td>505</td>
+      <td>Fourteen HSV-2 variant isolates were identified (2.8%); the variant lineage showed substantially greater UL30 diversity than classical HSV-2.</td>
+      <td>Shows that high average conservation can hide lineage-specific guide escape risk in UL30 and motivates held-out lineage testing.</td>
+      <td>PMID:26401046</td>
+      <td><a href="https://pubmed.ncbi.nlm.nih.gov/26401046/" target="_blank">https://pubmed.ncbi.nlm.nih.gov/26401046/</a></td>
+    </tr>
+    <tr>
+      <td>gene_specific</td>
+      <td>UL53</td>
+      <td>Thirty-six clinical strains plus HG52 typed in a 400-bp UL53 region</td>
+      <td>37</td>
+      <td>The UL53 region contained multiple polymorphic sites and separated the clinical strains into 16 sequence groups.</td>
+      <td>Shows that gene-level local entropy can be higher than the genome-wide average and should be evaluated at each candidate coordinate.</td>
+      <td>PMID:18077652</td>
+      <td><a href="https://pubmed.ncbi.nlm.nih.gov/18077652/" target="_blank">https://pubmed.ncbi.nlm.nih.gov/18077652/</a></td>
+    </tr>
+  </tbody>
+</table></section><section><h2>Interpretation boundaries</h2><p>Targetability is not essentiality. Ortholog evidence is not direct evidence. Predicted disruption is not viral inhibition. A comparison set is not a protocol or treatment recommendation.</p></section>
+<section><h2>Reproducibility</h2><pre>{
+  &quot;host_assembly&quot;: &quot;GRCh38.p14&quot;,
+  &quot;host_id&quot;: &quot;human_grch38&quot;,
+  &quot;mismatch_threshold&quot;: &quot;3&quot;,
+  &quot;nuclease_id&quot;: &quot;spcas9&quot;,
+  &quot;nuclease_name&quot;: &quot;SpCas9&quot;,
+  &quot;reference_accession&quot;: &quot;NC_001798.2&quot;,
+  &quot;virus_id&quot;: &quot;hsv2&quot;,
+  &quot;virus_name&quot;: &quot;Human alphaherpesvirus 2&quot;
+}</pre><p>See FINDINGS.md, METHODS.md, LIMITATIONS.md, and run_manifest.json in this directory.</p></section></body></html>

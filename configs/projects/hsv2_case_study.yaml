@@ -1,0 +1,16 @@
+schema_version: "1.0"
+project_type: viral_safe_target_project
+id: hsv2-case-study
+display_name: HSV-2 reproducible case study
+project_root: ../..
+profiles:
+  virus: configs/viruses/hsv2.yaml
+  host: configs/hosts/human_grch38.yaml
+  nuclease: configs/nucleases/spcas9.yaml
+workflow:
+  ranking_config: configs/hsv2_pilot.yaml
+  output_root: reports/hsv2_project
+  minimum_strain_coverage: 0.95
+  balanced_top_per_gene: 50
+  global_top: 500
+  maximum_host_candidates: null

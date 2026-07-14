@@ -70,9 +70,7 @@ if alignment_file:
                 host_path.write_bytes(host_file.getvalue())
                 host = read_fasta(host_path)
                 candidates = screen_against_small_fasta(candidates, host)
-                candidates = rank_candidates(candidates)
-            else:
-                candidates["decision"] = "full_host_off_target_screen_pending"
+            candidates = rank_candidates(candidates)
 
             st.session_state["candidates"] = candidates
             st.session_state["features"] = features
@@ -96,7 +94,11 @@ if "candidates" in st.session_state:
         "occurred. It is not a prediction that editing or viral inactivation will occur."
     )
     max_candidates = st.number_input(
-        "Top candidates considered for pairing", min_value=10, max_value=500, value=100, step=10
+        "Maximum ranked, gene-stratified candidates considered for pairing",
+        min_value=10,
+        max_value=500,
+        value=100,
+        step=10,
     )
     if st.button("Simulate candidate pairs"):
         pairs = rank_candidate_pairs(

@@ -1,0 +1,13 @@
+gene_name	uniprot_accession	region_type	protein_start_1based	protein_end_1based	method	source_url	retrieved_date
+UL3	G9I224	disordered	26	75	MobiDB-lite	https://mobidb.org/G9I224	2026-07-14
+UL10	P89433	disordered	371	395	MobiDB-lite	https://mobidb.org/P89433	2026-07-14
+UL10	P89433	disordered	432	459	MobiDB-lite	https://mobidb.org/P89433	2026-07-14
+UL36	G9I258	disordered	281	367	MobiDB-lite	https://mobidb.org/G9I258	2026-07-14
+UL36	G9I258	disordered	387	495	MobiDB-lite	https://mobidb.org/G9I258	2026-07-14
+UL36	G9I258	disordered	2494	2539	MobiDB-lite	https://mobidb.org/G9I258	2026-07-14
+UL36	G9I258	disordered	2570	2974	MobiDB-lite	https://mobidb.org/G9I258	2026-07-14
+UL36	G9I258	disordered	3006	3059	MobiDB-lite	https://mobidb.org/G9I258	2026-07-14
+UL52	G9I275	disordered	694	727	MobiDB-lite	https://mobidb.org/G9I275	2026-07-14
+UL30	P89453	disordered	1	44	MobiDB-lite	https://mobidb.org/P89453	2026-07-14
+UL30	P89453	disordered	646	695	MobiDB-lite	https://mobidb.org/P89453	2026-07-14
+UL30	P89453	disordered	1103	1139	MobiDB-lite	https://mobidb.org/P89453	2026-07-14

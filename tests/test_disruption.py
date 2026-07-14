@@ -39,5 +39,8 @@ def test_pair_simulation_is_ordered_and_bounded():
         max_distance_bp=10_000,
     )
     assert not pairs.empty
-    assert (pairs["deletion_length_bp"] > 0).all()
-    assert pairs["exact_pair_coverage"].between(0, 1).all()
+    deletion_pairs = pairs[pairs["hypothesis_type"].str.endswith("deletion_hypothesis")]
+    multi_target = pairs[pairs["hypothesis_type"] == "multi_target_hypothesis"]
+    assert (deletion_pairs["deletion_length_bp"] > 0).all()
+    assert multi_target["deletion_length_bp"].isna().all()
+    assert pairs["joint_strain_coverage"].between(0, 1).all()

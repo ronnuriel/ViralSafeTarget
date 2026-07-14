@@ -28,6 +28,14 @@ data/processed/*
 !data/processed/.gitkeep
 reports/*
 !reports/.gitkeep
+reports/private_*/
+**/cas_offinder_output*.tsv
+**/cas_offinder_output*.txt
+!tests/fixtures/**
+**/*.mafft.tmp
+**/*alignment*.tmp
+data/raw/human*/
+data/raw/GRCh38*/
 *.fasta.fai
 *.2bit
 *.zip

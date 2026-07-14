@@ -14,3 +14,8 @@ A future machine-readable benchmark should distinguish:
 - exact viral strain and reference coordinates.
 
 Do not treat “targeted in a paper” as a positive biological label without reading the experimental result.
+
+Use `known_targets.template.csv` as the empty curation contract and
+`known_targets.schema.csv` as the machine-readable header. Run `vst benchmark` only
+after exact sequences, PAMs, references, systems, and expected statuses have been
+verified. See `docs/BENCHMARKING.md`.

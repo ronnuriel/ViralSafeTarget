@@ -1,0 +1,4 @@
+candidate_id	guide_sequence	mismatches	bulge_type	bulge_size	annotation_type	genome_mode	population	sample
+c1	AAAAAAAAAAAAAAAAAAAA	2	none	0	intron	reference-only		
+c1	AAAAAAAAAAAAAAAAAAAA	3	DNA	1	exon	variant-enriched	EUR	S1
+c2	CCCCCCCCCCCCCCCCCCCC	1	RNA	1	intergenic	reference-only	AFR	S2

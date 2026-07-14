@@ -5,6 +5,7 @@ The script intentionally downloads a modest number of complete/high-length
 records for reproducible prototyping. It is not a population-representative
 sampling strategy.
 """
+
 from __future__ import annotations
 
 import argparse

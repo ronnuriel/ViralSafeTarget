@@ -1,5 +1,32 @@
 # ViralSafeTarget — סביבת מחקר חישובית לווירוסים
 
+נקודת הכניסה הרשמית לשחזור מחקר HSV-2 היא:
+
+```bash
+vst reproduce hsv2          # מציג תוכנית בלי לשנות או להוריד דבר
+vst reproduce hsv2 --execute
+```
+
+למחקר של וירוס חדש משתמשים בפרויקט עצמאי:
+
+```bash
+vst project init --id my-virus --display-name "My virus" \
+  --reference-accession REF_ACCESSION --out-dir projects/my-virus
+vst project validate --project projects/my-virus/project.yaml
+vst project run --project projects/my-virus/project.yaml
+vst project status --project projects/my-virus/project.yaml
+```
+
+ההוראות המלאות נמצאות ב־[`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md)
+וב־[`docs/NEW_VIRUS_WORKFLOW.md`](docs/NEW_VIRUS_WORKFLOW.md). המחברות מסבירות
+את התוצאות; הן אינן נקודת כניסה נסתרת שנדרשת להרצה.
+
+המחברת המלאה כתובה באנגלית:
+
+```bash
+jupyter lab notebooks/08_RUN_FULL_PIPELINE_EN.ipynb
+```
+
 הפרויקט מקבל אוסף גנומים של וירוס, מחפש אתרים שמורים בין הזנים, ממפה אותם למידע ביולוגי, מכין סריקת סיכון מול גנום המארח ומחשב **מה היה משתנה ברצף** אילו חיתוך אידאלי התרחש.
 
 > זהו כלי ליצירת השערות מחקריות. הוא לא מוכיח שהווירוס נשבר, לא מוכיח בטיחות, לא מסלק HSV מהגוף ואינו פרוטוקול מעבדה.
@@ -27,7 +54,9 @@ FASTA מיושר של הרבה זנים
 ```bash
 conda env create -f environment.yml
 conda activate viral-safe-target
-pytest
+python -m pip install -e .
+pytest -q
+ruff check .
 bash scripts/run_demo.sh
 ```
 
@@ -76,6 +105,24 @@ bash scripts/run_real_hsv2.sh --with-human --sample-size 25
 
 הפקודה מורידה גם GRCh38 ומכינה קלט ל-Cas-OFFinder. היא עדיין לא מריצה הוכחת בטיחות.
 
+לפיילוט הממוקד והניתן לשחזור של UL19 ו-UL30:
+
+```bash
+bash scripts/run_hsv2_pilot.sh
+```
+
+הבחירה נעשית אחרי דירוג, סינון כפילויות ו-stratification לפי גן, עם עד 100
+מועמדים לכל גן. פרטי ההרצה הדו-שלבית נמצאים ב-[`docs/HSV2_PILOT.md`](docs/HSV2_PILOT.md).
+
+## פירוש הציונים
+
+- `pre_human_score` משלב רכיבי שימור, ייחודיות בווירוס, GC, מורכבות רצף,
+  annotation וראיות אוצרות אם הן קיימות.
+- ראיה ביולוגית חסרה נשארת `null`; היא אינה הופכת אוטומטית ל-1.
+- `post_human_score` מחושב בנפרד רק אחרי סיכום תוצאות Cas-OFFinder.
+- היעדר פגיעה חזויה עד סף ה-mismatches שהוגדר אינו הוכחת בטיחות.
+- לזוג מטרות בגנים שונים לא מיוחסת מחיקה פיזית אחת; זו השערת multi-target בלבד.
+
 ## מה הסימולציה כן עושה
 
 לכל guide היא מחשבת את נקודת החיתוך הקנונית המשוערת של SpCas9. לזוג guides היא מחשבת:
@@ -97,6 +144,10 @@ bash scripts/run_real_hsv2.sh --with-human --sample-size 25
 - האם הפגיעה משביתה את הווירוס;
 - האם יש נזק לתא או לאדם;
 - האם הווירוס יכול להתעורר שוב.
+
+בנוסף, שימור בין רצפים אינו הוכחת יעילות ניסויית, ושיבוש מתמטי של רצף אינו
+הוכחה להשבתת הווירוס. נגישות בלטנטיות, delivery, יעילות עריכה, תיקון DNA,
+רעילות ו-reactivation נמצאים מחוץ למודל.
 
 כדי לדעת מה התרחש בפועל משתמשים בנתוני sequencing ובכלים כמו CRISPResso2. כדי להוכיח פגיעה בווירוס צריך ניסויי וירולוגיה מתאימים.
 

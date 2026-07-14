@@ -26,8 +26,7 @@ def write_fasta(records: Mapping[str, str], path: str | Path) -> None:
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     seq_records = [
-        SeqRecord(Seq(seq), id=record_id, description="")
-        for record_id, seq in records.items()
+        SeqRecord(Seq(seq), id=record_id, description="") for record_id, seq in records.items()
     ]
     SeqIO.write(seq_records, str(path), "fasta")
 

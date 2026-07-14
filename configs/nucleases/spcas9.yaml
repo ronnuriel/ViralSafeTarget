@@ -1,0 +1,12 @@
+schema_version: "1.0"
+profile_type: nuclease
+id: spcas9
+display_name: Streptococcus pyogenes Cas9
+name: SpCas9
+protospacer_length: 20
+pam_pattern: NGG
+pam_orientation: 3prime
+cut_offset: 3
+mismatch_search_threshold: 3
+tested: true
+notes: Canonical SpCas9 sequence model used by the HSV-2 case study.

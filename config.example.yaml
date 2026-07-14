@@ -1,13 +1,52 @@
-project_name: hsv2_spcas9_pilot
-reference_id: HSV2_reference
-min_site_coverage: 0.95
-max_demo_human_mismatches: 3
+# Copy configs/research_v0.3.yaml for a complete runnable configuration.
+# This abbreviated file documents the required top-level contract.
+schema_version: "0.3"
+project_name: example_project
+random_seed: 20260713
 editor:
   name: SpCas9
-  guide_length: 20
-  pam: NGG
-paths:
-  virus_alignment: data/processed/virus_aligned.fasta
-  reference_gff: data/raw/reference.gff3
-  human_reference_directory: data/raw/GRCh38_fasta
-  output_directory: reports/run_001
+  protospacer_length: 20
+  pam_pattern: NGG
+  pam_orientation: 3prime
+  cut_offset: 3
+  mismatch_search_threshold: 3
+  tested: true
+ranking:
+  weights:
+    conservation: 0.30
+    viral_uniqueness: 0.15
+    gc: 0.15
+    sequence_complexity: 0.15
+    annotation: 0.10
+    gene_evidence: 0.15
+  gc: {preferred_min: 0.40, preferred_max: 0.65, accepted_min: 0.25, accepted_max: 0.80}
+  complexity: {minimum_score: 0.55, maximum_homopolymer: 4}
+  rejection: {minimum_conservation: 0.80, maximum_ambiguous_bases: 0}
+  annotation_scores: {CDS: 1.0, intergenic_or_unannotated: 0.0}
+  evidence_scores: {strong: 1.0, unknown: null}
+pair_selection:
+  genes: []
+  feature_types: []
+  minimum_conservation: 0.80
+  gc_min: 0.25
+  gc_max: 0.80
+  maximum_viral_occurrence_count: 1
+  maximum_candidates_per_gene: 100
+  maximum_total_candidates: 250
+  stratify_by_gene: true
+  minimum_distance_bp: 20
+  maximum_deletion_distance_bp: 10000
+  same_region_distance_bp: 10000
+pair_scoring:
+  weights:
+    joint_strain_coverage: 0.45
+    individual_candidate_scores: 0.25
+    feature_fraction_removed: 0.20
+    distance_component: 0.10
+  distance_saturation_bp: 1000
+off_target:
+  human_assembly: GRCh38.p14
+  human_assembly_accession: GCF_000001405.40
+  maximum_candidates: 200
+  stratify_by_gene: true
+  risk_weights: {exact: 1.0, one_mismatch: 0.75, two_mismatch: 0.45, three_mismatch: 0.20}

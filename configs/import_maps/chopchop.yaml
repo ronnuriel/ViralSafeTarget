@@ -1,0 +1,14 @@
+tool_version: researcher supplied
+editor: SpCas9
+columns:
+  guide_sequence: Guide sequence
+  pam: PAM
+  strand: Strand
+  coordinate: Target location
+metrics:
+  Efficiency:
+    name: predicted_efficiency
+    direction: higher
+  Self-complementarity:
+    name: self_complementarity_burden
+    direction: lower

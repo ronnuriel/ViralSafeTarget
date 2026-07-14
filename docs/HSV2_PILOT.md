@@ -1,57 +1,58 @@
-# HSV-2 pilot
+# HSV-2 UL19/UL30 computational pilot
 
-## Goal
+## Purpose
 
-Produce a reproducible **pre-human-screen** list of conserved SpCas9-compatible sites across a modest public HSV-2 genome set.
+The pilot produces a reproducible, focused set of unique SpCas9 candidates in UL19
+and UL30. These genes are used as named pilot strata, not as fabricated claims of
+essentiality or therapeutic validation. The shipped HSV-2 evidence table is empty
+until repository sources are curated at the exact gene/reference level.
 
-## Recommended run
+## Prepare or resume the real-data stages
 
 ```bash
-conda env create -f environment.yml
-conda activate viral-safe-target
+bash scripts/doctor.sh
 bash scripts/run_real_hsv2.sh --sample-size 25
 ```
 
-A cross-platform Entrez alternative is available when the NCBI Datasets CLI is inconvenient:
+The real-data runner validates cached ZIP files, retries interrupted NCBI downloads,
+and uses checksum stamps for preparation, MAFFT, and candidate generation. It resumes
+valid stages and falls back to `python -m viral_safe_target` when no console script is
+installed.
+
+To obtain GRCh38 locally and build the full pilot input:
 
 ```bash
-export NCBI_EMAIL="you@example.org"
-python scripts/run_hsv2_pilot.py --email "$NCBI_EMAIL" --max-genomes 25
+bash scripts/run_real_hsv2.sh --with-human --sample-size 25
+bash scripts/run_hsv2_pilot.sh
 ```
 
-## Stages
+Alternatively set `HUMAN_FASTA_DIRECTORY` to an existing Cas-OFFinder-compatible
+GRCh38 FASTA directory. The focused script applies the YAML conservation, GC,
+complexity, uniqueness, and CDS filters; deterministically selects at most 100
+candidates per gene; and writes:
 
-1. Download reference accession `NC_001798.2` and public high-length HSV-2 records.
-2. Remove exact duplicates, high-`N` records and unexpected lengths.
-3. Convert reference GenBank features to GFF3.
-4. Align the selected genomes with MAFFT.
-5. Scan both strands for `20 nt + NGG` sites.
-6. Calculate exact 23-nt site coverage across the alignment.
-7. Map candidates to the reference annotation.
-8. Generate an idealized two-cut sequence report.
+```text
+reports/hsv2_pilot/cas_offinder_input.txt
+reports/hsv2_pilot/offtarget_selected_candidates.csv
+reports/hsv2_pilot/pair_hypotheses_same_gene.csv
+reports/hsv2_pilot/pair_hypotheses_multi_target.csv
+```
 
-## Critical alignment caveat
-
-HSV genomes contain repeats and alternative isomer orientations. The pilot is a starting point; researchers must inspect and normalize the alignment before treating conservation estimates as authoritative.
-
-## Human off-target stage
-
-Prepare a fixed human assembly and run a validated genome-scale engine. Keep the genome build, tool version and parameters in the report.
+Run Cas-OFFinder externally:
 
 ```bash
-cas-offinder reports/real_hsv2/cas_offinder_input.txt C \
-  reports/real_hsv2/cas_offinder_output.tsv
-
-python scripts/summarize_cas_offinder.py \
-  --candidates reports/real_hsv2/candidates_pre_human.csv \
-  --cas-output reports/real_hsv2/cas_offinder_output.tsv \
-  --out-dir reports/real_hsv2/final
+cas-offinder reports/hsv2_pilot/cas_offinder_input.txt C \
+  reports/hsv2_pilot/cas_offinder_output.tsv
+bash scripts/run_hsv2_pilot.sh
 ```
 
-## Required next validation
+On the second invocation, the script detects the result and generates
+`candidates_ranked_post_human.csv`, `predicted_human_hits.csv`, and `report.html`.
+No predicted hit within three mismatches in the configured GRCh38 assembly is a
+search result, not proof of safety.
 
-- compare with published anti-HSV targets and tested negatives;
-- add variant-aware human off-target analysis;
-- separate gene annotation from experimentally supported essentiality;
-- assess accessibility in latency-relevant models;
-- obtain experimental collaboration before claiming biological activity.
+## Alignment warning
+
+HSV genomes contain repeats and alternative isomer orientations. Whole-genome MAFFT
+output requires expert inspection and, where appropriate, normalization before
+conservation estimates are treated as research findings.

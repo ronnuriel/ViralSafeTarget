@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Cross-platform HSV-2 pilot runner."""
+
 from __future__ import annotations
 
 import argparse
@@ -33,16 +34,18 @@ def main() -> None:
     if not args.skip_download:
         if not args.email:
             raise SystemExit("Pass --email or set NCBI_EMAIL.")
-        run([
-            sys.executable,
-            str(root / "scripts/download_hsv2_pilot.py"),
-            "--email",
-            args.email,
-            "--max-genomes",
-            str(args.max_genomes),
-            "--out-dir",
-            str(raw),
-        ])
+        run(
+            [
+                sys.executable,
+                str(root / "scripts/download_hsv2_pilot.py"),
+                "--email",
+                args.email,
+                "--max-genomes",
+                str(args.max_genomes),
+                "--out-dir",
+                str(raw),
+            ]
+        )
 
     required = [
         raw / "hsv2_reference.fasta",
@@ -60,22 +63,24 @@ def main() -> None:
     sample_fasta = processed / "hsv2_sample.fasta"
     gff = processed / "hsv2_reference.gff3"
     alignment = processed / "hsv2_aligned.fasta"
-    run([
-        sys.executable,
-        str(root / "scripts/prepare_real_hsv2.py"),
-        "--reference-fasta",
-        str(raw / "hsv2_reference.fasta"),
-        "--reference-genbank",
-        str(raw / "hsv2_reference.gb"),
-        "--all-genomes-fasta",
-        str(raw / "hsv2_complete_genomes.fasta"),
-        "--output-fasta",
-        str(sample_fasta),
-        "--output-gff",
-        str(gff),
-        "--sample-size",
-        str(args.max_genomes),
-    ])
+    run(
+        [
+            sys.executable,
+            str(root / "scripts/prepare_real_hsv2.py"),
+            "--reference-fasta",
+            str(raw / "hsv2_reference.fasta"),
+            "--reference-genbank",
+            str(raw / "hsv2_reference.gb"),
+            "--all-genomes-fasta",
+            str(raw / "hsv2_complete_genomes.fasta"),
+            "--output-fasta",
+            str(sample_fasta),
+            "--output-gff",
+            str(gff),
+            "--sample-size",
+            str(args.max_genomes),
+        ]
+    )
     print("+ mafft --auto --thread -1", sample_fasta, ">", alignment)
     with alignment.open("w", encoding="utf-8") as handle:
         subprocess.run(
@@ -83,20 +88,22 @@ def main() -> None:
             check=True,
             stdout=handle,
         )
-    run([
-        sys.executable,
-        str(root / "scripts/generate_real_candidates.py"),
-        "--alignment",
-        str(alignment),
-        "--gff",
-        str(gff),
-        "--reference-id",
-        "NC_001798.2",
-        "--min-coverage",
-        str(args.min_coverage),
-        "--out-dir",
-        str(reports),
-    ])
+    run(
+        [
+            sys.executable,
+            str(root / "scripts/generate_real_candidates.py"),
+            "--alignment",
+            str(alignment),
+            "--gff",
+            str(gff),
+            "--reference-id",
+            "NC_001798.2",
+            "--min-coverage",
+            str(args.min_coverage),
+            "--out-dir",
+            str(reports),
+        ]
+    )
     print(f"Pilot complete. Open {reports / 'report_pre_human.html'}")
 
 

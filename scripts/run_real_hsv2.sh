@@ -1,160 +1,323 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Reproducible HSV-2 real-data pilot.
-# Downloads public NCBI data, selects a deterministic sample, aligns it, scans
-# conserved SpCas9-compatible sites, and optionally prepares a GRCh38
-# Cas-OFFinder query. It does not validate editing or viral inactivation.
-#
-# Usage:
-#   bash scripts/run_real_hsv2.sh
-#   bash scripts/run_real_hsv2.sh --sample-size 50
-#   bash scripts/run_real_hsv2.sh --with-human --sample-size 25
+# Resumable public-data HSV-2 workflow. Outputs are computational hypotheses,
+# not claims of editing, viral inactivation, safety, or clinical efficacy.
+
+ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+cd "$ROOT"
 
 WITH_HUMAN=0
 SAMPLE_SIZE=25
 MIN_COVERAGE=0.95
+CONFIG=configs/research_v0.3.yaml
+ACCESSIONS_FILE=data/curated/hsv2_discovery_accessions.txt
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --with-human)
-      WITH_HUMAN=1
-      shift
-      ;;
-    --sample-size)
-      SAMPLE_SIZE="$2"
-      shift 2
-      ;;
-    --min-coverage)
-      MIN_COVERAGE="$2"
-      shift 2
-      ;;
+    --with-human) WITH_HUMAN=1; shift ;;
+    --sample-size) SAMPLE_SIZE="$2"; shift 2 ;;
+    --min-coverage) MIN_COVERAGE="$2"; shift 2 ;;
+    --config) CONFIG="$2"; shift 2 ;;
+    --accessions-file) ACCESSIONS_FILE="$2"; shift 2 ;;
     -h|--help)
-      sed -n '1,24p' "$0"
+      sed -n '1,28p' "$0"
       exit 0
       ;;
-    *)
-      echo "Unknown argument: $1" >&2
-      exit 2
-      ;;
+    *) echo "Unknown argument: $1" >&2; exit 2 ;;
   esac
 done
 
-for cmd in datasets python mafft unzip curl; do
-  if ! command -v "$cmd" >/dev/null 2>&1; then
-    echo "Missing required command: $cmd" >&2
-    echo "Create the Conda environment first: conda env create -f environment.yml" >&2
+if command -v vst >/dev/null 2>&1; then
+  VST=(vst)
+elif command -v viral-safe-target >/dev/null 2>&1; then
+  VST=(viral-safe-target)
+else
+  VST=(python -m viral_safe_target)
+fi
+
+export PYTHONPATH="${ROOT}/src${PYTHONPATH:+:${PYTHONPATH}}"
+mkdir -p data/raw data/processed reports/real_hsv2 reports/real_hsv2/.cache
+
+declare -a STAGE_SUMMARY=()
+stage_done() { STAGE_SUMMARY+=("$1: $2"); }
+
+require_command() {
+  if ! command -v "$1" >/dev/null 2>&1; then
+    echo "Missing required command: $1" >&2
     exit 1
   fi
-done
+}
 
-mkdir -p data/raw data/processed reports/real_hsv2
+require_command python
+require_command unzip
+require_command curl
 
-if [[ ! -f data/raw/hsv2_reference.zip ]]; then
-  datasets download virus genome accession NC_001798.2 \
-    --include genome,cds,protein \
-    --filename data/raw/hsv2_reference.zip
-fi
-if [[ ! -d data/raw/hsv2_reference ]]; then
+valid_zip() { [[ -s "$1" ]] && unzip -tq "$1" >/dev/null 2>&1; }
+
+download_dataset() {
+  local output=$1
+  shift
+  require_command datasets
+  if valid_zip "$output"; then
+    stage_done "download $(basename "$output")" "cached and validated"
+    return
+  fi
+  rm -f "$output"
+  local attempt
+  for attempt in 1 2 3; do
+    echo "Dataset download attempt ${attempt}/3: $output"
+    if datasets download "$@" --filename "$output" && valid_zip "$output"; then
+      stage_done "download $(basename "$output")" "completed and validated"
+      return
+    fi
+    rm -f "$output"
+  done
+  echo "Failed to download a valid archive: $output" >&2
+  exit 1
+}
+
+download_dataset data/raw/hsv2_reference.zip virus genome accession NC_001798.2 \
+  --include genome,cds,protein
+if [[ ! -d data/raw/hsv2_reference ]] || \
+   [[ -z "$(find data/raw/hsv2_reference -type f -name 'genomic.fna' -print -quit 2>/dev/null)" ]]; then
+  rm -rf data/raw/hsv2_reference
   unzip -q data/raw/hsv2_reference.zip -d data/raw/hsv2_reference
+  stage_done "extract HSV-2 reference" "completed"
+else
+  stage_done "extract HSV-2 reference" "cached"
 fi
 
-if [[ ! -f data/raw/hsv2_complete.zip ]]; then
-  datasets download virus genome taxon 10310 \
-    --complete-only --include genome \
-    --filename data/raw/hsv2_complete.zip
+if [[ -n "$ACCESSIONS_FILE" ]]; then
+  [[ -s "$ACCESSIONS_FILE" ]] || {
+    echo "Frozen accession file is missing or empty: $ACCESSIONS_FILE" >&2
+    exit 2
+  }
+  COLLECTION_ZIP=data/raw/hsv2_discovery_frozen.zip
+  COLLECTION_DIR=data/raw/hsv2_discovery_frozen
+  COLLECTION_REQUEST_STAMP=data/raw/hsv2_discovery_frozen.request.json
+  if ! python scripts/cache_stage.py check --stamp "$COLLECTION_REQUEST_STAMP" \
+    --input "$ACCESSIONS_FILE" --output "$COLLECTION_ZIP"; then
+    rm -rf "$COLLECTION_ZIP" "$COLLECTION_DIR" "$COLLECTION_REQUEST_STAMP"
+  fi
+  download_dataset "$COLLECTION_ZIP" virus genome accession \
+    --inputfile "$ACCESSIONS_FILE" --include genome
+  python scripts/cache_stage.py stamp --stamp "$COLLECTION_REQUEST_STAMP" \
+    --input "$ACCESSIONS_FILE"
+else
+  COLLECTION_ZIP=data/raw/hsv2_complete.zip
+  COLLECTION_DIR=data/raw/hsv2_complete
+  download_dataset "$COLLECTION_ZIP" virus genome taxon 10310 \
+    --complete-only --include genome
 fi
-if [[ ! -d data/raw/hsv2_complete ]]; then
-  unzip -q data/raw/hsv2_complete.zip -d data/raw/hsv2_complete
+if [[ ! -d "$COLLECTION_DIR" ]] || \
+   [[ -z "$(find "$COLLECTION_DIR" -type f -name 'genomic.fna' -print -quit 2>/dev/null)" ]]; then
+  rm -rf "$COLLECTION_DIR"
+  unzip -q "$COLLECTION_ZIP" -d "$COLLECTION_DIR"
+  stage_done "extract HSV-2 collection" "completed"
+else
+  stage_done "extract HSV-2 collection" "cached"
 fi
 
 if [[ ! -s data/raw/hsv2_reference.gb ]]; then
-  curl -fL --retry 3 \
+  curl -fL --retry 5 --retry-all-errors \
     "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=NC_001798.2&rettype=gbwithparts&retmode=text" \
     -o data/raw/hsv2_reference.gb
+  stage_done "reference GenBank" "downloaded"
+else
+  stage_done "reference GenBank" "cached"
 fi
 
-REFERENCE_FASTA=$(find data/raw/hsv2_reference -type f -name 'genomic.fna' | head -n 1)
-ALL_FASTA=$(find data/raw/hsv2_complete -type f -name 'genomic.fna' | head -n 1)
-if [[ -z "$REFERENCE_FASTA" || -z "$ALL_FASTA" ]]; then
-  echo "Could not locate genomic.fna inside the extracted NCBI packages." >&2
-  exit 1
+REFERENCE_FASTA=$(find data/raw/hsv2_reference -type f -name 'genomic.fna' -print -quit)
+ALL_FASTA=$(find "$COLLECTION_DIR" -type f -name 'genomic.fna' -print -quit)
+SAMPLE=data/processed/hsv2_sample_${SAMPLE_SIZE}.fasta
+ALIGNMENT=data/processed/hsv2_aligned_${SAMPLE_SIZE}.fasta
+GFF=data/processed/hsv2_reference.gff3
+QC_REPORT=reports/real_hsv2/accession_qc.csv
+ACCESSIONS=reports/real_hsv2/accessions_used.txt
+ACCESSION_CACHE_INPUT=()
+if [[ -n "$ACCESSIONS_FILE" ]]; then
+  ACCESSION_CACHE_INPUT=(--input "$ACCESSIONS_FILE")
 fi
 
-python scripts/prepare_real_hsv2.py \
-  --reference-fasta "$REFERENCE_FASTA" \
-  --reference-genbank data/raw/hsv2_reference.gb \
-  --all-genomes-fasta "$ALL_FASTA" \
-  --output-fasta data/processed/hsv2_sample_${SAMPLE_SIZE}.fasta \
-  --output-gff data/processed/hsv2_reference.gff3 \
-  --sample-size "$SAMPLE_SIZE"
+PREPARE_STAMP=reports/real_hsv2/.cache/prepare_${SAMPLE_SIZE}.json
+if python scripts/cache_stage.py check --stamp "$PREPARE_STAMP" \
+  --input "$REFERENCE_FASTA" --input data/raw/hsv2_reference.gb --input "$ALL_FASTA" \
+  "${ACCESSION_CACHE_INPUT[@]}" \
+  --output "$SAMPLE" --output "$GFF" --output "$QC_REPORT" --output "$ACCESSIONS" \
+  --parameter "sample_size=${SAMPLE_SIZE}"; then
+  stage_done "prepare and QC" "cached"
+else
+  python scripts/prepare_real_hsv2.py \
+    --reference-fasta "$REFERENCE_FASTA" \
+    --reference-genbank data/raw/hsv2_reference.gb \
+    --all-genomes-fasta "$ALL_FASTA" \
+    --output-fasta "$SAMPLE" \
+    --output-gff "$GFF" \
+    --sample-size "$SAMPLE_SIZE" \
+    --qc-report "$QC_REPORT" \
+    --accessions-used "$ACCESSIONS"
+  python scripts/cache_stage.py stamp --stamp "$PREPARE_STAMP" \
+    --input "$REFERENCE_FASTA" --input data/raw/hsv2_reference.gb --input "$ALL_FASTA" \
+    "${ACCESSION_CACHE_INPUT[@]}" \
+    --parameter "sample_size=${SAMPLE_SIZE}"
+  stage_done "prepare and QC" "completed"
+fi
 
-mafft --auto --thread -1 data/processed/hsv2_sample_${SAMPLE_SIZE}.fasta \
-  > data/processed/hsv2_aligned_${SAMPLE_SIZE}.fasta
+require_command mafft
+MAFFT_STAMP=reports/real_hsv2/.cache/mafft_${SAMPLE_SIZE}.json
+if python scripts/cache_stage.py check --stamp "$MAFFT_STAMP" --input "$SAMPLE" \
+  --output "$ALIGNMENT" --parameter "mode=auto" --parameter "threads=-1"; then
+  stage_done "MAFFT" "cached"
+else
+  TEMP_ALIGNMENT="${ALIGNMENT}.tmp"
+  mafft --auto --thread -1 "$SAMPLE" > "$TEMP_ALIGNMENT"
+  [[ -s "$TEMP_ALIGNMENT" ]] || { echo "MAFFT produced an empty alignment" >&2; exit 1; }
+  mv "$TEMP_ALIGNMENT" "$ALIGNMENT"
+  python scripts/cache_stage.py stamp --stamp "$MAFFT_STAMP" --input "$SAMPLE" \
+    --parameter "mode=auto" --parameter "threads=-1"
+  stage_done "MAFFT" "completed"
+fi
 
-HUMAN_ARGS=()
+CANDIDATE_STAMP=reports/real_hsv2/.cache/candidates_${SAMPLE_SIZE}.json
+RANKED=reports/real_hsv2/candidates_ranked_pre_human.csv
+REJECTED=reports/real_hsv2/candidates_rejected_pre_human.csv
+if python scripts/cache_stage.py check --stamp "$CANDIDATE_STAMP" \
+  --input "$ALIGNMENT" --input "$GFF" --input "$CONFIG" \
+  --output "$RANKED" --output "$REJECTED" \
+  --parameter "minimum_coverage=${MIN_COVERAGE}"; then
+  stage_done "candidate scan and rank" "cached"
+else
+  "${VST[@]}" scan \
+    --virus-alignment "$ALIGNMENT" \
+    --reference-id NC_001798.2 \
+    --gff "$GFF" \
+    --gene-evidence data/curated/hsv2_gene_evidence.csv \
+    --out-dir reports/real_hsv2 \
+    --min-coverage "$MIN_COVERAGE" \
+    --config "$CONFIG"
+  python scripts/cache_stage.py stamp --stamp "$CANDIDATE_STAMP" \
+    --input "$ALIGNMENT" --input "$GFF" --input "$CONFIG" \
+    --parameter "minimum_coverage=${MIN_COVERAGE}"
+  stage_done "candidate scan and rank" "completed"
+fi
+
+PAIR_STAMP=reports/real_hsv2/.cache/pairs_${SAMPLE_SIZE}.json
+PAIR_SAME=reports/real_hsv2/pair_hypotheses_same_gene.csv
+PAIR_MULTI=reports/real_hsv2/pair_hypotheses_multi_target.csv
+if python scripts/cache_stage.py check --stamp "$PAIR_STAMP" \
+  --input "$RANKED" --input "$GFF" --input "$ALIGNMENT" --input "$CONFIG" \
+  --output "$PAIR_SAME" --output "$PAIR_MULTI" \
+  --parameter "reference=NC_001798.2"; then
+  stage_done "pair hypotheses" "cached"
+else
+  "${VST[@]}" simulate-pairs \
+    --candidates "$RANKED" \
+    --gff "$GFF" \
+    --virus-alignment "$ALIGNMENT" \
+    --reference-id NC_001798.2 \
+    --out-dir reports/real_hsv2 \
+    --config "$CONFIG"
+  python scripts/cache_stage.py stamp --stamp "$PAIR_STAMP" \
+    --input "$RANKED" --input "$GFF" --input "$ALIGNMENT" --input "$CONFIG" \
+    --parameter "reference=NC_001798.2"
+  stage_done "pair hypotheses" "completed"
+fi
+
+"${VST[@]}" report \
+  --candidates "$RANKED" \
+  --rejected "$REJECTED" \
+  --pairs "$PAIR_SAME" \
+  --multi-pairs "$PAIR_MULTI" \
+  --out-dir reports/real_hsv2 \
+  --title "HSV-2 real-data computational target-discovery report"
+stage_done "research report" "completed"
+
 if [[ "$WITH_HUMAN" -eq 1 ]]; then
-  if [[ ! -f data/raw/human_GRCh38.zip ]]; then
-    datasets download genome accession GCF_000001405.40 \
-      --include genome,gff3 \
-      --filename data/raw/human_GRCh38.zip
-  fi
-  if [[ ! -d data/raw/human_GRCh38 ]]; then
+  download_dataset data/raw/human_GRCh38.zip genome accession GCF_000001405.40 \
+    --include genome,gff3
+  if [[ ! -d data/raw/human_GRCh38 ]] || \
+     [[ -z "$(find data/raw/human_GRCh38 -type f -name '*_genomic.fna' -print -quit 2>/dev/null)" ]]; then
+    rm -rf data/raw/human_GRCh38
     unzip -q data/raw/human_GRCh38.zip -d data/raw/human_GRCh38
   fi
-  HUMAN_FASTA=$(find data/raw/human_GRCh38 -type f -name '*_genomic.fna' | head -n 1)
-  if [[ -z "$HUMAN_FASTA" ]]; then
-    echo "Could not locate the GRCh38 genomic FASTA." >&2
-    exit 1
-  fi
-  HUMAN_DIR=$(dirname "$HUMAN_FASTA")
-  HUMAN_ARGS=(--human-fasta-directory "$HUMAN_DIR")
+  HUMAN_FASTA=$(find data/raw/human_GRCh38 -type f -name '*_genomic.fna' -print -quit)
+  "${VST[@]}" build-offtarget-input \
+    --candidates "$RANKED" \
+    --human-fasta-directory "$(dirname "$HUMAN_FASTA")" \
+    --output reports/real_hsv2/cas_offinder_input.txt \
+    --manifest reports/real_hsv2/offtarget_selected_candidates.csv \
+    --config "$CONFIG"
+  stage_done "human off-target input" "completed"
 fi
 
-python scripts/generate_real_candidates.py \
-  --alignment data/processed/hsv2_aligned_${SAMPLE_SIZE}.fasta \
-  --gff data/processed/hsv2_reference.gff3 \
-  --reference-id NC_001798.2 \
-  --min-coverage "$MIN_COVERAGE" \
-  --out-dir reports/real_hsv2 \
-  "${HUMAN_ARGS[@]}"
-
-viral-safe-target simulate-pairs \
-  --candidates reports/real_hsv2/candidates_pre_human.csv \
-  --gff data/processed/hsv2_reference.gff3 \
-  --virus-alignment data/processed/hsv2_aligned_${SAMPLE_SIZE}.fasta \
-  --reference-id NC_001798.2 \
-  --output reports/real_hsv2/simulated_pairs_pre_human.csv \
-  --max-candidates 150
-
-python - <<PY
+python - "$CONFIG" "$SAMPLE_SIZE" "$MIN_COVERAGE" "$WITH_HUMAN" "$ACCESSIONS_FILE" <<'PY'
+import json
+import sys
 from pathlib import Path
-from viral_safe_target import write_run_manifest
+
+import pandas as pd
+
+from viral_safe_target import load_config, write_run_manifest
+
+config_path, sample_size, minimum_coverage, with_human, accessions_file = sys.argv[1:]
+config = load_config(config_path)
+qc = pd.read_csv("reports/real_hsv2/accession_qc.csv")
+accepted = qc.loc[qc["decision"] == "accepted", "accession"].astype(str).tolist()
+rejected = qc.loc[qc["decision"] == "rejected", ["accession", "rejection_reason"]].to_dict("records")
+outputs = [
+    path for path in Path("reports/real_hsv2").glob("*")
+    if path.is_file() and path.name != "run_manifest.json"
+]
 write_run_manifest(
     "reports/real_hsv2/run_manifest.json",
     [
-        "data/processed/hsv2_sample_${SAMPLE_SIZE}.fasta",
-        "data/processed/hsv2_aligned_${SAMPLE_SIZE}.fasta",
+        f"data/processed/hsv2_sample_{sample_size}.fasta",
+        f"data/processed/hsv2_aligned_{sample_size}.fasta",
         "data/processed/hsv2_reference.gff3",
+        *([accessions_file] if accessions_file else []),
     ],
     {
         "virus_taxon_id": 10310,
         "reference_accession": "NC_001798.2",
-        "sample_size": int("${SAMPLE_SIZE}"),
-        "minimum_exact_site_coverage": float("${MIN_COVERAGE}"),
-        "human_screen_prepared": bool(int("${WITH_HUMAN}")),
+        "frozen_accessions_file": accessions_file or None,
+        "sample_size": int(sample_size),
+        "minimum_exact_site_coverage": float(minimum_coverage),
+        "human_screen_prepared": bool(int(with_human)),
     },
+    config_path=config_path,
+    editor_profile=config["editor"],
+    accepted_accessions=accepted,
+    rejected_accessions=rejected,
+    human_assembly_identifier=(
+        config["off_target"]["human_assembly_accession"] if int(with_human) else None
+    ),
+    command_line=[
+        "bash",
+        "scripts/run_real_hsv2.sh",
+        "--sample-size",
+        sample_size,
+        "--min-coverage",
+        minimum_coverage,
+        "--config",
+        config_path,
+        *(["--accessions-file", accessions_file] if accessions_file else []),
+        *(["--with-human"] if int(with_human) else []),
+    ],
+    random_seed=int(config["random_seed"]),
+    output_paths=outputs,
 )
 PY
+stage_done "run manifest" "completed"
 
 echo
-echo "Done. Main outputs:"
-echo "  reports/real_hsv2/report_pre_human.html"
-echo "  reports/real_hsv2/candidates_pre_human.csv"
-echo "  reports/real_hsv2/simulated_pairs_pre_human.csv"
-echo "  reports/real_hsv2/run_manifest.json"
-if [[ "$WITH_HUMAN" -eq 1 ]]; then
-  echo
-echo "Next, after installing Cas-OFFinder:"
-  echo "  cas-offinder reports/real_hsv2/cas_offinder_input.txt C reports/real_hsv2/cas_offinder_output.tsv"
-fi
+echo "Stage summary"
+for stage in "${STAGE_SUMMARY[@]}"; do echo "- $stage"; done
+echo
+echo "Main outputs: reports/real_hsv2/"
+echo "- candidates_ranked_pre_human.csv"
+echo "- candidates_rejected_pre_human.csv"
+echo "- pair_hypotheses_same_gene.csv"
+echo "- pair_hypotheses_multi_target.csv"
+echo "- run_manifest.json"
+echo "- report.html"

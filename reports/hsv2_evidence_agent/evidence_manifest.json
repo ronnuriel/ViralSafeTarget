@@ -1,0 +1,23 @@
+{
+  "approved_count": 0,
+  "automatic_score_integration": false,
+  "created_utc": "2026-07-14T11:39:14.432398+00:00",
+  "gene_count": 9,
+  "interpretation": "All rows are review-pending proposals. No essentiality, function, or score is assigned without explicit researcher approval.",
+  "proposal_count": 76,
+  "query_count": 72,
+  "schema_version": "1.0",
+  "source_errors": [
+    {
+      "error": "Offline cache miss for https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=%28%22HSV-2%22+OR+%22Herpes+simplex+virus+2%22+OR+%22Herpes+simplex+virus+type+2%22+OR+%22Human+alphaherpesvirus+2%22+OR+%22Human+herpesvirus+2%22%29+AND+%28%22HHV2p66%22+OR+%22UL10%22+OR+%22envelope+glycoprotein+M%22%29+AND+%28%22interferon%22+OR+%22immune+evasion%22+OR+%22cGAS%22+OR+%22STING%22%29&format=json&resultType=core&pageSize=2",
+      "source": "europepmc"
+    }
+  ],
+  "source_record_count": 86,
+  "sources_requested": [
+    "europepmc",
+    "ncbi_refseq",
+    "pubmed",
+    "uniprot"
+  ]
+}
