@@ -14,3 +14,66 @@ workflow:
   balanced_top_per_gene: 50
   global_top: 500
   maximum_host_candidates: null
+analysis:
+  enabled: true
+  output_dir: ../hsv2_virtual_knockout_escape
+  candidate_table: reports/hsv2_genome_wide_exhaustive/deep_screening_panel.csv
+  heldout_population_table: reports/hsv2_population_validation_heldout/candidate_population_validation.csv
+  gene_ranking_table: reports/hsv2_genome_wide_exhaustive/gene_rankings.csv
+  indel_min_bp: -10
+  indel_max_bp: 10
+  default_panel_size: 3
+  focus_genes: [UL3, UL10, UL52, UL30, UL18, UL36]
+  strategies:
+    - id: top-ranking-only
+      size: 3
+      unique_genes: false
+      rationale: Highest individual post-host ranks without biological preselection.
+    - id: essential-replication-focused
+      size: 3
+      genes: [UL52, UL30, UL19]
+      unique_genes: true
+      rationale: Configured replication and classical structural benchmark genes; evidence remains separate.
+    - id: targetability-focused
+      size: 3
+      genes: [UL3, UL10, UL52]
+      unique_genes: true
+      rationale: One leading guide from each of the top three exhaustive gene-targetability ranks.
+    - id: mechanism-diverse
+      size: 3
+      genes: [UL30, UL18, UL36]
+      unique_genes: true
+      unique_categories: true
+      rationale: Configured DNA-replication, capsid-assembly, and structural-egress categories.
+  source_assertions:
+    - label: initial candidates
+      path: reports/hsv2_genome_wide_exhaustive/provenance.json
+      json_key: initial_candidate_count
+      expected: 28578
+    - label: eligible candidates
+      path: reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+      metric: rows
+      expected: 23108
+    - label: unique guide sequences
+      path: reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+      metric: unique
+      column: guide_sequence
+      expected: 21654
+    - label: predicted human matches
+      path: reports/hsv2_genome_wide_exhaustive/genome_wide_human_hits.csv
+      metric: rows
+      expected: 440341
+    - label: candidates with zero predicted human hits
+      path: reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv
+      metric: zero_value_rows
+      column: human_total_predicted_hits
+      expected: 2668
+    - label: completed Cas-OFFinder batches
+      path: reports/hsv2_genome_wide_exhaustive/provenance.json
+      json_key: completed_batches
+      expected: 109
+  case_study_notes:
+    - UL3 leads gene-level targetability in the exhaustive source table, while direct HSV-2 biological evidence remains incomplete.
+    - UL30 and UL52 retain stronger replication-focused biological rationales, which are reported separately from sequence targetability.
+    - UL18 provides a configured capsid-assembly comparison with strong predicted disruption context in the prior case-study analysis.
+    - UL36 contains the leading individual guide, while the exhaustive gene-level table ranks UL36 lower as a portfolio.

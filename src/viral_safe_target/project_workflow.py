@@ -40,7 +40,16 @@ from .scoring import rank_post_human_candidates, rank_pre_human_candidates
 
 PROJECT_SCHEMA_VERSION = "1.0"
 PROJECT_TYPE = "viral_safe_target_project"
-STAGE_ORDER = ("validate", "discover", "host_screen", "pairs", "report")
+STAGE_ORDER = (
+    "validate",
+    "discover",
+    "host_screen",
+    "pairs",
+    "virtual_knockout",
+    "escape",
+    "multiplex",
+    "report",
+)
 
 SOURCE_LINKED_EVIDENCE_COLUMNS = [
     "proposal_id",
@@ -174,6 +183,23 @@ def initialize_project(
             "global_top": 500,
             "maximum_host_candidates": None,
         },
+        "analysis": {
+            "enabled": True,
+            "output_dir": "virtual_knockout_escape",
+            "candidate_table": None,
+            "heldout_population_table": None,
+            "indel_min_bp": -10,
+            "indel_max_bp": 10,
+            "default_panel_size": 3,
+            "strategies": [
+                {
+                    "id": "top-ranking-only",
+                    "size": 3,
+                    "unique_genes": False,
+                    "rationale": "Highest configured candidate rank only.",
+                }
+            ],
+        },
     }
     virus = {
         "schema_version": "1.0",
@@ -192,6 +218,8 @@ def initialize_project(
         "evidence_table": "evidence/gene_evidence.tsv",
         "domain_table": None,
         "disorder_table": None,
+        "conserved_region_table": None,
+        "gene_category_table": None,
         "external_validation_table": None,
         "circular_genome": False,
         "notes": "Replace CHANGE_ME values and add reference-matched research inputs.",
@@ -698,6 +726,107 @@ def run_project(
     if stop_after == "pairs":
         return project_status(context)
 
+    analysis_settings = context.values.get("analysis") or {}
+    analysis_enabled = bool(analysis_settings.get("enabled", True))
+    if analysis_enabled:
+        from .virtual_analysis_workflow import (
+            OUTPUT_NAMES,
+            analysis_output_dir,
+            run_escape_analysis,
+            run_full_virtual_analysis,
+            run_virtual_knockout_analysis,
+        )
+
+        analysis_dir = analysis_output_dir(context)
+        configured_candidate = analysis_settings.get("candidate_table")
+        analysis_candidate = (
+            context.resolve(str(configured_candidate))
+            if configured_candidate
+            else post_host
+            if post_host.is_file()
+            else discovery_outputs[3]
+        )
+        domain_path = context.profiles.resolve(context.profiles.virus.get("domain_table"))
+        disorder_path = context.profiles.resolve(context.profiles.virus.get("disorder_table"))
+        conserved_path = context.profiles.resolve(
+            context.profiles.virus.get("conserved_region_table")
+        )
+        virtual_inputs = [analysis_candidate, gff_path, *context.profiles.source_paths]
+        virtual_inputs.extend(
+            path for path in (domain_path, disorder_path, conserved_path) if path and path.is_file()
+        )
+        virtual_outputs = [
+            analysis_dir / OUTPUT_NAMES[key]
+            for key in ("mapping", "hypotheses", "guide_virtual", "gene_virtual")
+        ]
+        virtual_signature = _signature(
+            virtual_inputs,
+            {
+                "indel_min_bp": analysis_settings.get("indel_min_bp", -10),
+                "indel_max_bp": analysis_settings.get("indel_max_bp", 10),
+            },
+        )
+        _run_cached_stage(
+            state,
+            "virtual_knockout",
+            virtual_signature,
+            virtual_outputs,
+            lambda: run_virtual_knockout_analysis(context),
+        )
+        if stop_after == "virtual_knockout":
+            return project_status(context)
+
+        heldout_path = (
+            context.resolve(str(analysis_settings["heldout_population_table"]))
+            if analysis_settings.get("heldout_population_table")
+            else None
+        )
+        escape_inputs = [analysis_candidate, context.profiles.source_paths[2]]
+        if heldout_path and heldout_path.is_file():
+            escape_inputs.append(heldout_path)
+        escape_outputs = [
+            analysis_dir / OUTPUT_NAMES["guide_escape"],
+            analysis_dir / OUTPUT_NAMES["counterfactuals"],
+        ]
+        escape_signature = _signature(escape_inputs, {})
+        _run_cached_stage(
+            state,
+            "escape",
+            escape_signature,
+            escape_outputs,
+            lambda: run_escape_analysis(context),
+        )
+        if stop_after == "escape":
+            return project_status(context)
+
+        category_path = context.profiles.resolve(context.profiles.virus.get("gene_category_table"))
+        multiplex_inputs = [analysis_candidate, *virtual_outputs[2:], *escape_outputs]
+        if category_path and category_path.is_file():
+            multiplex_inputs.append(category_path)
+        multiplex_outputs = [
+            analysis_dir / OUTPUT_NAMES["members"],
+            analysis_dir / OUTPUT_NAMES["multiplex"],
+            analysis_dir / OUTPUT_NAMES["comparison"],
+            analysis_dir / OUTPUT_NAMES["report"],
+            analysis_dir / OUTPUT_NAMES["findings"],
+            analysis_dir / OUTPUT_NAMES["manifest"],
+        ]
+        multiplex_signature = _signature(
+            multiplex_inputs, {"strategies": analysis_settings.get("strategies", [])}
+        )
+        _run_cached_stage(
+            state,
+            "multiplex",
+            multiplex_signature,
+            multiplex_outputs,
+            lambda: run_full_virtual_analysis(context),
+        )
+        if stop_after == "multiplex":
+            return project_status(context)
+    else:
+        for stage in ("virtual_knockout", "escape", "multiplex"):
+            state.set(stage, "disabled", message="Disabled by project analysis configuration")
+
     report_dir = context.output_root / "report"
     report_dir.mkdir(parents=True, exist_ok=True)
     report_outputs = [
@@ -706,6 +835,7 @@ def run_project(
         report_dir / "limitations.md",
         report_dir / "approved_gene_evidence.tsv",
         report_dir / "evidence_review_report.html",
+        report_dir / "virtual_knockout_escape_report.html",
         context.output_root / "run_manifest.json",
     ]
     evidence_review_source = context.output_root / "evidence" / "evidence_review_report.html"
@@ -719,6 +849,9 @@ def run_project(
         report_inputs.append(evidence_path)
     if evidence_review_source.is_file():
         report_inputs.append(evidence_review_source)
+    analysis_report_source = analysis_dir / OUTPUT_NAMES["report"] if analysis_enabled else None
+    if analysis_report_source and analysis_report_source.is_file():
+        report_inputs.append(analysis_report_source)
     report_signature = _signature(report_inputs, {"project_id": context.values["id"]})
 
     def report() -> None:
@@ -742,6 +875,15 @@ def run_project(
                 "apply approved rows. No biological claim was inferred from missing evidence.</p>",
                 encoding="utf-8",
             )
+        if analysis_report_source and analysis_report_source.is_file():
+            shutil.copyfile(analysis_report_source, report_outputs[5])
+        else:
+            report_outputs[5].write_text(
+                "<!doctype html><html lang='en'><meta charset='utf-8'>"
+                "<title>Virtual analysis unavailable</title><h1>Virtual analysis unavailable</h1>"
+                "<p>The virtual-knockout and escape stage was disabled or not completed.</p>",
+                encoding="utf-8",
+            )
         write_methods_and_limitations(report_dir)
         write_html_report(
             candidates,
@@ -751,7 +893,7 @@ def run_project(
             pairs=pd.concat([same, multi], ignore_index=True),
             predicted_hits=hits,
             approved_evidence=approved_evidence,
-            output_links=[path.name for path in report_outputs[:5]],
+            output_links=[path.name for path in report_outputs[:6]],
         )
         manifest = {
             "schema_version": "1.0",
@@ -776,7 +918,7 @@ def run_project(
                 "editing, safety, efficacy, delivery, or therapeutic claim."
             ),
         }
-        report_outputs[5].write_text(
+        report_outputs[6].write_text(
             json.dumps(manifest, indent=2, sort_keys=True), encoding="utf-8"
         )
 

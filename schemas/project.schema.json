@@ -39,6 +39,40 @@
         "maximum_host_candidates": {"type": ["integer", "null"], "minimum": 1}
       },
       "additionalProperties": false
+    },
+    "analysis": {
+      "type": "object",
+      "properties": {
+        "enabled": {"type": "boolean", "default": true},
+        "output_dir": {"type": "string", "minLength": 1},
+        "candidate_table": {"type": ["string", "null"]},
+        "heldout_population_table": {"type": ["string", "null"]},
+        "gene_ranking_table": {"type": ["string", "null"]},
+        "indel_min_bp": {"type": "integer", "minimum": -100, "maximum": 0},
+        "indel_max_bp": {"type": "integer", "minimum": 0, "maximum": 100},
+        "default_panel_size": {"type": "integer", "minimum": 1},
+        "focus_genes": {"type": "array", "items": {"type": "string"}},
+        "case_study_notes": {"type": "array", "items": {"type": "string"}},
+        "source_assertions": {"type": "array", "items": {"type": "object"}},
+        "strategies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "size"],
+            "properties": {
+              "id": {"type": "string", "minLength": 1},
+              "size": {"type": "integer", "minimum": 1},
+              "genes": {"type": "array", "items": {"type": "string"}},
+              "categories": {"type": "array", "items": {"type": "string"}},
+              "unique_genes": {"type": "boolean"},
+              "unique_categories": {"type": "boolean"},
+              "rationale": {"type": "string"}
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": true
     }
   },
   "additionalProperties": false
