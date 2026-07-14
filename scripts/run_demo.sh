@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+PYTHON_BIN="${PYTHON_BIN:-python}"
+
 if command -v vst >/dev/null 2>&1; then
   VST=(vst)
 elif command -v viral-safe-target >/dev/null 2>&1; then
   VST=(viral-safe-target)
 else
-  VST=(python -m viral_safe_target)
+  VST=("$PYTHON_BIN" -m viral_safe_target)
 fi
 
 "${VST[@]}" scan \

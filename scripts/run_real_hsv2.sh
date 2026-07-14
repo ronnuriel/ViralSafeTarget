@@ -12,6 +12,7 @@ SAMPLE_SIZE=25
 MIN_COVERAGE=0.95
 CONFIG=configs/research_v0.3.yaml
 ACCESSIONS_FILE=data/curated/hsv2_discovery_accessions.txt
+PYTHON_BIN="${PYTHON_BIN:-python}"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -33,7 +34,7 @@ if command -v vst >/dev/null 2>&1; then
 elif command -v viral-safe-target >/dev/null 2>&1; then
   VST=(viral-safe-target)
 else
-  VST=(python -m viral_safe_target)
+  VST=("$PYTHON_BIN" -m viral_safe_target)
 fi
 
 export PYTHONPATH="${ROOT}/src${PYTHONPATH:+:${PYTHONPATH}}"
@@ -49,7 +50,11 @@ require_command() {
   fi
 }
 
-require_command python
+if [[ "$PYTHON_BIN" == */* ]]; then
+  [[ -x "$PYTHON_BIN" ]] || { echo "Python executable is not executable: $PYTHON_BIN" >&2; exit 1; }
+else
+  require_command "$PYTHON_BIN"
+fi
 require_command unzip
 require_command curl
 
@@ -96,13 +101,13 @@ if [[ -n "$ACCESSIONS_FILE" ]]; then
   COLLECTION_ZIP=data/raw/hsv2_discovery_frozen.zip
   COLLECTION_DIR=data/raw/hsv2_discovery_frozen
   COLLECTION_REQUEST_STAMP=data/raw/hsv2_discovery_frozen.request.json
-  if ! python scripts/cache_stage.py check --stamp "$COLLECTION_REQUEST_STAMP" \
+  if ! "$PYTHON_BIN" scripts/cache_stage.py check --stamp "$COLLECTION_REQUEST_STAMP" \
     --input "$ACCESSIONS_FILE" --output "$COLLECTION_ZIP"; then
     rm -rf "$COLLECTION_ZIP" "$COLLECTION_DIR" "$COLLECTION_REQUEST_STAMP"
   fi
   download_dataset "$COLLECTION_ZIP" virus genome accession \
     --inputfile "$ACCESSIONS_FILE" --include genome
-  python scripts/cache_stage.py stamp --stamp "$COLLECTION_REQUEST_STAMP" \
+  "$PYTHON_BIN" scripts/cache_stage.py stamp --stamp "$COLLECTION_REQUEST_STAMP" \
     --input "$ACCESSIONS_FILE"
 else
   COLLECTION_ZIP=data/raw/hsv2_complete.zip
@@ -141,14 +146,14 @@ if [[ -n "$ACCESSIONS_FILE" ]]; then
 fi
 
 PREPARE_STAMP=reports/real_hsv2/.cache/prepare_${SAMPLE_SIZE}.json
-if python scripts/cache_stage.py check --stamp "$PREPARE_STAMP" \
+if "$PYTHON_BIN" scripts/cache_stage.py check --stamp "$PREPARE_STAMP" \
   --input "$REFERENCE_FASTA" --input data/raw/hsv2_reference.gb --input "$ALL_FASTA" \
   "${ACCESSION_CACHE_INPUT[@]}" \
   --output "$SAMPLE" --output "$GFF" --output "$QC_REPORT" --output "$ACCESSIONS" \
   --parameter "sample_size=${SAMPLE_SIZE}"; then
   stage_done "prepare and QC" "cached"
 else
-  python scripts/prepare_real_hsv2.py \
+  "$PYTHON_BIN" scripts/prepare_real_hsv2.py \
     --reference-fasta "$REFERENCE_FASTA" \
     --reference-genbank data/raw/hsv2_reference.gb \
     --all-genomes-fasta "$ALL_FASTA" \
@@ -157,7 +162,7 @@ else
     --sample-size "$SAMPLE_SIZE" \
     --qc-report "$QC_REPORT" \
     --accessions-used "$ACCESSIONS"
-  python scripts/cache_stage.py stamp --stamp "$PREPARE_STAMP" \
+  "$PYTHON_BIN" scripts/cache_stage.py stamp --stamp "$PREPARE_STAMP" \
     --input "$REFERENCE_FASTA" --input data/raw/hsv2_reference.gb --input "$ALL_FASTA" \
     "${ACCESSION_CACHE_INPUT[@]}" \
     --parameter "sample_size=${SAMPLE_SIZE}"
@@ -166,7 +171,7 @@ fi
 
 require_command mafft
 MAFFT_STAMP=reports/real_hsv2/.cache/mafft_${SAMPLE_SIZE}.json
-if python scripts/cache_stage.py check --stamp "$MAFFT_STAMP" --input "$SAMPLE" \
+if "$PYTHON_BIN" scripts/cache_stage.py check --stamp "$MAFFT_STAMP" --input "$SAMPLE" \
   --output "$ALIGNMENT" --parameter "mode=auto" --parameter "threads=-1"; then
   stage_done "MAFFT" "cached"
 else
@@ -174,7 +179,7 @@ else
   mafft --auto --thread -1 "$SAMPLE" > "$TEMP_ALIGNMENT"
   [[ -s "$TEMP_ALIGNMENT" ]] || { echo "MAFFT produced an empty alignment" >&2; exit 1; }
   mv "$TEMP_ALIGNMENT" "$ALIGNMENT"
-  python scripts/cache_stage.py stamp --stamp "$MAFFT_STAMP" --input "$SAMPLE" \
+  "$PYTHON_BIN" scripts/cache_stage.py stamp --stamp "$MAFFT_STAMP" --input "$SAMPLE" \
     --parameter "mode=auto" --parameter "threads=-1"
   stage_done "MAFFT" "completed"
 fi
@@ -182,7 +187,7 @@ fi
 CANDIDATE_STAMP=reports/real_hsv2/.cache/candidates_${SAMPLE_SIZE}.json
 RANKED=reports/real_hsv2/candidates_ranked_pre_human.csv
 REJECTED=reports/real_hsv2/candidates_rejected_pre_human.csv
-if python scripts/cache_stage.py check --stamp "$CANDIDATE_STAMP" \
+if "$PYTHON_BIN" scripts/cache_stage.py check --stamp "$CANDIDATE_STAMP" \
   --input "$ALIGNMENT" --input "$GFF" --input "$CONFIG" \
   --output "$RANKED" --output "$REJECTED" \
   --parameter "minimum_coverage=${MIN_COVERAGE}"; then
@@ -196,7 +201,7 @@ else
     --out-dir reports/real_hsv2 \
     --min-coverage "$MIN_COVERAGE" \
     --config "$CONFIG"
-  python scripts/cache_stage.py stamp --stamp "$CANDIDATE_STAMP" \
+  "$PYTHON_BIN" scripts/cache_stage.py stamp --stamp "$CANDIDATE_STAMP" \
     --input "$ALIGNMENT" --input "$GFF" --input "$CONFIG" \
     --parameter "minimum_coverage=${MIN_COVERAGE}"
   stage_done "candidate scan and rank" "completed"
@@ -205,7 +210,7 @@ fi
 PAIR_STAMP=reports/real_hsv2/.cache/pairs_${SAMPLE_SIZE}.json
 PAIR_SAME=reports/real_hsv2/pair_hypotheses_same_gene.csv
 PAIR_MULTI=reports/real_hsv2/pair_hypotheses_multi_target.csv
-if python scripts/cache_stage.py check --stamp "$PAIR_STAMP" \
+if "$PYTHON_BIN" scripts/cache_stage.py check --stamp "$PAIR_STAMP" \
   --input "$RANKED" --input "$GFF" --input "$ALIGNMENT" --input "$CONFIG" \
   --output "$PAIR_SAME" --output "$PAIR_MULTI" \
   --parameter "reference=NC_001798.2"; then
@@ -218,7 +223,7 @@ else
     --reference-id NC_001798.2 \
     --out-dir reports/real_hsv2 \
     --config "$CONFIG"
-  python scripts/cache_stage.py stamp --stamp "$PAIR_STAMP" \
+  "$PYTHON_BIN" scripts/cache_stage.py stamp --stamp "$PAIR_STAMP" \
     --input "$RANKED" --input "$GFF" --input "$ALIGNMENT" --input "$CONFIG" \
     --parameter "reference=NC_001798.2"
   stage_done "pair hypotheses" "completed"
@@ -251,7 +256,7 @@ if [[ "$WITH_HUMAN" -eq 1 ]]; then
   stage_done "human off-target input" "completed"
 fi
 
-python - "$CONFIG" "$SAMPLE_SIZE" "$MIN_COVERAGE" "$WITH_HUMAN" "$ACCESSIONS_FILE" <<'PY'
+"$PYTHON_BIN" - "$CONFIG" "$SAMPLE_SIZE" "$MIN_COVERAGE" "$WITH_HUMAN" "$ACCESSIONS_FILE" <<'PY'
 import json
 import sys
 from pathlib import Path
