@@ -1,0 +1,627 @@
+<!doctype html><html lang='en'><head><meta charset='utf-8'>
+<title>Virtual knockout and escape analysis</title><style>
+body{font-family:Arial,sans-serif;max-width:1100px;margin:2rem auto;line-height:1.5}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{border:1px solid #ddd;padding:.4rem}
+.warning{background:#fff7ed;border-left:5px solid #ea580c;padding:1rem}
+</style></head><body><h1>HSV-2 reproducible case study</h1>
+<h2>Virtual knockout and exact-target escape analysis</h2>
+<div class='warning'><strong>Computational scope only.</strong> Indels are size-defined sequence
+hypotheses, and escape barriers are exact-target sequence-change counts. No repair frequency,
+editing, safety, efficacy, viral inactivation, treatment, delivery, or cure is inferred.</div>
+<h2>Strategy comparison</h2><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>strategy</th>
+      <th>panel_size</th>
+      <th>sequence_escape_barrier</th>
+      <th>discovery_support_min</th>
+      <th>heldout_support_min</th>
+      <th>predicted_host_hits_max</th>
+      <th>disruption_hypothesis_fraction_mean</th>
+      <th>combined_therapeutic_score</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>top-ranking-only</td>
+      <td>3</td>
+      <td>3</td>
+      <td>1.0</td>
+      <td>0.973913</td>
+      <td>0.0</td>
+      <td>0.7</td>
+      <td>unknown</td>
+    </tr>
+    <tr>
+      <td>essential-replication-focused</td>
+      <td>3</td>
+      <td>3</td>
+      <td>1.0</td>
+      <td>0.982609</td>
+      <td>0.0</td>
+      <td>0.7</td>
+      <td>unknown</td>
+    </tr>
+    <tr>
+      <td>targetability-focused</td>
+      <td>3</td>
+      <td>3</td>
+      <td>1.0</td>
+      <td>0.973913</td>
+      <td>0.0</td>
+      <td>0.7</td>
+      <td>unknown</td>
+    </tr>
+    <tr>
+      <td>mechanism-diverse</td>
+      <td>3</td>
+      <td>3</td>
+      <td>1.0</td>
+      <td>0.973913</td>
+      <td>0.0</td>
+      <td>0.7</td>
+      <td>unknown</td>
+    </tr>
+  </tbody>
+</table>
+<h2>Gene-level descriptive summaries</h2><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>gene_name</th>
+      <th>mapped_guide_count</th>
+      <th>median_relative_protein_position</th>
+      <th>median_frameshift_hypothesis_fraction</th>
+      <th>guides_with_determinable_premature_stop</th>
+      <th>guides_cutting_annotated_domain</th>
+      <th>guides_cutting_annotated_disorder</th>
+      <th>guides_in_annotated_conserved_region</th>
+      <th>summary_scope</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>UL10</td>
+      <td>20</td>
+      <td>0.873662</td>
+      <td>0.7</td>
+      <td>20</td>
+      <td>11</td>
+      <td>3</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL11</td>
+      <td>17</td>
+      <td>0.656250</td>
+      <td>0.7</td>
+      <td>17</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL12</td>
+      <td>6</td>
+      <td>0.965323</td>
+      <td>0.7</td>
+      <td>6</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL13</td>
+      <td>2</td>
+      <td>0.880309</td>
+      <td>0.7</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL15</td>
+      <td>20</td>
+      <td>3.181293</td>
+      <td>0.7</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL17</td>
+      <td>10</td>
+      <td>0.575499</td>
+      <td>0.7</td>
+      <td>10</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL18</td>
+      <td>3</td>
+      <td>0.191824</td>
+      <td>0.7</td>
+      <td>3</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL19</td>
+      <td>2</td>
+      <td>0.499272</td>
+      <td>0.7</td>
+      <td>2</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL20</td>
+      <td>2</td>
+      <td>0.574324</td>
+      <td>0.7</td>
+      <td>2</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL21</td>
+      <td>1</td>
+      <td>0.214286</td>
+      <td>0.7</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL22</td>
+      <td>1</td>
+      <td>0.426014</td>
+      <td>0.7</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL23</td>
+      <td>1</td>
+      <td>0.888298</td>
+      <td>0.7</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL26</td>
+      <td>1</td>
+      <td>0.485086</td>
+      <td>0.7</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL26.5</td>
+      <td>1</td>
+      <td>0.003040</td>
+      <td>0.7</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL27</td>
+      <td>1</td>
+      <td>0.889381</td>
+      <td>0.7</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL28</td>
+      <td>1</td>
+      <td>0.870064</td>
+      <td>0.7</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL29</td>
+      <td>2</td>
+      <td>0.634615</td>
+      <td>0.7</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL3</td>
+      <td>20</td>
+      <td>0.371622</td>
+      <td>0.7</td>
+      <td>20</td>
+      <td>10</td>
+      <td>10</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL30</td>
+      <td>20</td>
+      <td>0.384274</td>
+      <td>0.7</td>
+      <td>20</td>
+      <td>16</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL31</td>
+      <td>1</td>
+      <td>0.885246</td>
+      <td>0.7</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL33</td>
+      <td>7</td>
+      <td>0.215385</td>
+      <td>0.7</td>
+      <td>7</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL34</td>
+      <td>9</td>
+      <td>0.257246</td>
+      <td>0.7</td>
+      <td>8</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL35</td>
+      <td>3</td>
+      <td>0.821429</td>
+      <td>0.7</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL36</td>
+      <td>7</td>
+      <td>0.601858</td>
+      <td>0.7</td>
+      <td>7</td>
+      <td>7</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL37</td>
+      <td>1</td>
+      <td>0.281867</td>
+      <td>0.7</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL39</td>
+      <td>1</td>
+      <td>0.640105</td>
+      <td>0.7</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL4</td>
+      <td>1</td>
+      <td>0.398010</td>
+      <td>0.7</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL40</td>
+      <td>1</td>
+      <td>1.002967</td>
+      <td>0.7</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL41</td>
+      <td>3</td>
+      <td>0.975610</td>
+      <td>0.7</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL42</td>
+      <td>3</td>
+      <td>0.191489</td>
+      <td>0.7</td>
+      <td>3</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL43</td>
+      <td>1</td>
+      <td>0.850242</td>
+      <td>0.7</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL46</td>
+      <td>18</td>
+      <td>0.477147</td>
+      <td>0.7</td>
+      <td>18</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL47</td>
+      <td>10</td>
+      <td>0.492816</td>
+      <td>0.7</td>
+      <td>10</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL48</td>
+      <td>2</td>
+      <td>0.733673</td>
+      <td>0.7</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL49A</td>
+      <td>2</td>
+      <td>0.011494</td>
+      <td>0.7</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL5</td>
+      <td>7</td>
+      <td>0.770715</td>
+      <td>0.7</td>
+      <td>7</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL50</td>
+      <td>18</td>
+      <td>0.344173</td>
+      <td>0.7</td>
+      <td>18</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL52</td>
+      <td>11</td>
+      <td>0.385553</td>
+      <td>0.7</td>
+      <td>11</td>
+      <td>11</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL53</td>
+      <td>9</td>
+      <td>0.337278</td>
+      <td>0.7</td>
+      <td>9</td>
+      <td>9</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL54</td>
+      <td>1</td>
+      <td>0.927734</td>
+      <td>0.7</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL55</td>
+      <td>1</td>
+      <td>0.865591</td>
+      <td>0.7</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL56</td>
+      <td>2</td>
+      <td>0.691489</td>
+      <td>0.7</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL7</td>
+      <td>1</td>
+      <td>0.695946</td>
+      <td>0.7</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL8</td>
+      <td>1</td>
+      <td>0.022606</td>
+      <td>0.7</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>UL9</td>
+      <td>5</td>
+      <td>0.363949</td>
+      <td>0.7</td>
+      <td>5</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>US3</td>
+      <td>4</td>
+      <td>0.628898</td>
+      <td>0.7</td>
+      <td>4</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>US4</td>
+      <td>1</td>
+      <td>0.227468</td>
+      <td>0.7</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>US6</td>
+      <td>1</td>
+      <td>0.086514</td>
+      <td>0.7</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+    <tr>
+      <td>US9</td>
+      <td>1</td>
+      <td>1.011236</td>
+      <td>0.7</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>Descriptive aggregation only; no biological importance or therapeutic priority is inferred.</td>
+    </tr>
+  </tbody>
+</table>
+<h2>Auditable outputs</h2><ul><li><a href='guide_cds_mapping.csv'>guide_cds_mapping.csv</a></li><li><a href='indel_sequence_hypotheses.csv'>indel_sequence_hypotheses.csv</a></li><li><a href='guide_virtual_knockout.csv'>guide_virtual_knockout.csv</a></li><li><a href='gene_virtual_knockout.csv'>gene_virtual_knockout.csv</a></li><li><a href='single_nt_escape_counterfactuals.csv'>single_nt_escape_counterfactuals.csv</a></li><li><a href='guide_escape_robustness.csv'>guide_escape_robustness.csv</a></li><li><a href='multiplex_panel_members.csv'>multiplex_panel_members.csv</a></li><li><a href='multiplex_escape_robustness.csv'>multiplex_escape_robustness.csv</a></li><li><a href='strategy_comparison.csv'>strategy_comparison.csv</a></li><li><a href='FINDINGS.md'>FINDINGS.md</a></li><li><a href='run_manifest.json'>run_manifest.json</a></li></ul>
+<h2>Interpretation boundary</h2><p>Host-risk, biological evidence, predicted disruption, and
+escape robustness remain separate axes. See FINDINGS.md and run_manifest.json.</p>
+</body></html>

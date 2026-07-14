@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.9.0 — 2026-07-14
+
+- Added generic virtual-knockout mapping from guide cut boundaries to every overlapping
+  CDS, including reverse strands, optional domain/disorder/conserved-region context,
+  and bounded size-defined indel hypotheses without repair-frequency claims.
+- Added observed discovery/held-out target support, single-nucleotide exact-target
+  counterfactuals, and exact set-cover multiplex escape barriers without evolutionary
+  probability claims.
+- Integrated the analysis with `vst analyze`, project run/resume/status caching,
+  reports, manifests, tests, and a canonical English notebook.
+- Published an auditable HSV-2 deep-panel snapshot plus manuscript and researcher
+  outreach drafts that keep all biological and therapeutic limitations explicit.
+
 ## 0.8.0 — 2026-07-14
 
 - Added the generic Evidence Agent with alias-aware PubMed, Europe PMC, UniProt, and

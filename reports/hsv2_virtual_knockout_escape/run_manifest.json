@@ -1,0 +1,215 @@
+{
+  "analysis": "generic virtual knockout and exact-target escape robustness",
+  "created_utc": "2026-07-14T20:57:48.662400+00:00",
+  "inputs": [
+    {
+      "path": "data/raw/hsv2_reference/ncbi_dataset/data/genomic.fna",
+      "sha256": "415e81818fd232a67087acbef360582d2ce300611853cd6dae7d150ab9ac3c7a"
+    },
+    {
+      "path": "data/processed/hsv2_reference.gff3",
+      "sha256": "1a65ad61be30965e400b1d80edfb4239fe323801772076f42f20f2cc3ac2529c"
+    },
+    {
+      "path": "reports/hsv2_genome_wide_exhaustive/deep_screening_panel.csv",
+      "sha256": "2276effab72a80e7536b22967877f22e8b4ce38dafa4cbdd2383c3ef3ca69a66"
+    },
+    {
+      "path": "configs/projects/hsv2_case_study.yaml",
+      "sha256": "d1c6d89d17afe94daffecd83b84a927f0323e7fbab5a8218b2a33c926b84b35b"
+    },
+    {
+      "path": "configs/viruses/hsv2.yaml",
+      "sha256": "cc2fdfe167cae5f4d49bd31db2d3fff6aec645b92dd00bdc4ad09ed6072a2097"
+    },
+    {
+      "path": "configs/hosts/human_grch38.yaml",
+      "sha256": "88f13e5ef6e40da45fa15f4c15daf89373689e391fe7811efa4a4e3a962e80ed"
+    },
+    {
+      "path": "configs/nucleases/spcas9.yaml",
+      "sha256": "98e824133ba2149175d9ae8b10e045e730646f1024c71dfac04a163cb9b80829"
+    },
+    {
+      "path": "reports/hsv2_population_validation_heldout/candidate_population_validation.csv",
+      "sha256": "e7572506f4615133302cfba62e13ab627ff0aa6e2ee49e25fdb853de2f686154"
+    },
+    {
+      "path": "reports/hsv2_genome_wide_exhaustive/gene_rankings.csv",
+      "sha256": "f859ddb5f240fe5f6196a185b61d0420688e4dda9b905a56a362c8672e76307b"
+    }
+  ],
+  "interpretation": "Computational sequence hypotheses only; no repair-frequency, editing, safety, efficacy, viral inactivation, treatment, delivery, or cure claim.",
+  "outputs": {
+    "escape": {
+      "counterfactual_count": 17733,
+      "guide_count": 257,
+      "heldout_matched_count": 200,
+      "output_dir": "reports/hsv2_virtual_knockout_escape"
+    },
+    "figures": [
+      "reports/hsv2_virtual_knockout_escape/figures/gene_annotation_coverage.png",
+      "reports/hsv2_virtual_knockout_escape/figures/multiplex_sequence_escape_barrier.png",
+      "reports/hsv2_virtual_knockout_escape/figures/discovery_vs_heldout_coverage.png"
+    ],
+    "multiplex": {
+      "output_dir": "reports/hsv2_virtual_knockout_escape",
+      "panel_member_count": 12,
+      "strategy_count": 4
+    },
+    "virtual_knockout": {
+      "candidate_count": 257,
+      "gene_count": 49,
+      "hypothesis_count": 5691,
+      "mapped_candidate_count": 250,
+      "mapping_row_count": 271,
+      "output_dir": "reports/hsv2_virtual_knockout_escape"
+    }
+  },
+  "parameters": {
+    "candidate_table": "reports/hsv2_genome_wide_exhaustive/deep_screening_panel.csv",
+    "default_panel_size": 3,
+    "enabled": true,
+    "focus_genes": [
+      "UL3",
+      "UL10",
+      "UL52",
+      "UL30",
+      "UL18",
+      "UL36"
+    ],
+    "gene_ranking_table": "reports/hsv2_genome_wide_exhaustive/gene_rankings.csv",
+    "heldout_population_table": "reports/hsv2_population_validation_heldout/candidate_population_validation.csv",
+    "indel_max_bp": 10,
+    "indel_min_bp": -10,
+    "output_dir": "../hsv2_virtual_knockout_escape",
+    "source_assertions": [
+      {
+        "expected": 28578,
+        "json_key": "initial_candidate_count",
+        "label": "initial candidates",
+        "path": "reports/hsv2_genome_wide_exhaustive/provenance.json"
+      },
+      {
+        "expected": 23108,
+        "label": "eligible candidates",
+        "metric": "rows",
+        "path": "reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv"
+      },
+      {
+        "column": "guide_sequence",
+        "expected": 21654,
+        "label": "unique guide sequences",
+        "metric": "unique",
+        "path": "reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv"
+      },
+      {
+        "expected": 440341,
+        "label": "predicted human matches",
+        "metric": "rows",
+        "path": "reports/hsv2_genome_wide_exhaustive/genome_wide_human_hits.csv"
+      },
+      {
+        "column": "human_total_predicted_hits",
+        "expected": 2668,
+        "label": "candidates with zero predicted human hits",
+        "metric": "zero_value_rows",
+        "path": "reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv"
+      },
+      {
+        "expected": 109,
+        "json_key": "completed_batches",
+        "label": "completed Cas-OFFinder batches",
+        "path": "reports/hsv2_genome_wide_exhaustive/provenance.json"
+      }
+    ],
+    "strategies": [
+      {
+        "id": "top-ranking-only",
+        "rationale": "Highest individual post-host ranks without biological preselection.",
+        "size": 3,
+        "unique_genes": false
+      },
+      {
+        "genes": [
+          "UL52",
+          "UL30",
+          "UL19"
+        ],
+        "id": "essential-replication-focused",
+        "rationale": "Configured replication and classical structural benchmark genes; evidence remains separate.",
+        "size": 3,
+        "unique_genes": true
+      },
+      {
+        "genes": [
+          "UL3",
+          "UL10",
+          "UL52"
+        ],
+        "id": "targetability-focused",
+        "rationale": "One leading guide from each of the top three exhaustive gene-targetability ranks.",
+        "size": 3,
+        "unique_genes": true
+      },
+      {
+        "genes": [
+          "UL30",
+          "UL18",
+          "UL36"
+        ],
+        "id": "mechanism-diverse",
+        "rationale": "Configured DNA-replication, capsid-assembly, and structural-egress categories.",
+        "size": 3,
+        "unique_categories": true,
+        "unique_genes": true
+      }
+    ]
+  },
+  "project_id": "hsv2-case-study",
+  "schema_version": "1.0",
+  "source_assertions": [
+    {
+      "expected": 28578,
+      "label": "initial candidates",
+      "observed": 28578,
+      "source": "reports/hsv2_genome_wide_exhaustive/provenance.json",
+      "status": "pass"
+    },
+    {
+      "expected": 23108,
+      "label": "eligible candidates",
+      "observed": 23108,
+      "source": "reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv",
+      "status": "pass"
+    },
+    {
+      "expected": 21654,
+      "label": "unique guide sequences",
+      "observed": 21654,
+      "source": "reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv",
+      "status": "pass"
+    },
+    {
+      "expected": 440341,
+      "label": "predicted human matches",
+      "observed": 440341,
+      "source": "reports/hsv2_genome_wide_exhaustive/genome_wide_human_hits.csv",
+      "status": "pass"
+    },
+    {
+      "expected": 2668,
+      "label": "candidates with zero predicted human hits",
+      "observed": 2668,
+      "source": "reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv",
+      "status": "pass"
+    },
+    {
+      "expected": 109,
+      "label": "completed Cas-OFFinder batches",
+      "observed": 109,
+      "source": "reports/hsv2_genome_wide_exhaustive/provenance.json",
+      "status": "pass"
+    }
+  ]
+}
