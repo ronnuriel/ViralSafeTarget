@@ -450,7 +450,9 @@ def _profiles_validate(args: argparse.Namespace) -> None:
         project_root=args.project_root,
     )
     checks = validate_profile_bundle(
-        bundle, require_large_host_reference=args.require_host_reference
+        bundle,
+        require_large_host_reference=args.require_host_reference,
+        require_virus_inputs=args.require_virus_inputs,
     )
     print(checks.to_string(index=False))
     if checks["status"].eq("fail").any():
@@ -673,6 +675,7 @@ def build_parser() -> argparse.ArgumentParser:
     profile_validate.add_argument("--nuclease-profile", required=True)
     profile_validate.add_argument("--project-root", default=".")
     profile_validate.add_argument("--require-host-reference", action="store_true")
+    profile_validate.add_argument("--require-virus-inputs", action="store_true")
     profile_validate.set_defaults(func=_profiles_validate)
 
     showcase = subparsers.add_parser(

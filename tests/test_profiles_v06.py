@@ -36,6 +36,16 @@ def test_large_host_reference_can_remain_explicitly_external() -> None:
     assert host_status in {"pass", "external_pending"}
 
 
+def test_missing_virus_inputs_are_pending_unless_strictly_required() -> None:
+    bundle = _bundle()
+    bundle.virus["reference_fasta"] = "data/raw/definitely_missing_reference.fasta"
+    relaxed = validate_profile_bundle(bundle)
+    strict = validate_profile_bundle(bundle, require_virus_inputs=True)
+    component = "virus path: reference_fasta"
+    assert relaxed.loc[relaxed["component"].eq(component), "status"].iloc[0] == "input_pending"
+    assert strict.loc[strict["component"].eq(component), "status"].iloc[0] == "fail"
+
+
 def test_profile_type_mismatch_is_rejected(tmp_path: Path) -> None:
     invalid = tmp_path / "not-a-virus.yaml"
     invalid.write_text(

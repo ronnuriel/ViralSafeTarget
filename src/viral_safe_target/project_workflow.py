@@ -251,7 +251,9 @@ def validate_project(
 ) -> pd.DataFrame:
     context = load_project(project) if not isinstance(project, ProjectContext) else project
     rows = validate_profile_bundle(
-        context.profiles, require_large_host_reference=require_host_reference
+        context.profiles,
+        require_large_host_reference=require_host_reference,
+        require_virus_inputs=True,
     ).to_dict("records")
     _add_check(rows, "project specification", "pass", str(context.source))
     _add_check(

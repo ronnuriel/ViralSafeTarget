@@ -73,6 +73,7 @@ def validate_profile_bundle(
     bundle: ResearchProfileBundle,
     *,
     require_large_host_reference: bool = False,
+    require_virus_inputs: bool = False,
 ) -> pd.DataFrame:
     checks: list[dict[str, object]] = []
 
@@ -97,6 +98,7 @@ def validate_profile_bundle(
         "pass" if not missing else "fail",
         "complete" if not missing else "missing: " + ", ".join(missing),
     )
+    required_input_fields = {"reference_fasta", "annotation_gff", "strain_alignment"}
     for field in (
         "reference_fasta",
         "reference_genbank",
@@ -113,9 +115,16 @@ def validate_profile_bundle(
         if path is None:
             add(f"virus path: {field}", "optional_missing", "not configured")
         else:
+            exists = path.exists()
+            if exists:
+                status = "pass"
+            elif field in required_input_fields:
+                status = "fail" if require_virus_inputs else "input_pending"
+            else:
+                status = "optional_missing"
             add(
                 f"virus path: {field}",
-                "pass" if path.exists() else "fail",
+                status,
                 display_path(path),
             )
     host_root = bundle.resolve(bundle.host.get("fasta_root"))
