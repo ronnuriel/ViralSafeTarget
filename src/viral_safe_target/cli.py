@@ -33,7 +33,7 @@ from .offtarget import (
     summarize_cas_offinder_hits,
     write_offtarget_metadata,
 )
-from .provenance import write_run_manifest
+from .provenance import sha256_file, write_run_manifest
 from .reporting import write_html_report, write_methods_and_limitations
 from .scoring import rank_post_human_candidates, rank_pre_human_candidates
 from .sdk import load_run
@@ -367,6 +367,112 @@ def _discover_genome_wide(args: argparse.Namespace) -> None:
         webbrowser.open((result["output_dir"] / "report.html").as_uri())
 
 
+def _analyze_gene_function(args: argparse.Namespace) -> None:
+    from .gene_function_workflow import run_gene_function_analysis
+
+    result = run_gene_function_analysis(
+        genome_wide_dir=args.genome_wide_dir,
+        hsv2_genbank=args.hsv2_genbank,
+        hsv1_genbank=args.hsv1_genbank,
+        virus_alignment=args.virus_alignment,
+        domain_table=args.domain_table,
+        disorder_table=args.disorder_table,
+        evidence_table=args.evidence_table,
+        out_dir=args.out_dir,
+        top_per_gene=args.top_per_gene,
+    )
+    print(json.dumps({key: str(value) for key, value in result.items()}, indent=2))
+    if args.open_report:
+        webbrowser.open((result["output_dir"] / "gene_evidence_report.html").as_uri())
+
+
+def _analyze_population(args: argparse.Namespace) -> None:
+    from .population_reporting import build_population_comparison, write_population_report
+    from .population_validation import (
+        exact_guide_presence_by_accession,
+        map_population_to_reference,
+        summarize_locus_aware_population_validation,
+    )
+
+    candidates = pd.read_csv(args.candidates)
+    records = read_fasta(args.population_fasta)
+    editor = get_editor(load_config(args.config))
+    presence = exact_guide_presence_by_accession(candidates, records, editor)
+    alignments = map_population_to_reference(
+        records,
+        args.reference_fasta,
+        minimum_mapq=args.minimum_mapq,
+        minimum_identity=args.minimum_identity,
+    )
+    validation = summarize_locus_aware_population_validation(
+        candidates, presence, alignments, list(records)
+    )
+    comparison, genes = build_population_comparison(candidates, validation)
+    output = Path(args.out_dir).resolve()
+    output.mkdir(parents=True, exist_ok=True)
+    alignments.to_csv(output / "population_reference_alignments.csv", index=False)
+    validation.to_csv(output / "candidate_locus_population_validation.csv", index=False)
+    provenance = {
+        "schema_version": "1.0",
+        "population_record_count": len(records),
+        "candidate_count": len(candidates),
+        "reference_alignment_count": len(alignments),
+        "records_with_reference_alignment": int(alignments["accession"].nunique())
+        if not alignments.empty
+        else 0,
+        "minimum_mapq": args.minimum_mapq,
+        "minimum_identity": args.minimum_identity,
+        "population_fasta": str(Path(args.population_fasta).resolve()),
+        "population_fasta_sha256": sha256_file(args.population_fasta),
+        "reference_fasta": str(Path(args.reference_fasta).resolve()),
+        "reference_fasta_sha256": sha256_file(args.reference_fasta),
+        "candidate_source": str(Path(args.candidates).resolve()),
+        "candidate_source_sha256": sha256_file(args.candidates),
+        "score_integration": "none; population evidence is reported separately",
+        "interpretation": (
+            "Held-out population-genomic validation only; no editing efficacy, safety, "
+            "delivery, or therapeutic claim."
+        ),
+    }
+    write_population_report(comparison, genes, output, provenance)
+    print(json.dumps(provenance, indent=2, sort_keys=True))
+    if args.open_report:
+        webbrowser.open((output / "population_validation_report.html").as_uri())
+
+
+def _profiles_validate(args: argparse.Namespace) -> None:
+    from .profiles import load_profile_bundle, validate_profile_bundle
+
+    bundle = load_profile_bundle(
+        args.virus_profile,
+        args.host_profile,
+        args.nuclease_profile,
+        project_root=args.project_root,
+    )
+    checks = validate_profile_bundle(
+        bundle, require_large_host_reference=args.require_host_reference
+    )
+    print(checks.to_string(index=False))
+    if checks["status"].eq("fail").any():
+        raise SystemExit(2)
+
+
+def _showcase_build(args: argparse.Namespace) -> None:
+    from .showcase_workflow import run_showcase
+
+    result = run_showcase(
+        virus_profile=args.virus_profile,
+        host_profile=args.host_profile,
+        nuclease_profile=args.nuclease_profile,
+        out_dir=args.out_dir,
+        project_root=args.project_root,
+        per_gene=args.per_gene,
+    )
+    print(json.dumps({key: str(value) for key, value in result.items()}, indent=2))
+    if args.open_report:
+        webbrowser.open((result["output_dir"] / "FINAL_REPORT.html").as_uri())
+
+
 def _add_config(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--config", default=str(DEFAULT_CONFIG_PATH))
 
@@ -396,6 +502,66 @@ def build_parser() -> argparse.ArgumentParser:
     genome_wide.add_argument("--confirm-exhaustive", action="store_true")
     genome_wide.add_argument("--open-report", action="store_true")
     genome_wide.set_defaults(func=_discover_genome_wide)
+
+    analyze = subparsers.add_parser("analyze", help="post-discovery biological analyses")
+    analyze_commands = analyze.add_subparsers(dest="analyze_command", required=True)
+    gene_function = analyze_commands.add_parser(
+        "gene-function", help="map top HSV-2 candidates to protein disruption hypotheses"
+    )
+    gene_function.add_argument("--genome-wide-dir", default="reports/hsv2_genome_wide")
+    gene_function.add_argument("--hsv2-genbank", default="data/raw/hsv2_reference.gb")
+    gene_function.add_argument("--hsv1-genbank", default="data/raw/hsv1_reference.gb")
+    gene_function.add_argument("--virus-alignment", default="data/processed/hsv2_aligned_25.fasta")
+    gene_function.add_argument("--domain-table", default="data/curated/hsv2_target_domains.tsv")
+    gene_function.add_argument("--disorder-table", default="data/curated/hsv2_target_disorder.tsv")
+    gene_function.add_argument(
+        "--evidence-table", default="data/curated/hsv_gene_function_evidence.tsv"
+    )
+    gene_function.add_argument("--out-dir", default="reports/hsv2_gene_function")
+    gene_function.add_argument("--top-per-gene", type=int, default=10)
+    gene_function.add_argument("--open-report", action="store_true")
+    gene_function.set_defaults(func=_analyze_gene_function)
+
+    population = analyze_commands.add_parser(
+        "population", help="run locus-aware held-out viral population validation"
+    )
+    population.add_argument("--population-fasta", required=True)
+    population.add_argument("--reference-fasta", required=True)
+    population.add_argument("--candidates", required=True)
+    population.add_argument("--out-dir", required=True)
+    population.add_argument("--minimum-mapq", type=int, default=20)
+    population.add_argument("--minimum-identity", type=float, default=0.9)
+    population.add_argument("--config", default="configs/hsv2_pilot.yaml")
+    population.add_argument("--open-report", action="store_true")
+    population.set_defaults(func=_analyze_population)
+
+    profiles = subparsers.add_parser("profiles", help="generic research-profile operations")
+    profile_commands = profiles.add_subparsers(dest="profiles_command", required=True)
+    profile_validate = profile_commands.add_parser(
+        "validate", help="validate virus, host, and nuclease profiles"
+    )
+    profile_validate.add_argument("--virus-profile", required=True)
+    profile_validate.add_argument("--host-profile", required=True)
+    profile_validate.add_argument("--nuclease-profile", required=True)
+    profile_validate.add_argument("--project-root", default=".")
+    profile_validate.add_argument("--require-host-reference", action="store_true")
+    profile_validate.set_defaults(func=_profiles_validate)
+
+    showcase = subparsers.add_parser(
+        "showcase", help="build a presentation-ready standardized case study"
+    )
+    showcase_commands = showcase.add_subparsers(dest="showcase_command", required=True)
+    showcase_build = showcase_commands.add_parser(
+        "build", help="build multi-objective panels, figures, and reports"
+    )
+    showcase_build.add_argument("--virus-profile", required=True)
+    showcase_build.add_argument("--host-profile", required=True)
+    showcase_build.add_argument("--nuclease-profile", required=True)
+    showcase_build.add_argument("--project-root", default=".")
+    showcase_build.add_argument("--out-dir", default="reports/hsv2_showcase")
+    showcase_build.add_argument("--per-gene", type=int, default=4)
+    showcase_build.add_argument("--open-report", action="store_true")
+    showcase_build.set_defaults(func=_showcase_build)
 
     scan = subparsers.add_parser("scan", help="scan and rank an aligned viral genome collection")
     scan.add_argument("--virus-alignment", required=True)

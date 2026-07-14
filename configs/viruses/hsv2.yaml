@@ -1,0 +1,25 @@
+schema_version: "1.0"
+profile_type: virus
+id: hsv2
+display_name: Human alphaherpesvirus 2
+reference_accession: NC_001798.2
+reference_fasta: data/raw/hsv2_reference/ncbi_dataset/data/genomic.fna
+reference_genbank: data/raw/hsv2_reference.gb
+annotation_gff: data/processed/hsv2_reference.gff3
+strain_alignment: data/processed/hsv2_aligned_25.fasta
+evidence_table: data/curated/hsv_gene_function_evidence.tsv
+domain_table: data/curated/hsv2_target_domains.tsv
+disorder_table: data/curated/hsv2_target_disorder.tsv
+gene_category_table: data/curated/hsv2_gene_categories.tsv
+external_validation_table: data/curated/hsv2_external_validation.tsv
+population_validation_candidates: reports/hsv2_population_report_balanced/candidate_population_comparison.csv
+population_validation_genes: reports/hsv2_population_report_balanced/gene_population_summary.csv
+circular_genome: false
+default_host_profile: human_grch38
+default_nuclease_profile: spcas9
+case_study_outputs:
+  genome_wide: reports/hsv2_genome_wide
+  gene_function: reports/hsv2_gene_function
+notes: >-
+  First ViralSafeTarget case study. Profile paths are project-root relative and
+  biological evidence is data, not hard-coded program logic.

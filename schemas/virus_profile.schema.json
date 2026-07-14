@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://viral-safe-target.example/schemas/virus_profile.schema.json",
+  "title": "ViralSafeTarget virus profile",
+  "type": "object",
+  "required": ["schema_version", "profile_type", "id", "display_name", "reference_accession", "reference_fasta", "annotation_gff", "strain_alignment"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "profile_type": {"const": "virus"},
+    "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_-]*$"},
+    "display_name": {"type": "string", "minLength": 1},
+    "reference_accession": {"type": "string", "minLength": 1},
+    "reference_fasta": {"type": "string", "minLength": 1},
+    "reference_genbank": {"type": ["string", "null"]},
+    "annotation_gff": {"type": "string", "minLength": 1},
+    "strain_alignment": {"type": "string", "minLength": 1},
+    "evidence_table": {"type": ["string", "null"]},
+    "domain_table": {"type": ["string", "null"]},
+    "disorder_table": {"type": ["string", "null"]},
+    "external_validation_table": {"type": ["string", "null"]},
+    "population_validation_candidates": {"type": ["string", "null"]},
+    "population_validation_genes": {"type": ["string", "null"]},
+    "circular_genome": {"type": "boolean"}
+  },
+  "additionalProperties": true
+}

@@ -11,6 +11,9 @@ NOTEBOOKS = [
     ROOT / "notebooks/07_HSV2_MULTITOOL_COMPARISON_EN.ipynb",
     ROOT / "notebooks/08_RUN_FULL_PIPELINE_EN.ipynb",
     ROOT / "notebooks/09_HSV2_GENOME_WIDE_DISCOVERY_EN.ipynb",
+    ROOT / "notebooks/10_HSV2_GENE_FUNCTION_AND_DISRUPTION_EN.ipynb",
+    ROOT / "notebooks/11_HSV2_RESEARCH_SHOWCASE_EN.ipynb",
+    ROOT / "notebooks/12_HSV2_HELDOUT_POPULATION_VALIDATION_EN.ipynb",
 ]
 
 

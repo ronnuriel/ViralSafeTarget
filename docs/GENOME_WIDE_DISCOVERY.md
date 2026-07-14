@@ -29,6 +29,15 @@ batches without launching an external tool. Missing, failed, and pending batches
 explicitly incomplete. Use `--exhaustive --confirm-exhaustive` only when the workload of
 screening every retained pre-human candidate is intentional.
 
+For a checksum-resumable exhaustive case-study run in a separate output directory:
+
+```bash
+CAS_OFFINDER_PATH=/path/to/cas-offinder bash scripts/run_hsv2_exhaustive.sh
+```
+
+The exhaustive mode is intended for sensitivity analysis against the balanced design.
+It does not make a zero-hit prediction a safety result.
+
 ## Balanced discovery design
 
 The default pre-human panel is the union of up to 50 candidates per annotated gene and
@@ -58,10 +67,23 @@ to zero and is not a negative score. The import header is available at
 `gene_rank_stability.csv` recomputes nested K=10, K=25, and K=50 views from the single
 completed maximum-quota screen. It does not rerun Cas-OFFinder.
 
+## Independent population validation
+
+Population validation remains separate from targetability and host off-target scores.
+The preparation workflow can explicitly exclude the discovery FASTA, audits valid IUPAC
+ambiguity, and rejects records above a declared ambiguity threshold. Because public viral
+records are frequently partial, the optional reference-aware workflow maps each record to
+the reference before treating absence of an exact guide/PAM as an observable locus
+difference. Install that optional mapper with `pip install -e '.[population]'`.
+
+After both balanced and exhaustive screens finish, `scripts/compare_discovery_modes.py`
+produces candidate- and gene-rank sensitivity tables. Rank changes are interpreted as
+selection-mode sensitivity, not as biological efficacy or safety evidence.
+
 ## Main outputs
 
 - `candidate_feature_map.csv`: one-to-many inclusive coordinate mapping.
-- `genome_wide_screening_panel.csv`: balanced panel and selection reasons.
+- `genome_wide_screening_panel.csv`: balanced or exhaustive panel and selection reasons.
 - `genome_wide_human_hits.csv`: every parsed, candidate-expanded predicted hit.
 - `genome_wide_candidates_post_human.csv`: completed and explicitly incomplete rows.
 - `gene_rankings.csv` and `gene_rank_stability.csv`: gene views and sensitivity.

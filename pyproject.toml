@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "viral-safe-target"
-version = "0.5.0"
+version = "0.6.0"
 description = "Reproducible research toolkit for conserved viral genome target prioritization and sequence-level disruption simulation"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -46,12 +46,16 @@ dev = [
 torch = [
   "torch>=2.2",
 ]
+population = [
+  "mappy>=2.31",
+]
 all = [
   "jupyterlab>=4.0",
   "nbformat>=5.9",
   "streamlit>=1.38",
   "pytest>=8.0",
   "ruff>=0.6",
+  "mappy>=2.31",
 ]
 
 [project.scripts]

@@ -523,6 +523,7 @@ def run_genome_wide_discovery(
         exhaustive=exhaustive,
         confirm_exhaustive=confirm_exhaustive,
     )
+    selection_mode = "exhaustive" if exhaustive else "balanced"
     panel = selected.panel.copy()
     panel["mapping_provenance"] = str((output / "candidate_feature_map.csv").resolve())
     panel_export = panel.copy()
@@ -541,7 +542,7 @@ def run_genome_wide_discovery(
     genes_without_candidates.to_csv(output / "genes_without_eligible_candidates.csv", index=False)
     print(f"Initial candidates before pre-human rejection: {initial_candidate_count:,}")
     print(f"Eligible pre-human candidates: {len(eligible):,}")
-    print(f"Balanced discovery panel candidates: {len(panel):,}")
+    print(f"{selection_mode.title()} discovery panel candidates: {len(panel):,}")
     print(f"Panel unique guides: {panel['guide_sequence'].nunique():,}")
 
     human_directory, human_fasta = _find_human_directory(_resolve(root, config["human_fasta_root"]))
@@ -577,6 +578,7 @@ def run_genome_wide_discovery(
         output / "combined_batch_manifest.json",
         {
             "schema_version": "0.5",
+            "selection_mode": selection_mode,
             "candidate_count": len(panel),
             "unique_guide_count": int(panel["guide_sequence"].nunique()),
             "batches": [
@@ -683,6 +685,7 @@ def run_genome_wide_discovery(
         ),
         "cas_offinder_completed_batch_seconds": timings["cas_offinder_completed_batch_seconds"],
         "analysis_only": analysis_only,
+        "selection_mode": selection_mode,
         "completed_batches": sum(batch["status"] == "completed" for batch in batches),
         "total_batches": len(batches),
         "initial_candidate_count": initial_candidate_count,

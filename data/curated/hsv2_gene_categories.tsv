@@ -1,0 +1,10 @@
+gene_name	primary_category	lifecycle_stage	showcase_role	biological_rationale	key_limitation
+UL3	exploratory_accessory	late	discovery_leader	Highly targetable and conserved in the case-study panel; useful for demonstrating discovery beyond preselected benchmark genes.	Direct HSV-2 null-essentiality evidence is absent and function is incompletely characterized.
+UL10	structural_egress	late	structural_comparator	Envelope glycoprotein M provides a structural and egress-oriented comparison to replication targets.	HSV-1 deletion evidence indicates nonessential growth in tested culture conditions; direct HSV-2 essentiality is unknown.
+UL18	capsid_assembly	late	capsid_target	Capsid triplex subunit with direct HSV-2 knockdown phenotype and supporting HSV-1 capsid evidence.	Knockdown is not null-essentiality evidence.
+UL19	capsid_assembly	late	capsid_target	Major capsid protein provides a classical structural benchmark with supporting HSV-1 evidence.	Direct HSV-2 null-essentiality evidence is absent in the curated table.
+UL20	structural_egress	late	egress_target	UL20-null HSV-1 evidence supports a strong cytoplasmic envelopment defect.	The phenotype is context-dependent and cannot be transferred automatically to HSV-2.
+UL30	DNA_replication	early	replication_benchmark	DNA polymerase catalytic subunit is a classical replication benchmark with mapped functional domains.	Curated essentiality evidence is HSV-1 ortholog evidence rather than direct HSV-2 null evidence.
+UL36	structural_egress	late	discovery_and_structure	Top coordinate-level candidate and direct HSV-1 null-mutant evidence for maturation and egress.	Very large protein; target location and domain context matter, and direct HSV-2 null evidence is absent.
+UL52	DNA_replication	early	replication_target	Primase subunit provides a second mechanistically distinct DNA-replication target.	Evidence is HSV-1 functional mutagenesis, not direct HSV-2 null evidence.
+UL53	structural_egress	late	egress_comparator	Glycoprotein K supports a context-dependent egress comparison.	HSV-1 null virus remains productive in actively replicating cells and direct HSV-2 essentiality is unknown.

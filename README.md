@@ -62,6 +62,9 @@ For an English end-to-end workflow, open
 `notebooks/08_RUN_FULL_PIPELINE_EN.ipynb`. The focused multi-tool tutorial is
 `notebooks/07_HSV2_MULTITOOL_COMPARISON_EN.ipynb`, and the genome-wide discovery
 tutorial is `notebooks/09_HSV2_GENOME_WIDE_DISCOVERY_EN.ipynb`.
+The presentation walkthrough is
+`notebooks/11_HSV2_RESEARCH_SHOWCASE_EN.ipynb`, and held-out population validation is
+explained in `notebooks/12_HSV2_HELDOUT_POPULATION_VALIDATION_EN.ipynb`.
 
 ## Run the HSV-2 pilot on public data
 
@@ -129,6 +132,64 @@ vst discover genome-wide --virus hsv2 --analysis-only
 See [`docs/GENOME_WIDE_DISCOVERY.md`](docs/GENOME_WIDE_DISCOVERY.md). A missing batch is
 never interpreted as a zero-hit result.
 
+## Analyze gene function and predicted disruption
+
+After a completed genome-wide run, map the top candidates to coding and protein
+coordinates, import domain and disorder annotations, summarize alignment-bound
+conservation, and generate size-defined indel and paired-deletion hypotheses:
+
+```bash
+vst analyze gene-function --out-dir reports/hsv2_gene_function
+```
+
+The analysis keeps sequence targetability, cited essentiality evidence, predicted
+protein disruption, and evidence coverage separate. HSV-1 ortholog evidence is never
+presented as direct HSV-2 evidence, and missing essentiality evidence remains unknown.
+See `notebooks/10_HSV2_GENE_FUNCTION_AND_DISRUPTION_EN.ipynb`.
+
+## Validate against an independent viral population panel
+
+The population workflow excludes every discovery accession, audits all valid DNA
+IUPAC ambiguity codes, and uses a locus-specific denominator for partial public
+records. Install the optional reference mapper and run:
+
+```bash
+python -m pip install -e '.[population]'
+vst analyze population \
+  --population-fasta reports/hsv2_population_heldout/population_unique.fasta \
+  --reference-fasta data/raw/hsv2_reference/ncbi_dataset/data/genomic.fna \
+  --candidates reports/hsv2_genome_wide/genome_wide_candidates_post_human.csv \
+  --out-dir reports/hsv2_population_report_balanced
+```
+
+Held-out exact sequence/PAM support is reported separately and never added to the
+targetability, essentiality, or predicted-disruption scores. An absent target in a
+partial record remains unknown unless a high-quality reference alignment covers that
+locus.
+
+For a checksum-audited NCBI download plus the complete validation/report workflow, run
+`bash scripts/run_hsv2_population_validation.sh`. Existing downloads are reused.
+
+## Build the presentation-ready HSV-2 case study
+
+ViralSafeTarget now uses versioned virus, host and nuclease profiles instead of
+hard-coding HSV-specific biology in the Python workflow. Validate the profiles and
+build the multi-objective showcase with:
+
+```bash
+bash scripts/build_hsv2_showcase.sh
+```
+
+The report keeps sequence targetability, direct essentiality evidence, predicted
+protein disruption and evidence coverage separate. It produces a balanced deep
+panel, computational comparison sets, figures, findings, methods, limitations and
+an auditable run manifest under `reports/hsv2_showcase/`. The generated
+`research_findings.csv` keeps each potentially useful observation or hypothesis
+beside its computational support and the limitation that prevents overclaiming.
+
+See [`docs/GENERIC_PROFILES.md`](docs/GENERIC_PROFILES.md) and
+[`docs/PRESENTATION_WORKFLOW.md`](docs/PRESENTATION_WORKFLOW.md).
+
 ## Main outputs
 
 - `candidates_ranked_pre_human.csv`: retained candidates with visible score components.
@@ -167,6 +228,7 @@ ViralSafeTarget/
 ├── docs/                     # concepts, formats, validation and tool map
 ├── notebooks/                # guided research notebooks
 ├── scripts/                  # demo and real-data workflows
+├── schemas/                  # generic profile and evidence contracts
 ├── src/viral_safe_target/    # reusable Python package
 ├── tests/                    # unit tests
 └── .github/                  # CI and contribution templates

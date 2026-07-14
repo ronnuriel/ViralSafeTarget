@@ -1,6 +1,6 @@
 """ViralSafeTarget computational research package."""
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 
 from .annotations import annotate_candidates, read_gff3
 from .config import EditorProfile, load_config
@@ -33,6 +33,7 @@ from .offtarget import (
     summarize_cas_offinder_hits,
     write_cas_offinder_input,
 )
+from .profiles import ResearchProfileBundle, load_profile_bundle, validate_profile_bundle
 from .provenance import sha256_file, write_run_manifest
 from .reporting import write_html_report
 from .scorers import CandidateScorer, ExampleRuleScorer
@@ -70,6 +71,9 @@ __all__ = [
     "exact_pair_coverage",
     "sha256_file",
     "write_run_manifest",
+    "ResearchProfileBundle",
+    "load_profile_bundle",
+    "validate_profile_bundle",
     "ResearchRun",
     "load_run",
     "CandidateTable",

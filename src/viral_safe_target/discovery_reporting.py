@@ -73,6 +73,8 @@ def write_discovery_report(
         feature_map.loc[feature_map["mapping_status"].ne("intergenic"), "feature_id"].nunique()
     )
     screening_fraction = len(completed) / len(candidates) if len(candidates) else 0.0
+    selection_mode = str(provenance.get("selection_mode", "balanced"))
+    panel_label = "exhaustive panel" if selection_mode == "exhaustive" else "balanced panel"
 
     if another_gene_above_ul30 is None:
         ul30_answer = "Not yet determinable: UL30 lacks a completed comparable gene rank."
@@ -122,7 +124,7 @@ def write_discovery_report(
             "stage": [
                 "initial",
                 "eligible pre-human",
-                "balanced panel",
+                panel_label,
                 "human screen completed",
                 "post-human ranked",
             ],
@@ -189,8 +191,17 @@ def write_discovery_report(
         ),
         ("Candidate funnel", _table(funnel, ["stage", "candidate_count"])),
         (
-            "Balanced-panel selection method",
-            "<p>The panel is the deterministic union of the configured top candidates per annotated gene and global pre-human leaders. Selection uses no human-screen outcome; stable candidate IDs deduplicate the union, while one-to-many feature memberships remain in the mapping table.</p>",
+            "Candidate selection method",
+            (
+                "<p>The exhaustive panel contains every retained pre-human candidate; "
+                "stable candidate IDs and unique Cas-OFFinder queries preserve coordinate "
+                "mapping without redundant searches.</p>"
+                if selection_mode == "exhaustive"
+                else "<p>The balanced panel is the deterministic union of the configured "
+                "top candidates per annotated gene and global pre-human leaders. Selection "
+                "uses no human-screen outcome; stable candidate IDs deduplicate the union, "
+                "while one-to-many feature memberships remain in the mapping table.</p>"
+            ),
         ),
         (
             "Cas-OFFinder execution and completeness",

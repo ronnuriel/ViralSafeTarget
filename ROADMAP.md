@@ -30,6 +30,23 @@
 - [x] Custom scorer API and optional PyTorch scorer
 - [x] Cached 32-candidate HSV-2 consensus report
 
+## v0.5 — genome-wide discovery
+
+- [x] One-to-many candidate-feature mapping across the complete HSV-2 annotation
+- [x] Balanced per-gene and guarded exhaustive host-screen modes
+- [x] Resumable, checksum-validated Cas-OFFinder batches
+- [x] Gene-level targetability and K=10/25/50 sensitivity views
+
+## v0.6 — evidence, protein disruption and population validation
+
+- [x] Coding/protein coordinate and domain/disorder mapping
+- [x] Cross-strain entropy, amino-acid conservation, ortholog comparison and bounded dN/dS
+- [x] Separate cited HSV-2 and HSV-1 evidence scopes; missing essentiality remains unknown
+- [x] Deterministic indel and theoretical deletion consequence tables
+- [x] Generic virus/host/nuclease profiles and presentation-ready case-study reports
+- [x] Discovery-excluded, locus-aware validation against independent public HSV-2 records
+- [x] English research notebooks
+
 ## Future benchmark release
 
 - [ ] Curated public benchmark with experimentally active and inactive targets
@@ -37,7 +54,7 @@
 - [ ] Variant-aware host off-target integration
 - [ ] Candidate rejection database with stable reason codes
 - [ ] Alignment normalization for HSV repeat/isomer structure
-- [ ] English research notebooks
+- [ ] Prospective, independently generated held-out benchmark cohort
 
 ## Future multi-editor and multi-target planning
 

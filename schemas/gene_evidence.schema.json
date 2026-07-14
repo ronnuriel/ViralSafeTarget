@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://viral-safe-target.example/schemas/gene_evidence.schema.json",
+  "title": "ViralSafeTarget source-linked gene evidence row",
+  "type": "object",
+  "required": ["gene_name", "virus_type", "evidence_category", "essentiality_call", "evidence_strength", "finding", "source_identifier", "source_url"],
+  "properties": {
+    "gene_name": {"type": "string", "minLength": 1},
+    "virus_type": {"type": "string", "minLength": 1},
+    "evidence_category": {"type": "string", "minLength": 1},
+    "essentiality_call": {"type": "string", "minLength": 1},
+    "essentiality_score": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+    "evidence_strength": {"enum": ["direct", "supporting", "indirect", "unknown"]},
+    "experimental_system": {"type": ["string", "null"]},
+    "finding": {"type": "string", "minLength": 1},
+    "source_identifier": {"type": "string", "minLength": 1},
+    "source_url": {"type": "string", "format": "uri"},
+    "directness_notes": {"type": ["string", "null"]}
+  },
+  "additionalProperties": true
+}

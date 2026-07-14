@@ -1,0 +1,21 @@
+gene_name	uniprot_accession	interpro_accession	entry_type	domain_name	protein_start_1based	protein_end_1based	source_url	retrieved_date
+UL3	G9I224	IPR005035	family	Herpesvirus UL3	83	217	https://www.ebi.ac.uk/interpro/entry/InterPro/IPR005035/	2026-07-14
+UL10	P89433	IPR000785	family	Herpesvirus envelope glycoprotein M	16	410	https://www.ebi.ac.uk/interpro/entry/InterPro/IPR000785/	2026-07-14
+UL18	P89441	IPR002690	family	Herpesvirus capsid protein 2	5	315	https://www.ebi.ac.uk/interpro/entry/InterPro/IPR002690/	2026-07-14
+UL20	P89443	IPR007629	family	Herpesvirus UL20 egress protein	42	217	https://www.ebi.ac.uk/interpro/entry/InterPro/IPR007629/	2026-07-14
+UL36	G9I258	IPR005210	domain	Herpesvirus large tegument protein deneddylase	1325	1576	https://www.ebi.ac.uk/interpro/entry/InterPro/IPR005210/	2026-07-14
+UL36	G9I258	IPR006928	domain	Herpesvirus large tegument protein USP domain	20	238	https://www.ebi.ac.uk/interpro/entry/InterPro/IPR006928/	2026-07-14
+UL36	G9I258	IPR034702	family	Large tegument protein deneddylase	17	3122	https://www.ebi.ac.uk/interpro/entry/InterPro/IPR034702/	2026-07-14
+UL36	G9I258	IPR038765	homologous_superfamily	Papain-like cysteine peptidase superfamily	19	246	https://www.ebi.ac.uk/interpro/entry/InterPro/IPR038765/	2026-07-14
+UL52	G9I275	IPR033685	family	DNA primase	18	1052	https://www.ebi.ac.uk/interpro/entry/InterPro/IPR033685/	2026-07-14
+UL53	G9I276	IPR002567	family	Envelope glycoprotein K	4	337	https://www.ebi.ac.uk/interpro/entry/InterPro/IPR002567/	2026-07-14
+UL19	G9I240	IPR000912	family	Herpesvirus major capsid protein	5	1374	https://www.ebi.ac.uk/interpro/entry/InterPro/IPR000912/	2026-07-14
+UL19	G9I240	IPR023233	homologous_superfamily	Herpesvirus major capsid protein upper domain superfamily	486	1045	https://www.ebi.ac.uk/interpro/entry/InterPro/IPR023233/	2026-07-14
+UL30	P89453	IPR061942	domain	Alphaherpesvirus DNA polymerase N-terminal domain	64	138	https://www.ebi.ac.uk/interpro/entry/InterPro/IPR061942/	2026-07-14
+UL30	P89453	IPR006133	domain	DNA-directed DNA polymerase family B exonuclease domain	292	544	https://www.ebi.ac.uk/interpro/entry/InterPro/IPR006133/	2026-07-14
+UL30	P89453	IPR006172	family	DNA-directed DNA polymerase family B	361	901	https://www.ebi.ac.uk/interpro/entry/InterPro/IPR006172/	2026-07-14
+UL30	P89453	IPR006134	domain	DNA-directed DNA polymerase family B multifunctional domain	608	1180	https://www.ebi.ac.uk/interpro/entry/InterPro/IPR006134/	2026-07-14
+UL30	P89453	IPR023211	homologous_superfamily	DNA polymerase palm domain superfamily	706	961	https://www.ebi.ac.uk/interpro/entry/InterPro/IPR023211/	2026-07-14
+UL30	P89453	IPR017964	conserved_site	DNA-directed DNA polymerase family B conserved site	889	897	https://www.ebi.ac.uk/interpro/entry/InterPro/IPR017964/	2026-07-14
+UL30	P89453	IPR042087	homologous_superfamily	DNA polymerase family B thumb domain	962	1202	https://www.ebi.ac.uk/interpro/entry/InterPro/IPR042087/	2026-07-14
+UL30	P89453	IPR021639	domain	DNA polymerase catalytic subunit Pol C-terminal	1205	1240	https://www.ebi.ac.uk/interpro/entry/InterPro/IPR021639/	2026-07-14

@@ -114,6 +114,20 @@ def test_exhaustive_requires_explicit_confirmation() -> None:
         select_balanced_discovery_panel(candidates, mapping, _features(), exhaustive=True)
 
 
+def test_confirmed_exhaustive_selection_retains_every_eligible_candidate() -> None:
+    candidates = _candidates()
+    mapping = build_candidate_feature_map(candidates, _features(), config=_settings())
+    selection = select_balanced_discovery_panel(
+        candidates,
+        mapping,
+        _features(),
+        exhaustive=True,
+        confirm_exhaustive=True,
+    )
+    assert set(selection.panel["candidate_id"]) == set(candidates["candidate_id"])
+    assert selection.audit["selection_reason"].eq("exhaustive").all()
+
+
 def _screened_candidates() -> tuple[pd.DataFrame, pd.DataFrame]:
     candidates = _candidates(4)
     mapping = build_candidate_feature_map(candidates, _features(), config=_settings())

@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.6.0 — 2026-07-14
+
+- Added configuration-driven virus, host, and nuclease profiles plus generic schemas.
+- Added coding/protein-coordinate mapping, InterPro and disorder context, cross-strain
+  entropy, amino-acid conservation, ortholog comparison, and bounded dN/dS summaries.
+- Added deterministic -10 to +10 bp indel and theoretical paired-deletion consequence
+  tables without claiming repair frequencies or experimental outcomes.
+- Kept targetability, direct HSV-2 essentiality, HSV-1 ortholog evidence, predicted
+  disruption, evidence coverage, and held-out population support as separate axes.
+- Added a discovery-excluded HSV-2 population panel with IUPAC-aware QC and
+  reference-aware locus denominators for partial public records.
+- Added presentation reports, figures, English notebooks 10–12, and reusable scripts.
+
+## 0.5.0 — 2026-07-14
+
+- Added balanced and guarded exhaustive genome-wide discovery modes.
+- Added one-to-many feature mapping, quota sensitivity at K=10/25/50, gene rankings,
+  resumable Cas-OFFinder batches, and partial-state reporting.
+
+## 0.4.0 — 2026-07-13
+
+- Added multi-tool adapters, normalized imports, consensus reporting, the public Python
+  run-loading API, and separate measured-result imports.
+
 ## 0.3.0 — 2026-07-13
 
 - Added stable content-derived candidate IDs, viral occurrence counts, and explicit

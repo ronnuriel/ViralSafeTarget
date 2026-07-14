@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://viral-safe-target.example/schemas/host_profile.schema.json",
+  "title": "ViralSafeTarget host profile",
+  "type": "object",
+  "required": ["schema_version", "profile_type", "id", "display_name", "assembly_name", "assembly_accession", "fasta_root"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "profile_type": {"const": "host"},
+    "id": {"type": "string"},
+    "display_name": {"type": "string"},
+    "assembly_name": {"type": "string"},
+    "assembly_accession": {"type": "string"},
+    "fasta_root": {"type": "string"},
+    "annotation_gff": {"type": ["string", "null"]}
+  },
+  "additionalProperties": true
+}
