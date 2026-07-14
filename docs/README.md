@@ -20,6 +20,7 @@ Documentation is grouped by the question a researcher is trying to answer. The r
 
 - [`GENOME_WIDE_DISCOVERY.md`](workflows/GENOME_WIDE_DISCOVERY.md)
 - [`EVIDENCE_AGENT.md`](workflows/EVIDENCE_AGENT.md)
+- [`VIRTUAL_KNOCKOUT_ESCAPE.md`](workflows/VIRTUAL_KNOCKOUT_ESCAPE.md)
 - [`HSV2_PILOT.md`](workflows/HSV2_PILOT.md)
 - [`HSV2_CONSENSUS_PILOT.md`](workflows/HSV2_CONSENSUS_PILOT.md)
 - [`MULTITOOL_COMPARISON.md`](workflows/MULTITOOL_COMPARISON.md)

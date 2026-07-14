@@ -8,8 +8,9 @@ Configuration is split between reusable profiles and versioned case-study settin
   evidence sources.
 - `hosts/human_grch38.yaml` — host assembly identity and reference location.
 - `nucleases/spcas9.yaml` — editor/PAM/cut model.
-- `projects/hsv2_case_study.yaml` — binds virus, host, nuclease, ranking, and output
-  settings into one researcher-facing project.
+- `projects/hsv2_case_study.yaml` — binds virus, host, nuclease, ranking, output,
+  virtual-knockout bounds, source assertions, and multiplex strategies into one
+  researcher-facing project.
 
 Add a new virus by creating a project with `vst project init`; do not add gene-name
 conditionals to Python code.

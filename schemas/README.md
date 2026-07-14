@@ -2,8 +2,10 @@
 
 Schemas define the generic project and human-review contracts:
 
-- `project.schema.json` — top-level project configuration.
-- `virus_profile.schema.json` — virus identity, inputs, aliases, and evidence paths.
+- `project.schema.json` — top-level project configuration, including bounded virtual
+  knockout and configured multiplex strategies.
+- `virus_profile.schema.json` — virus identity, inputs, aliases, evidence paths, and
+  optional domain/disorder/conserved-region/category tables.
 - `host_profile.schema.json` — host assembly configuration.
 - `nuclease_profile.schema.json` — editor, PAM, and cut model.
 - `gene_evidence.schema.json` — curated source-linked gene evidence.
