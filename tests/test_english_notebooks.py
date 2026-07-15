@@ -8,15 +8,15 @@ import matplotlib
 
 ROOT = Path(__file__).resolve().parents[1]
 NOTEBOOKS = [
-    ROOT / "notebooks/07_HSV2_MULTITOOL_COMPARISON_EN.ipynb",
-    ROOT / "notebooks/08_RUN_FULL_PIPELINE_EN.ipynb",
-    ROOT / "notebooks/09_HSV2_GENOME_WIDE_DISCOVERY_EN.ipynb",
-    ROOT / "notebooks/10_HSV2_GENE_FUNCTION_AND_DISRUPTION_EN.ipynb",
-    ROOT / "notebooks/11_HSV2_RESEARCH_SHOWCASE_EN.ipynb",
-    ROOT / "notebooks/12_HSV2_HELDOUT_POPULATION_VALIDATION_EN.ipynb",
-    ROOT / "notebooks/13_EVIDENCE_AGENT_HUMAN_REVIEW_EN.ipynb",
-    ROOT / "notebooks/14_VIRTUAL_KNOCKOUT_AND_ESCAPE_EN.ipynb",
-    ROOT / "notebooks/15_SYSTEMATIC_MULTITOOL_BENCHMARK_EN.ipynb",
+    ROOT / "notebooks/advanced/benchmarking/07_HSV2_MULTITOOL_COMPARISON_EN.ipynb",
+    ROOT / "notebooks/advanced/genome-wide/08_RUN_FULL_PIPELINE_EN.ipynb",
+    ROOT / "notebooks/advanced/genome-wide/09_HSV2_GENOME_WIDE_DISCOVERY_EN.ipynb",
+    ROOT / "notebooks/advanced/disruption-escape/10_HSV2_GENE_FUNCTION_AND_DISRUPTION_EN.ipynb",
+    ROOT / "notebooks/advanced/genome-wide/11_HSV2_RESEARCH_SHOWCASE_EN.ipynb",
+    ROOT / "notebooks/advanced/genome-wide/12_HSV2_HELDOUT_POPULATION_VALIDATION_EN.ipynb",
+    ROOT / "notebooks/advanced/evidence/13_EVIDENCE_AGENT_HUMAN_REVIEW_EN.ipynb",
+    ROOT / "notebooks/advanced/disruption-escape/14_VIRTUAL_KNOCKOUT_AND_ESCAPE_EN.ipynb",
+    ROOT / "notebooks/advanced/benchmarking/15_SYSTEMATIC_MULTITOOL_BENCHMARK_EN.ipynb",
 ]
 
 
@@ -70,7 +70,7 @@ def test_genome_wide_notebook_executes_in_english_synthetic_mode(monkeypatch):
 
 def test_evidence_agent_notebook_executes_without_network_or_automatic_approval(monkeypatch):
     monkeypatch.chdir(ROOT / "notebooks")
-    path = ROOT / "notebooks/13_EVIDENCE_AGENT_HUMAN_REVIEW_EN.ipynb"
+    path = ROOT / "notebooks/advanced/evidence/13_EVIDENCE_AGENT_HUMAN_REVIEW_EN.ipynb"
     notebook = _load(path)
     namespace: dict[str, object] = {}
     for number, cell in enumerate(notebook["cells"]):
@@ -84,7 +84,7 @@ def test_evidence_agent_notebook_executes_without_network_or_automatic_approval(
 
 def test_virtual_knockout_escape_notebook_executes_from_clean_synthetic_inputs(monkeypatch):
     monkeypatch.chdir(ROOT / "notebooks")
-    path = ROOT / "notebooks/14_VIRTUAL_KNOCKOUT_AND_ESCAPE_EN.ipynb"
+    path = ROOT / "notebooks/advanced/disruption-escape/14_VIRTUAL_KNOCKOUT_AND_ESCAPE_EN.ipynb"
     notebook = _load(path)
     namespace: dict[str, object] = {}
     for number, cell in enumerate(notebook["cells"]):
@@ -98,7 +98,7 @@ def test_virtual_knockout_escape_notebook_executes_from_clean_synthetic_inputs(m
 
 def test_systematic_benchmark_notebook_executes_in_synthetic_mode(monkeypatch):
     monkeypatch.chdir(ROOT / "notebooks")
-    path = ROOT / "notebooks/15_SYSTEMATIC_MULTITOOL_BENCHMARK_EN.ipynb"
+    path = ROOT / "notebooks/advanced/benchmarking/15_SYSTEMATIC_MULTITOOL_BENCHMARK_EN.ipynb"
     notebook = _load(path)
     namespace: dict[str, object] = {}
     for number, cell in enumerate(notebook["cells"]):

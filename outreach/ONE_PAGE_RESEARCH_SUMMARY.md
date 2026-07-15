@@ -25,6 +25,9 @@ multiplex escape robustness.
   and shared 49 of their top 50 guides under closely matched reference-genome settings.
 - CRISPOR, CHOPCHOP, and GuideScan2 are documented in the capability matrix but remain
   export-required; their quantitative results were not fabricated or treated as zero.
+- The installed 0.10.0 wheel completed a reference-only BK polyomavirus workflow without
+  virus-specific core-code changes; this demonstrates usability, not biological
+  generalization.
 
 ## Why it matters
 

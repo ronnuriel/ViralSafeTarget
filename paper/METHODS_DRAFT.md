@@ -78,3 +78,17 @@ For sensitivity analysis, each configured ViralSafeTarget score component was om
 in turn and the transparent weighted score was recomputed on the frozen panel. This
 leave-one-component-out procedure was not treated as model retraining or biological
 validation.
+
+## Reproducibility and researcher usability
+
+The 0.10.0 source distribution and wheel were built from the tagged package metadata.
+A temporary environment outside the repository installed the wheel non-editably and
+executed the public CLI (`doctor`, `quickstart`, `plan`, `run`, `status`, `resume`,
+`open --no-browser`, and `export`). Each project persisted stage signatures, explicit
+external-required states, elapsed timings, provenance, and a portable result archive.
+
+As a software generalization check, the same installed CLI retrieved BK polyomavirus
+NC_001538.1 through NCBI E-utilities, derived a reference-matched GFF3 from the GenBank
+record, and ran the generic workflow. No BK-specific gene name or rule was introduced
+in core code. Because this check used a reference-only strain panel and no host
+assembly, population conservation and host-risk outputs were explicitly unavailable.

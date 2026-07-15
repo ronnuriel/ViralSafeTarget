@@ -5,6 +5,8 @@ Documentation is grouped by the question a researcher is trying to answer. The r
 
 ## Getting started
 
+- [`FIVE_MINUTE_QUICKSTART.md`](getting-started/FIVE_MINUTE_QUICKSTART.md) — install a
+  wheel, run the demo, start a new virus, and export a collaborator bundle.
 - [`NEW_VIRUS_WORKFLOW.md`](getting-started/NEW_VIRUS_WORKFLOW.md) — create and run a
   project for another virus.
 - [`REPRODUCIBILITY.md`](getting-started/REPRODUCIBILITY.md) — reproduce the HSV-2

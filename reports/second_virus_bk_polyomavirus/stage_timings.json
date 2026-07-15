@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0",
+  "stages": [
+    {
+      "stage": "validate",
+      "status": "completed",
+      "elapsed_seconds": null,
+      "cache_reused": false,
+      "updated_utc": "2026-07-15T10:28:02.163012+00:00"
+    },
+    {
+      "stage": "discover",
+      "status": "completed",
+      "elapsed_seconds": 0.66108,
+      "cache_reused": true,
+      "updated_utc": "2026-07-15T10:28:02.167022+00:00"
+    },
+    {
+      "stage": "host_screen",
+      "status": "external_required",
+      "elapsed_seconds": null,
+      "cache_reused": false,
+      "updated_utc": "2026-07-15T10:28:02.170585+00:00"
+    },
+    {
+      "stage": "pairs",
+      "status": "completed",
+      "elapsed_seconds": 13.370874,
+      "cache_reused": true,
+      "updated_utc": "2026-07-15T10:28:02.171187+00:00"
+    },
+    {
+      "stage": "virtual_knockout",
+      "status": "completed",
+      "elapsed_seconds": 1.982405,
+      "cache_reused": true,
+      "updated_utc": "2026-07-15T10:28:02.174871+00:00"
+    },
+    {
+      "stage": "escape",
+      "status": "completed",
+      "elapsed_seconds": 0.360207,
+      "cache_reused": true,
+      "updated_utc": "2026-07-15T10:28:02.175351+00:00"
+    },
+    {
+      "stage": "multiplex",
+      "status": "completed",
+      "elapsed_seconds": 2.503378,
+      "cache_reused": true,
+      "updated_utc": "2026-07-15T10:28:02.178550+00:00"
+    },
+    {
+      "stage": "report",
+      "status": "completed",
+      "elapsed_seconds": 0.104137,
+      "cache_reused": true,
+      "updated_utc": "2026-07-15T10:28:02.186694+00:00"
+    },
+    {
+      "stage": "bundle",
+      "status": "completed",
+      "elapsed_seconds": 0.264115,
+      "cache_reused": true,
+      "updated_utc": "2026-07-15T10:28:02.187569+00:00"
+    }
+  ]
+}
