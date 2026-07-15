@@ -1,0 +1,2 @@
+# Preserve external-tool raw output byte-for-byte; its checksums are publication provenance.
+reports/**/raw/** whitespace=-trailing-space,-blank-at-eof

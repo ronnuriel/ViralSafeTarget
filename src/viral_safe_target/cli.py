@@ -440,6 +440,38 @@ def _analyze_population(args: argparse.Namespace) -> None:
         webbrowser.open((output / "population_validation_report.html").as_uri())
 
 
+def _analyze_virtual_knockout(args: argparse.Namespace) -> None:
+    from .virtual_analysis_workflow import run_virtual_knockout_analysis
+
+    result = run_virtual_knockout_analysis(args.project)
+    print(json.dumps({key: str(value) for key, value in result.items()}, indent=2))
+
+
+def _analyze_escape(args: argparse.Namespace) -> None:
+    from .virtual_analysis_workflow import run_escape_analysis
+
+    result = run_escape_analysis(args.project)
+    print(json.dumps({key: str(value) for key, value in result.items()}, indent=2))
+
+
+def _analyze_multiplex(args: argparse.Namespace) -> None:
+    from .virtual_analysis_workflow import run_full_virtual_analysis
+
+    result = run_full_virtual_analysis(args.project)
+    print(json.dumps(result, indent=2, default=str))
+    if args.open_report:
+        webbrowser.open(Path(result["report"]).as_uri())
+
+
+def _tool_benchmark(args: argparse.Namespace) -> None:
+    from .tool_benchmark import run_tool_benchmark
+
+    result = run_tool_benchmark(args.config)
+    print(json.dumps(result, indent=2, default=str))
+    if args.open_report:
+        webbrowser.open(Path(result["report"]).resolve().as_uri())
+
+
 def _profiles_validate(args: argparse.Namespace) -> None:
     from .profiles import load_profile_bundle, validate_profile_bundle
 
@@ -632,7 +664,16 @@ def build_parser() -> argparse.ArgumentParser:
         )
         project_run.add_argument(
             "--stop-after",
-            choices=["validate", "discover", "host_screen", "pairs", "report"],
+            choices=[
+                "validate",
+                "discover",
+                "host_screen",
+                "pairs",
+                "virtual_knockout",
+                "escape",
+                "multiplex",
+                "report",
+            ],
         )
         project_run.add_argument("--open-report", action="store_true")
         project_run.set_defaults(func=_project_run)
@@ -750,6 +791,28 @@ def build_parser() -> argparse.ArgumentParser:
     population.add_argument("--open-report", action="store_true")
     population.set_defaults(func=_analyze_population)
 
+    virtual_knockout = analyze_commands.add_parser(
+        "virtual-knockout",
+        help="enumerate bounded coding-sequence hypotheses for a generic virus project",
+    )
+    virtual_knockout.add_argument("--project", required=True)
+    virtual_knockout.set_defaults(func=_analyze_virtual_knockout)
+
+    escape = analyze_commands.add_parser(
+        "escape",
+        help="measure observed target support and exact-target sequence counterfactuals",
+    )
+    escape.add_argument("--project", required=True)
+    escape.set_defaults(func=_analyze_escape)
+
+    multiplex = analyze_commands.add_parser(
+        "multiplex",
+        help="compare configured panels using a sequence-level escape barrier",
+    )
+    multiplex.add_argument("--project", required=True)
+    multiplex.add_argument("--open-report", action="store_true")
+    multiplex.set_defaults(func=_analyze_multiplex)
+
     profiles = subparsers.add_parser("profiles", help="generic research-profile operations")
     profile_commands = profiles.add_subparsers(dest="profiles_command", required=True)
     profile_validate = profile_commands.add_parser(
@@ -859,6 +922,14 @@ def build_parser() -> argparse.ArgumentParser:
     tool_commands = tools.add_subparsers(dest="tools_command", required=True)
     tools_doctor = tool_commands.add_parser("doctor", help="detect supported external tools")
     tools_doctor.set_defaults(func=_tools_doctor)
+
+    tools_benchmark = tool_commands.add_parser(
+        "benchmark",
+        help="run a frozen-panel multi-tool benchmark with explicit missingness",
+    )
+    tools_benchmark.add_argument("--config", required=True)
+    tools_benchmark.add_argument("--open-report", action="store_true")
+    tools_benchmark.set_defaults(func=_tool_benchmark)
 
     crispritz = tool_commands.add_parser("crispritz", help="CRISPRitz integration")
     crispritz_commands = crispritz.add_subparsers(dest="crispritz_command", required=True)

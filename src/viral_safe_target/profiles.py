@@ -107,6 +107,8 @@ def validate_profile_bundle(
         "evidence_table",
         "domain_table",
         "disorder_table",
+        "conserved_region_table",
+        "gene_category_table",
         "external_validation_table",
         "population_validation_candidates",
         "population_validation_genes",

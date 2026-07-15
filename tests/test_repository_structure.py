@@ -78,5 +78,7 @@ def test_public_reports_are_not_deleted_by_default_clean_target() -> None:
         "reports/hsv2_showcase",
         "reports/hsv2_genome_wide_exhaustive",
         "reports/hsv2_evidence_agent",
+        "reports/hsv2_virtual_knockout_escape",
+        "reports/hsv2_tool_benchmark",
     ):
         assert directory not in makefile.split("clean-generated:", maxsplit=1)[-1]

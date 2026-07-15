@@ -1,8 +1,8 @@
 # ViralSafeTarget
 
 **A virus-first computational research toolkit for conserved target discovery,
-host off-target triage, protein-disruption hypotheses, and source-linked evidence
-review.**
+host off-target triage, virtual-knockout sequence hypotheses, exact-target escape
+robustness, and source-linked evidence review.**
 
 [Hebrew overview](README_HE.md) · [Documentation](docs/README.md) ·
 [Completed result snapshots](reports/README.md) · [Notebooks](notebooks/README.md)
@@ -16,6 +16,8 @@ review.**
 | Goal | Start here |
 |---|---|
 | Inspect the completed HSV-2 results | [`reports/README.md`](reports/README.md) |
+| Inspect virtual knockout and escape results | [`reports/hsv2_virtual_knockout_escape/FINDINGS.md`](reports/hsv2_virtual_knockout_escape/FINDINGS.md) |
+| Inspect the systematic tool benchmark | [`docs/workflows/SYSTEMATIC_TOOL_BENCHMARK.md`](docs/workflows/SYSTEMATIC_TOOL_BENCHMARK.md) |
 | Learn the workflow in Hebrew | [`notebooks/00_START_HERE.ipynb`](notebooks/00_START_HERE.ipynb) |
 | Run a small synthetic example | `make demo` |
 | Reproduce the HSV-2 case study | `vst reproduce hsv2` |
@@ -55,9 +57,10 @@ flowchart LR
     C --> D["Host off-target screen"]
     D --> E["Candidate and gene rankings"]
     E --> F["Protein-disruption hypotheses"]
+    F --> J["Exact-target escape counterfactuals"]
     G["Literature and protein databases"] --> H["Human evidence review"]
     H --> E
-    E --> I["Auditable reports and tables"]
+    J --> I["Auditable reports and tables"]
 ```
 
 The pipeline keeps four questions separate:
@@ -70,6 +73,9 @@ The pipeline keeps four questions separate:
    idealized sequence outcomes could affect?
 4. **Evidence coverage:** what is known, transferred from an ortholog, unresolved, or
    missing?
+5. **Escape robustness:** how well is an exact target supported in observed viral
+   populations, and how many distinct substitutions are required to remove every exact
+   target in a configured multiplex panel?
 
 Missing evidence remains unknown. A zero predicted host hit is model-bounded and is
 not proof of safety.
@@ -89,6 +95,24 @@ vst project validate --project projects/my-virus/project.yaml
 vst project run --project projects/my-virus/project.yaml
 vst project status --project projects/my-virus/project.yaml
 ```
+
+The default project workflow now writes bounded virtual-knockout and exact-target
+escape outputs after pair analysis. The same analyses can be run directly:
+
+```bash
+vst analyze virtual-knockout --project projects/my-virus/project.yaml
+vst analyze escape --project projects/my-virus/project.yaml
+vst analyze multiplex --project projects/my-virus/project.yaml
+vst tools benchmark --config configs/benchmarks/hsv2_multitool.yaml
+```
+
+The indel grid is not a repair-frequency model, and the multiplex barrier is not an
+evolutionary probability. See
+[`docs/workflows/VIRTUAL_KNOCKOUT_ESCAPE.md`](docs/workflows/VIRTUAL_KNOCKOUT_ESCAPE.md).
+
+The benchmark freezes candidate identity, records versions and raw-output hashes,
+compares only commensurable within-tool ranks, and keeps unavailable external outputs
+explicitly pending. Missing output is never converted into zero predicted risk.
 
 Inputs and profiles are documented in
 [`docs/getting-started/NEW_VIRUS_WORKFLOW.md`](docs/getting-started/NEW_VIRUS_WORKFLOW.md).
@@ -121,6 +145,11 @@ Current exhaustive snapshot:
 - leading computational targetability genes: UL3, UL10, UL52, UL47, and UL11.
 
 These are targetability results, not biological or therapeutic rankings.
+
+The publication-facing virtual analysis snapshot covers the current 257-guide deep
+panel. It preserves 271 guide-to-CDS mappings for overlapping annotations, enumerates
+5,691 bounded indel hypotheses and 17,733 single-nucleotide counterfactuals, and
+compares four configured multiplex strategies without a combined therapeutic score.
 
 ## Evidence Agent
 

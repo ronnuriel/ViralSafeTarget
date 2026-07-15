@@ -1,0 +1,1103 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<title>ViralSafeTarget multi-tool benchmark</title>
+<style>
+body {font-family: Arial, sans-serif; max-width: 1180px; margin: 2rem auto;
+      line-height: 1.5; color: #17202a}
+table {border-collapse: collapse; width: 100%; font-size: .88rem}
+th, td {border: 1px solid #ddd; padding: .45rem; text-align: left}
+th {background: #eef3f7}
+.warning {background: #fff4d6; padding: 1rem; border-left: 5px solid #e9a23b}
+img {max-width: 100%}
+</style></head><body>
+<h1>Multi-tool benchmark on a frozen 257-guide panel</h1>
+<div class='warning'><strong>Interpretation boundary.</strong> Tool scores are not placed on a common biological scale. Missing output remains pending, not zero. This benchmark does not establish editing efficacy, safety, viral inactivation, treatment, or cure.</div>
+<h2>Execution status</h2>
+<p>Completed: viral_safe_target_pre_human, viral_safe_target_post_human, cas-offinder, crispritz. Pending/export-required: crispor, chopchop, guidescan2.</p>
+<table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>tool_name</th>
+      <th>tool_version</th>
+      <th>execution_mode</th>
+      <th>status</th>
+      <th>candidate_count</th>
+      <th>reported_candidates</th>
+      <th>missing_candidates</th>
+      <th>coverage_fraction</th>
+      <th>runtime_seconds</th>
+      <th>runtime_scope</th>
+      <th>reason</th>
+      <th>official_source</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>viral_safe_target_pre_human</td>
+      <td>0.9.0</td>
+      <td>internal ranking</td>
+      <td>completed</td>
+      <td>257</td>
+      <td>257</td>
+      <td>0</td>
+      <td>1.0</td>
+      <td>&lt;NA&gt;</td>
+      <td>not isolated from the source workflow</td>
+      <td></td>
+      <td>https://github.com/ronnuriel/ViralSafeTarget</td>
+    </tr>
+    <tr>
+      <td>viral_safe_target_post_human</td>
+      <td>0.9.0</td>
+      <td>internal ranking after configured host-risk layer</td>
+      <td>completed</td>
+      <td>257</td>
+      <td>257</td>
+      <td>0</td>
+      <td>1.0</td>
+      <td>&lt;NA&gt;</td>
+      <td>not isolated from the source workflow</td>
+      <td></td>
+      <td>https://github.com/ronnuriel/ViralSafeTarget</td>
+    </tr>
+    <tr>
+      <td>cas-offinder</td>
+      <td>2.4.1</td>
+      <td>GRCh38.p14 reference search through three mismatches</td>
+      <td>completed</td>
+      <td>257</td>
+      <td>257</td>
+      <td>0</td>
+      <td>1.0</td>
+      <td>18821.560434</td>
+      <td>exhaustive 23,108-candidate source run; not a same-panel runtime comparison</td>
+      <td></td>
+      <td>https://github.com/snugel/cas-offinder</td>
+    </tr>
+    <tr>
+      <td>crispritz</td>
+      <td>2.6.6 Docker image digest sha256:8a6c8212621ee6cc467e7a5bc7ff4405cbb83bfa7c0487c232977f4a09ff0273</td>
+      <td>GRCh38.p14 reference search through three mismatches; no bulges or variants</td>
+      <td>completed</td>
+      <td>257</td>
+      <td>257</td>
+      <td>0</td>
+      <td>1.0</td>
+      <td>709.78</td>
+      <td>frozen 257-guide panel</td>
+      <td>official Docker raw profile and runtime record are committed</td>
+      <td>https://github.com/pinellolab/CRISPRitz</td>
+    </tr>
+    <tr>
+      <td>crispor</td>
+      <td>web/CLI capability assessed 2026-07-15</td>
+      <td>documented researcher export</td>
+      <td>export_required</td>
+      <td>257</td>
+      <td>0</td>
+      <td>257</td>
+      <td>0.0</td>
+      <td>&lt;NA&gt;</td>
+      <td>not assessed</td>
+      <td>no raw export is committed; public web interfaces are not scraped</td>
+      <td>https://github.com/maximilianh/crisporWebsite</td>
+    </tr>
+    <tr>
+      <td>chopchop</td>
+      <td>v3 web/CLI capability assessed 2026-07-15</td>
+      <td>documented researcher export</td>
+      <td>export_required</td>
+      <td>257</td>
+      <td>0</td>
+      <td>257</td>
+      <td>0.0</td>
+      <td>&lt;NA&gt;</td>
+      <td>not assessed</td>
+      <td>no raw export is committed; public web interfaces are not scraped</td>
+      <td>https://chopchop.cbu.uib.no/about</td>
+    </tr>
+    <tr>
+      <td>guidescan2</td>
+      <td>GuideScan2 capability assessed 2026-07-15</td>
+      <td>documented researcher export</td>
+      <td>export_required</td>
+      <td>257</td>
+      <td>0</td>
+      <td>257</td>
+      <td>0.0</td>
+      <td>&lt;NA&gt;</td>
+      <td>not assessed</td>
+      <td>no raw export is committed; public web interfaces are not scraped</td>
+      <td>https://guidescan.com/</td>
+    </tr>
+  </tbody>
+</table>
+<img src='figures/tool_result_coverage.png' alt='Tool result coverage'>
+<h2>Rank agreement</h2>
+<table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>tool_a</th>
+      <th>tool_b</th>
+      <th>shared_candidates</th>
+      <th>spearman_rank_correlation</th>
+      <th>status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>cas-offinder</td>
+      <td>crispritz</td>
+      <td>257</td>
+      <td>0.880413</td>
+      <td>completed</td>
+    </tr>
+    <tr>
+      <td>cas-offinder</td>
+      <td>viral_safe_target_post_human</td>
+      <td>257</td>
+      <td>0.289675</td>
+      <td>completed</td>
+    </tr>
+    <tr>
+      <td>cas-offinder</td>
+      <td>viral_safe_target_pre_human</td>
+      <td>257</td>
+      <td>0.085008</td>
+      <td>completed</td>
+    </tr>
+    <tr>
+      <td>crispritz</td>
+      <td>viral_safe_target_post_human</td>
+      <td>257</td>
+      <td>0.296323</td>
+      <td>completed</td>
+    </tr>
+    <tr>
+      <td>crispritz</td>
+      <td>viral_safe_target_pre_human</td>
+      <td>257</td>
+      <td>0.117298</td>
+      <td>completed</td>
+    </tr>
+    <tr>
+      <td>viral_safe_target_post_human</td>
+      <td>viral_safe_target_pre_human</td>
+      <td>257</td>
+      <td>0.961975</td>
+      <td>completed</td>
+    </tr>
+  </tbody>
+</table>
+<img src='figures/rank_agreement.png' alt='Rank agreement'>
+<h2>Top-K overlap</h2>
+<table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>tool_a</th>
+      <th>tool_b</th>
+      <th>top_k</th>
+      <th>overlap_count</th>
+      <th>jaccard_overlap</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>cas-offinder</td>
+      <td>crispritz</td>
+      <td>10</td>
+      <td>9</td>
+      <td>0.818182</td>
+    </tr>
+    <tr>
+      <td>cas-offinder</td>
+      <td>crispritz</td>
+      <td>25</td>
+      <td>24</td>
+      <td>0.923077</td>
+    </tr>
+    <tr>
+      <td>cas-offinder</td>
+      <td>crispritz</td>
+      <td>50</td>
+      <td>49</td>
+      <td>0.960784</td>
+    </tr>
+    <tr>
+      <td>cas-offinder</td>
+      <td>viral_safe_target_post_human</td>
+      <td>10</td>
+      <td>0</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <td>cas-offinder</td>
+      <td>viral_safe_target_post_human</td>
+      <td>25</td>
+      <td>4</td>
+      <td>0.086957</td>
+    </tr>
+    <tr>
+      <td>cas-offinder</td>
+      <td>viral_safe_target_post_human</td>
+      <td>50</td>
+      <td>10</td>
+      <td>0.111111</td>
+    </tr>
+    <tr>
+      <td>cas-offinder</td>
+      <td>viral_safe_target_pre_human</td>
+      <td>10</td>
+      <td>0</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <td>cas-offinder</td>
+      <td>viral_safe_target_pre_human</td>
+      <td>25</td>
+      <td>4</td>
+      <td>0.086957</td>
+    </tr>
+    <tr>
+      <td>cas-offinder</td>
+      <td>viral_safe_target_pre_human</td>
+      <td>50</td>
+      <td>10</td>
+      <td>0.111111</td>
+    </tr>
+    <tr>
+      <td>crispritz</td>
+      <td>viral_safe_target_post_human</td>
+      <td>10</td>
+      <td>0</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <td>crispritz</td>
+      <td>viral_safe_target_post_human</td>
+      <td>25</td>
+      <td>4</td>
+      <td>0.086957</td>
+    </tr>
+    <tr>
+      <td>crispritz</td>
+      <td>viral_safe_target_post_human</td>
+      <td>50</td>
+      <td>10</td>
+      <td>0.111111</td>
+    </tr>
+    <tr>
+      <td>crispritz</td>
+      <td>viral_safe_target_pre_human</td>
+      <td>10</td>
+      <td>0</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <td>crispritz</td>
+      <td>viral_safe_target_pre_human</td>
+      <td>25</td>
+      <td>4</td>
+      <td>0.086957</td>
+    </tr>
+    <tr>
+      <td>crispritz</td>
+      <td>viral_safe_target_pre_human</td>
+      <td>50</td>
+      <td>10</td>
+      <td>0.111111</td>
+    </tr>
+    <tr>
+      <td>viral_safe_target_post_human</td>
+      <td>viral_safe_target_pre_human</td>
+      <td>10</td>
+      <td>10</td>
+      <td>1.000000</td>
+    </tr>
+    <tr>
+      <td>viral_safe_target_post_human</td>
+      <td>viral_safe_target_pre_human</td>
+      <td>25</td>
+      <td>25</td>
+      <td>1.000000</td>
+    </tr>
+    <tr>
+      <td>viral_safe_target_post_human</td>
+      <td>viral_safe_target_pre_human</td>
+      <td>50</td>
+      <td>50</td>
+      <td>1.000000</td>
+    </tr>
+  </tbody>
+</table>
+<h2>ViralSafeTarget ablation</h2>
+<p>This is sensitivity analysis, not model retraining or biological validation.</p>
+<table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>variant</th>
+      <th>spearman_vs_all_components</th>
+      <th>median_absolute_rank_shift</th>
+      <th>maximum_absolute_rank_shift</th>
+      <th>top_10_overlap</th>
+      <th>top_25_overlap</th>
+      <th>top_50_overlap</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>all_components</td>
+      <td>1.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>10</td>
+      <td>25</td>
+      <td>50</td>
+    </tr>
+    <tr>
+      <td>without_conservation</td>
+      <td>1.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>10</td>
+      <td>25</td>
+      <td>50</td>
+    </tr>
+    <tr>
+      <td>without_viral_uniqueness</td>
+      <td>1.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>10</td>
+      <td>25</td>
+      <td>50</td>
+    </tr>
+    <tr>
+      <td>without_gc</td>
+      <td>0.999937</td>
+      <td>0.0</td>
+      <td>9.0</td>
+      <td>10</td>
+      <td>25</td>
+      <td>50</td>
+    </tr>
+    <tr>
+      <td>without_sequence_complexity</td>
+      <td>0.179123</td>
+      <td>75.0</td>
+      <td>230.0</td>
+      <td>0</td>
+      <td>4</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <td>without_annotation</td>
+      <td>1.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>10</td>
+      <td>25</td>
+      <td>50</td>
+    </tr>
+    <tr>
+      <td>without_gene_evidence</td>
+      <td>1.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>10</td>
+      <td>25</td>
+      <td>50</td>
+    </tr>
+  </tbody>
+</table>
+<img src='figures/ablation_rank_shift.png' alt='Ablation rank shifts'>
+<h2>Capability evidence matrix</h2>
+<p>Documented scope is separate from executable performance.</p>
+<table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>tool_name</th>
+      <th>capability</th>
+      <th>status</th>
+      <th>note</th>
+      <th>official_source</th>
+      <th>accessed_date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ViralSafeTarget</td>
+      <td>guide_design</td>
+      <td>yes</td>
+      <td>Enumerates configured nuclease targets across supplied viral sequences.</td>
+      <td>https://github.com/ronnuriel/ViralSafeTarget</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>ViralSafeTarget</td>
+      <td>user_supplied_genome</td>
+      <td>yes</td>
+      <td>Project profiles accept virus FASTA/GFF and host references.</td>
+      <td>https://github.com/ronnuriel/ViralSafeTarget</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>ViralSafeTarget</td>
+      <td>multi_strain_viral_conservation</td>
+      <td>yes</td>
+      <td>Exact target/PAM support is measured across discovery and held-out viral populations.</td>
+      <td>https://github.com/ronnuriel/ViralSafeTarget</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>ViralSafeTarget</td>
+      <td>host_offtarget_search</td>
+      <td>yes</td>
+      <td>Orchestrates Cas-OFFinder and preserves model-bounded hit counts.</td>
+      <td>https://github.com/ronnuriel/ViralSafeTarget</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>ViralSafeTarget</td>
+      <td>mismatch_search</td>
+      <td>yes</td>
+      <td>Configured Cas-OFFinder mismatch searches are supported.</td>
+      <td>https://github.com/ronnuriel/ViralSafeTarget</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>ViralSafeTarget</td>
+      <td>bulge_search</td>
+      <td>partial</td>
+      <td>CRISPRitz adapter/import support exists; no bulge result is claimed in the HSV-2 snapshot.</td>
+      <td>https://github.com/ronnuriel/ViralSafeTarget</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>ViralSafeTarget</td>
+      <td>population_variant_host_risk</td>
+      <td>partial</td>
+      <td>CRISPRitz variant-aware inputs/imports are supported but not completed in this benchmark.</td>
+      <td>https://github.com/ronnuriel/ViralSafeTarget</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>ViralSafeTarget</td>
+      <td>on_target_scoring</td>
+      <td>partial</td>
+      <td>Transparent sequence heuristics are reported; they are not presented as experimentally calibrated efficiency.</td>
+      <td>https://github.com/ronnuriel/ViralSafeTarget</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>ViralSafeTarget</td>
+      <td>gene_annotation</td>
+      <td>yes</td>
+      <td>One-to-many GFF gene/CDS mappings are preserved.</td>
+      <td>https://github.com/ronnuriel/ViralSafeTarget</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>ViralSafeTarget</td>
+      <td>protein_disruption</td>
+      <td>yes</td>
+      <td>Reports bounded sequence hypotheses, frameshift class, premature-stop potential, and region overlap.</td>
+      <td>https://github.com/ronnuriel/ViralSafeTarget</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>ViralSafeTarget</td>
+      <td>biological_evidence_provenance</td>
+      <td>yes</td>
+      <td>Evidence species, directness, source, confidence, and human review state remain explicit.</td>
+      <td>https://github.com/ronnuriel/ViralSafeTarget</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>ViralSafeTarget</td>
+      <td>escape_robustness</td>
+      <td>yes</td>
+      <td>Reports observed population support and exact-target sequence counterfactuals.</td>
+      <td>https://github.com/ronnuriel/ViralSafeTarget</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>ViralSafeTarget</td>
+      <td>mechanism_aware_multiplex</td>
+      <td>yes</td>
+      <td>Config-driven panels keep mechanism categories and sequence escape barriers separate.</td>
+      <td>https://github.com/ronnuriel/ViralSafeTarget</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>ViralSafeTarget</td>
+      <td>cli</td>
+      <td>yes</td>
+      <td>Installable vst CLI with project and analysis workflows.</td>
+      <td>https://github.com/ronnuriel/ViralSafeTarget</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPOR</td>
+      <td>guide_design</td>
+      <td>yes</td>
+      <td>Finds and ranks guides in an input sequence.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC6030908/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPOR</td>
+      <td>user_supplied_genome</td>
+      <td>partial</td>
+      <td>Standalone use is documented but local genome/index preparation is required for full off-target analysis.</td>
+      <td>https://github.com/maximilianh/crisporWebsite</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPOR</td>
+      <td>multi_strain_viral_conservation</td>
+      <td>not_assessed</td>
+      <td>No integrated multi-strain viral population workflow was identified in the cited scope; this is not proof of absence.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC6030908/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPOR</td>
+      <td>host_offtarget_search</td>
+      <td>yes</td>
+      <td>Reports predicted off-target sites and specificity scores in a selected genome.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC6030908/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPOR</td>
+      <td>mismatch_search</td>
+      <td>yes</td>
+      <td>The paper documents potential off-targets through four mismatches.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC6030908/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPOR</td>
+      <td>bulge_search</td>
+      <td>not_assessed</td>
+      <td>Not established from the cited official paper/repository review.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC6030908/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPOR</td>
+      <td>population_variant_host_risk</td>
+      <td>not_assessed</td>
+      <td>Not established from the cited official paper/repository review.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC6030908/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPOR</td>
+      <td>on_target_scoring</td>
+      <td>yes</td>
+      <td>Multiple activity scores are presented and assay-dependent limitations are documented.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC6030908/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPOR</td>
+      <td>gene_annotation</td>
+      <td>yes</td>
+      <td>Off-target locations and genomic annotations are reported.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC6030908/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPOR</td>
+      <td>protein_disruption</td>
+      <td>partial</td>
+      <td>An out-of-frame score is available; it is not the same as the bounded CDS/domain analysis benchmarked here.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC6030908/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPOR</td>
+      <td>biological_evidence_provenance</td>
+      <td>not_assessed</td>
+      <td>No virus-gene literature evidence curation layer was identified in the cited scope.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC6030908/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPOR</td>
+      <td>escape_robustness</td>
+      <td>not_assessed</td>
+      <td>No discovery/held-out viral target escape workflow was identified in the cited scope.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC6030908/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPOR</td>
+      <td>mechanism_aware_multiplex</td>
+      <td>not_assessed</td>
+      <td>No mechanism-aware viral panel selection was identified in the cited scope.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC6030908/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPOR</td>
+      <td>cli</td>
+      <td>yes</td>
+      <td>A standalone command-line version is documented.</td>
+      <td>https://github.com/maximilianh/crisporWebsite</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CHOPCHOP</td>
+      <td>guide_design</td>
+      <td>yes</td>
+      <td>Supports Cas9, Cpf1/Cas12a, Cas13, nickase, and TALEN design modes.</td>
+      <td>https://chopchop.cbu.uib.no/about</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CHOPCHOP</td>
+      <td>user_supplied_genome</td>
+      <td>partial</td>
+      <td>New FASTA/GFF assemblies can be submitted and a local command-line version is documented.</td>
+      <td>https://chopchop.cbu.uib.no/submissions</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CHOPCHOP</td>
+      <td>multi_strain_viral_conservation</td>
+      <td>not_assessed</td>
+      <td>No integrated multi-strain viral population workflow was identified in the cited scope.</td>
+      <td>https://chopchop.cbu.uib.no/instructions</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CHOPCHOP</td>
+      <td>host_offtarget_search</td>
+      <td>yes</td>
+      <td>Guide ranking includes predicted off-target considerations for configured genomes.</td>
+      <td>https://chopchop.cbu.uib.no/instructions</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CHOPCHOP</td>
+      <td>mismatch_search</td>
+      <td>yes</td>
+      <td>Mismatch parameters are part of the documented CRISPR options.</td>
+      <td>https://chopchop.cbu.uib.no/instructions</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CHOPCHOP</td>
+      <td>bulge_search</td>
+      <td>not_assessed</td>
+      <td>Not established from the cited official documentation.</td>
+      <td>https://chopchop.cbu.uib.no/instructions</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CHOPCHOP</td>
+      <td>population_variant_host_risk</td>
+      <td>not_assessed</td>
+      <td>Not established from the cited official documentation.</td>
+      <td>https://chopchop.cbu.uib.no/instructions</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CHOPCHOP</td>
+      <td>on_target_scoring</td>
+      <td>yes</td>
+      <td>Multiple guide-efficiency scoring methods are documented.</td>
+      <td>https://chopchop.cbu.uib.no/instructions</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CHOPCHOP</td>
+      <td>gene_annotation</td>
+      <td>yes</td>
+      <td>Gene, transcript, and isoform-aware targeting is documented.</td>
+      <td>https://chopchop.cbu.uib.no/instructions</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CHOPCHOP</td>
+      <td>protein_disruption</td>
+      <td>partial</td>
+      <td>Knockout modes and target placement are supported, but equivalence to the current CDS/domain hypothesis model is not claimed.</td>
+      <td>https://chopchop.cbu.uib.no/instructions</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CHOPCHOP</td>
+      <td>biological_evidence_provenance</td>
+      <td>not_assessed</td>
+      <td>No virus-gene literature evidence curation layer was identified in the cited scope.</td>
+      <td>https://chopchop.cbu.uib.no/about</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CHOPCHOP</td>
+      <td>escape_robustness</td>
+      <td>not_assessed</td>
+      <td>No discovery/held-out viral target escape workflow was identified in the cited scope.</td>
+      <td>https://chopchop.cbu.uib.no/about</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CHOPCHOP</td>
+      <td>mechanism_aware_multiplex</td>
+      <td>not_assessed</td>
+      <td>No mechanism-aware viral panel selection was identified in the cited scope.</td>
+      <td>https://chopchop.cbu.uib.no/about</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CHOPCHOP</td>
+      <td>cli</td>
+      <td>yes</td>
+      <td>A local command-line implementation is linked by the official site.</td>
+      <td>https://chopchop.cbu.uib.no/about</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPRitz</td>
+      <td>guide_design</td>
+      <td>no</td>
+      <td>The documented scope is off-target search and assessment, not de novo guide design.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC7141852/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPRitz</td>
+      <td>user_supplied_genome</td>
+      <td>yes</td>
+      <td>Search accepts a supplied reference genome or pre-built index.</td>
+      <td>https://github.com/pinellolab/CRISPRitz</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPRitz</td>
+      <td>multi_strain_viral_conservation</td>
+      <td>not_assessed</td>
+      <td>No integrated viral multi-strain target prioritization was identified in the cited scope.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC7141852/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPRitz</td>
+      <td>host_offtarget_search</td>
+      <td>yes</td>
+      <td>High-throughput off-target identification is the primary documented function.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC7141852/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPRitz</td>
+      <td>mismatch_search</td>
+      <td>yes</td>
+      <td>Arbitrary mismatch thresholds are supported.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC7141852/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPRitz</td>
+      <td>bulge_search</td>
+      <td>yes</td>
+      <td>RNA/DNA bulges are explicitly supported through an indexed-genome workflow.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC7141852/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPRitz</td>
+      <td>population_variant_host_risk</td>
+      <td>yes</td>
+      <td>Genetic variants can be encoded and analyzed at population/sample levels.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC7141852/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPRitz</td>
+      <td>on_target_scoring</td>
+      <td>partial</td>
+      <td>The search/report workflow can calculate Doench/CFD scores under supported settings; it is not a de novo design layer.</td>
+      <td>https://github.com/pinellolab/CRISPRitz</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPRitz</td>
+      <td>gene_annotation</td>
+      <td>partial</td>
+      <td>Annotate-results adds functional annotations to nominated sites.</td>
+      <td>https://github.com/pinellolab/CRISPRitz</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPRitz</td>
+      <td>protein_disruption</td>
+      <td>no</td>
+      <td>The cited scope does not model viral CDS/protein consequences after the on-target cut.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC7141852/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPRitz</td>
+      <td>biological_evidence_provenance</td>
+      <td>no</td>
+      <td>The cited scope does not curate virus-gene literature evidence.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC7141852/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPRitz</td>
+      <td>escape_robustness</td>
+      <td>no</td>
+      <td>The cited scope does not report held-out viral target coverage or multiplex escape barriers.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC7141852/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPRitz</td>
+      <td>mechanism_aware_multiplex</td>
+      <td>no</td>
+      <td>The cited scope does not select viral panels by biological mechanism.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC7141852/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>CRISPRitz</td>
+      <td>cli</td>
+      <td>yes</td>
+      <td>Conda and Docker command-line workflows are documented.</td>
+      <td>https://github.com/pinellolab/CRISPRitz</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>GuideScan2</td>
+      <td>guide_design</td>
+      <td>yes</td>
+      <td>Builds genome-wide guide databases and supports guide design/search.</td>
+      <td>https://link.springer.com/article/10.1186/s13059-025-03488-8</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>GuideScan2</td>
+      <td>user_supplied_genome</td>
+      <td>yes</td>
+      <td>The software constructs specificity databases from genome assemblies.</td>
+      <td>https://link.springer.com/article/10.1186/s13059-025-03488-8</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>GuideScan2</td>
+      <td>multi_strain_viral_conservation</td>
+      <td>not_assessed</td>
+      <td>No integrated multi-strain viral population prioritization was identified in the cited scope.</td>
+      <td>https://link.springer.com/article/10.1186/s13059-025-03488-8</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>GuideScan2</td>
+      <td>host_offtarget_search</td>
+      <td>yes</td>
+      <td>Genome-wide specificity analysis is a primary documented function.</td>
+      <td>https://link.springer.com/article/10.1186/s13059-025-03488-8</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>GuideScan2</td>
+      <td>mismatch_search</td>
+      <td>yes</td>
+      <td>Specificity depends on the configured maximum off-target search threshold.</td>
+      <td>https://guidescan.com/py/grna_sequence_search</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>GuideScan2</td>
+      <td>bulge_search</td>
+      <td>not_assessed</td>
+      <td>Not established from the cited official paper/site review.</td>
+      <td>https://link.springer.com/article/10.1186/s13059-025-03488-8</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>GuideScan2</td>
+      <td>population_variant_host_risk</td>
+      <td>not_assessed</td>
+      <td>Not established from the cited official paper/site review.</td>
+      <td>https://link.springer.com/article/10.1186/s13059-025-03488-8</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>GuideScan2</td>
+      <td>on_target_scoring</td>
+      <td>partial</td>
+      <td>Guide design and specificity are supported; a common experimentally calibrated activity metric was not assumed here.</td>
+      <td>https://link.springer.com/article/10.1186/s13059-025-03488-8</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>GuideScan2</td>
+      <td>gene_annotation</td>
+      <td>partial</td>
+      <td>Genome-wide guide databases can be used with genomic context; equivalence to one-to-many viral GFF mapping is not claimed.</td>
+      <td>https://link.springer.com/article/10.1186/s13059-025-03488-8</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>GuideScan2</td>
+      <td>protein_disruption</td>
+      <td>no</td>
+      <td>The cited scope does not model bounded viral CDS/protein outcomes after cutting.</td>
+      <td>https://link.springer.com/article/10.1186/s13059-025-03488-8</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>GuideScan2</td>
+      <td>biological_evidence_provenance</td>
+      <td>no</td>
+      <td>The cited scope does not curate virus-gene experimental evidence.</td>
+      <td>https://link.springer.com/article/10.1186/s13059-025-03488-8</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>GuideScan2</td>
+      <td>escape_robustness</td>
+      <td>no</td>
+      <td>The cited scope does not report discovery/held-out viral target escape robustness.</td>
+      <td>https://link.springer.com/article/10.1186/s13059-025-03488-8</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>GuideScan2</td>
+      <td>mechanism_aware_multiplex</td>
+      <td>no</td>
+      <td>The cited scope does not select viral panels by biological mechanism.</td>
+      <td>https://link.springer.com/article/10.1186/s13059-025-03488-8</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>GuideScan2</td>
+      <td>cli</td>
+      <td>yes</td>
+      <td>Software and downloadable databases are documented in the paper/site.</td>
+      <td>https://guidescan.com/py/downloads</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>Cas-OFFinder</td>
+      <td>guide_design</td>
+      <td>no</td>
+      <td>Accepts guide patterns for off-target enumeration; it does not prioritize de novo guides.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC4016707/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>Cas-OFFinder</td>
+      <td>user_supplied_genome</td>
+      <td>yes</td>
+      <td>Reads single- or multi-sequence FASTA genomes.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC4016707/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>Cas-OFFinder</td>
+      <td>multi_strain_viral_conservation</td>
+      <td>no</td>
+      <td>The documented algorithm searches supplied genomes but does not implement a viral population-ranking layer.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC4016707/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>Cas-OFFinder</td>
+      <td>host_offtarget_search</td>
+      <td>yes</td>
+      <td>Potential off-target enumeration is the primary function.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC4016707/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>Cas-OFFinder</td>
+      <td>mismatch_search</td>
+      <td>yes</td>
+      <td>User-configured mismatch thresholds are supported.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC4016707/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>Cas-OFFinder</td>
+      <td>bulge_search</td>
+      <td>no</td>
+      <td>The cited original algorithm does not claim bulge support.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC4016707/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>Cas-OFFinder</td>
+      <td>population_variant_host_risk</td>
+      <td>no</td>
+      <td>The cited original algorithm does not integrate population variants.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC4016707/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>Cas-OFFinder</td>
+      <td>on_target_scoring</td>
+      <td>no</td>
+      <td>It enumerates sequence matches rather than predicting on-target efficiency.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC4016707/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>Cas-OFFinder</td>
+      <td>gene_annotation</td>
+      <td>no</td>
+      <td>The core output is location, direction, sequence, and mismatch count.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC4016707/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>Cas-OFFinder</td>
+      <td>protein_disruption</td>
+      <td>no</td>
+      <td>No CDS/protein consequence model is documented.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC4016707/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>Cas-OFFinder</td>
+      <td>biological_evidence_provenance</td>
+      <td>no</td>
+      <td>No literature evidence curation is documented.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC4016707/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>Cas-OFFinder</td>
+      <td>escape_robustness</td>
+      <td>no</td>
+      <td>No held-out viral population or multiplex escape analysis is documented.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC4016707/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>Cas-OFFinder</td>
+      <td>mechanism_aware_multiplex</td>
+      <td>no</td>
+      <td>No biological mechanism-aware panel selection is documented.</td>
+      <td>https://pmc.ncbi.nlm.nih.gov/articles/PMC4016707/</td>
+      <td>2026-07-15</td>
+    </tr>
+    <tr>
+      <td>Cas-OFFinder</td>
+      <td>cli</td>
+      <td>yes</td>
+      <td>Standalone command-line/OpenCL execution is documented.</td>
+      <td>https://github.com/snugel/cas-offinder</td>
+      <td>2026-07-15</td>
+    </tr>
+  </tbody>
+</table>
+<h2>What this benchmark can support</h2>
+<p>It supports computational coverage, agreement, missingness, and reproducible integration claims. Predictive superiority requires experimental ground truth.</p>
+</body></html>

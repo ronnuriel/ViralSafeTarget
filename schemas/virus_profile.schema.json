@@ -29,6 +29,8 @@
     "evidence_table": {"type": ["string", "null"]},
     "domain_table": {"type": ["string", "null"]},
     "disorder_table": {"type": ["string", "null"]},
+    "conserved_region_table": {"type": ["string", "null"]},
+    "gene_category_table": {"type": ["string", "null"]},
     "external_validation_table": {"type": ["string", "null"]},
     "population_validation_candidates": {"type": ["string", "null"]},
     "population_validation_genes": {"type": ["string", "null"]},

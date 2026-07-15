@@ -1,0 +1,5 @@
+tool_name,metric_name,reported_candidates,numeric_values,unique_numeric_values,minimum_raw_value,maximum_raw_value
+cas-offinder,predicted_offtarget_burden,257,257,6,0.0,26.0
+crispritz,predicted_offtarget_burden,257,257,6,0.0,23.0
+viral_safe_target_post_human,post_human_score,257,257,24,0.6716578428466209,0.85
+viral_safe_target_pre_human,pre_human_score,257,257,20,0.730705323646025,0.85

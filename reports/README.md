@@ -3,7 +3,8 @@
 This directory contains a deliberately small, reviewable snapshot of completed
 computational runs. Large host-hit tables, reference genomes, tool caches, and raw
 batch outputs remain excluded from Git. They can be regenerated with the versioned
-workflows and notebooks.
+workflows and notebooks. Compact raw outputs required to audit the frozen-panel
+benchmark are an explicit exception.
 
 > These are computational research outputs. They do not establish editing,
 > safety, viral inhibition, latency clearance, treatment efficacy, or a cure.
@@ -70,6 +71,48 @@ The balanced-panel presentation materials remain available under
 explicit limitations, research hypotheses, and held-out-population summaries. They
 must not be confused with the later exhaustive targetability rank.
 
+## Virtual knockout and exact-target escape snapshot
+
+[`hsv2_virtual_knockout_escape/`](hsv2_virtual_knockout_escape/) is the current
+publication-facing analysis of the exhaustive deep-screening panel:
+
+- 257 unique guides and 271 guide-to-CDS rows, preserving overlapping annotations;
+- 5,691 size-defined indel hypotheses across the configured -10 to +10 bp grid;
+- 17,733 single-nucleotide protospacer/PAM counterfactuals;
+- held-out exact-target coverage available for 200 guides and unknown for 57;
+- four configured three-guide strategies with a sequence-level escape barrier;
+- six source-table assertions checked before the snapshot was written.
+
+Start with:
+
+- [`hsv2_virtual_knockout_escape/virtual_knockout_escape_report.html`](hsv2_virtual_knockout_escape/virtual_knockout_escape_report.html)
+- [`hsv2_virtual_knockout_escape/FINDINGS.md`](hsv2_virtual_knockout_escape/FINDINGS.md)
+- [`hsv2_virtual_knockout_escape/strategy_comparison.csv`](hsv2_virtual_knockout_escape/strategy_comparison.csv)
+- [`../notebooks/14_VIRTUAL_KNOCKOUT_AND_ESCAPE_EN.ipynb`](../notebooks/14_VIRTUAL_KNOCKOUT_AND_ESCAPE_EN.ipynb)
+
+## Systematic multi-tool benchmark
+
+[`hsv2_tool_benchmark/`](hsv2_tool_benchmark/) freezes 257 candidate identities and
+separates executable comparison from documented capability evidence. It contains raw
+outputs when available, normalized within-tool ranks, explicit missingness, top-K
+overlap, ablation, figures, and a checksum manifest. A tool without a committed raw
+export remains `pending` or `export_required`.
+
+Current executable coverage:
+
+- complete ViralSafeTarget pre-host and post-host ranks;
+- complete Cas-OFFinder source counts and a complete CRISPRitz 2.6.6 profile;
+- Cas-OFFinder/CRISPRitz rank correlation 0.880413 and top-50 overlap 49/50;
+- CRISPOR, CHOPCHOP, and GuideScan2 retained as `export_required`, not zero;
+- largest ablation shift after removing sequence complexity (median 75, maximum 230).
+
+Start with:
+
+- [`hsv2_tool_benchmark/multitool_benchmark_report.html`](hsv2_tool_benchmark/multitool_benchmark_report.html)
+- [`hsv2_tool_benchmark/tool_execution_status.csv`](hsv2_tool_benchmark/tool_execution_status.csv)
+- [`hsv2_tool_benchmark/rank_agreement.csv`](hsv2_tool_benchmark/rank_agreement.csv)
+- [`../notebooks/15_SYSTEMATIC_MULTITOOL_BENCHMARK_EN.ipynb`](../notebooks/15_SYSTEMATIC_MULTITOOL_BENCHMARK_EN.ipynb)
+
 ## Reproduction notebooks
 
 - [`../notebooks/09_HSV2_GENOME_WIDE_DISCOVERY_EN.ipynb`](../notebooks/09_HSV2_GENOME_WIDE_DISCOVERY_EN.ipynb)
@@ -77,6 +120,8 @@ must not be confused with the later exhaustive targetability rank.
 - [`../notebooks/11_HSV2_RESEARCH_SHOWCASE_EN.ipynb`](../notebooks/11_HSV2_RESEARCH_SHOWCASE_EN.ipynb)
 - [`../notebooks/12_HSV2_HELDOUT_POPULATION_VALIDATION_EN.ipynb`](../notebooks/12_HSV2_HELDOUT_POPULATION_VALIDATION_EN.ipynb)
 - [`../notebooks/13_EVIDENCE_AGENT_HUMAN_REVIEW_EN.ipynb`](../notebooks/13_EVIDENCE_AGENT_HUMAN_REVIEW_EN.ipynb)
+- [`../notebooks/14_VIRTUAL_KNOCKOUT_AND_ESCAPE_EN.ipynb`](../notebooks/14_VIRTUAL_KNOCKOUT_AND_ESCAPE_EN.ipynb)
+- [`../notebooks/15_SYSTEMATIC_MULTITOOL_BENCHMARK_EN.ipynb`](../notebooks/15_SYSTEMATIC_MULTITOOL_BENCHMARK_EN.ipynb)
 
 The notebooks and machine-readable tables are the reproducible record. The checked-in
 HTML files are convenience views of those outputs.

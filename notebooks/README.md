@@ -31,6 +31,8 @@ The filenames are English and language-neutral; the notebook content remains Heb
 | [`11_HSV2_RESEARCH_SHOWCASE_EN.ipynb`](11_HSV2_RESEARCH_SHOWCASE_EN.ipynb) | Presentation-ready multi-axis analysis | Showcase outputs |
 | [`12_HSV2_HELDOUT_POPULATION_VALIDATION_EN.ipynb`](12_HSV2_HELDOUT_POPULATION_VALIDATION_EN.ipynb) | Held-out sequence support | Population-validation outputs |
 | [`13_EVIDENCE_AGENT_HUMAN_REVIEW_EN.ipynb`](13_EVIDENCE_AGENT_HUMAN_REVIEW_EN.ipynb) | Literature proposal and human-review workflow | GFF or checked-in public gene catalog |
+| [`14_VIRTUAL_KNOCKOUT_AND_ESCAPE_EN.ipynb`](14_VIRTUAL_KNOCKOUT_AND_ESCAPE_EN.ipynb) | Canonical virtual-knockout and exact-target escape analysis | Bundled synthetic inputs or verified public HSV-2 snapshot |
+| [`15_SYSTEMATIC_MULTITOOL_BENCHMARK_EN.ipynb`](15_SYSTEMATIC_MULTITOOL_BENCHMARK_EN.ipynb) | Frozen-panel comparison, missingness, rank agreement, capability evidence, and ablation | Synthetic demonstration or verified public HSV-2 benchmark snapshot |
 
 ## Reproducibility rules
 
