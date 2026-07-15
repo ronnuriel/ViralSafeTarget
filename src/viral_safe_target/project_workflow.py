@@ -13,6 +13,7 @@ import json
 import os
 import shutil
 import subprocess
+import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -49,6 +50,7 @@ STAGE_ORDER = (
     "escape",
     "multiplex",
     "report",
+    "bundle",
 )
 
 SOURCE_LINKED_EVIDENCE_COLUMNS = [
@@ -398,6 +400,22 @@ class _State:
     def write(self) -> None:
         self.values["updated_utc"] = _utc_now()
         self.path.write_text(json.dumps(self.values, indent=2, sort_keys=True), encoding="utf-8")
+        timing_rows = []
+        for stage in STAGE_ORDER:
+            record = self.values["stages"].get(stage, {})
+            timing_rows.append(
+                {
+                    "stage": stage,
+                    "status": record.get("status", "pending"),
+                    "elapsed_seconds": record.get("elapsed_seconds"),
+                    "cache_reused": bool(record.get("cache_reused", False)),
+                    "updated_utc": record.get("updated_utc"),
+                }
+            )
+        (self.context.output_root / "stage_timings.json").write_text(
+            json.dumps({"schema_version": "1.0", "stages": timing_rows}, indent=2) + "\n",
+            encoding="utf-8",
+        )
 
     def reusable(self, stage: str, signature: str, outputs: list[Path]) -> bool:
         record = self.values["stages"].get(stage, {})
@@ -415,12 +433,16 @@ class _State:
         signature: str = "",
         outputs: list[Path] | None = None,
         message: str = "",
+        elapsed_seconds: float | None = None,
+        cache_reused: bool = False,
     ) -> None:
         self.values["stages"][stage] = {
             "status": status,
             "signature": signature,
             "outputs": [str(path.resolve()) for path in outputs or []],
             "message": message,
+            "elapsed_seconds": elapsed_seconds,
+            "cache_reused": cache_reused,
             "updated_utc": _utc_now(),
         }
         self.write()
@@ -434,14 +456,42 @@ def _run_cached_stage(
     action: Callable[[], None],
 ) -> str:
     if state.reusable(stage, signature, outputs):
+        record = state.values["stages"].get(stage, {})
+        state.set(
+            stage,
+            "completed",
+            signature=signature,
+            outputs=outputs,
+            message="Reused valid cached outputs.",
+            elapsed_seconds=record.get("elapsed_seconds"),
+            cache_reused=True,
+        )
+        print(f"[{stage}] cached")
         return "cached"
+    started = time.perf_counter()
+    print(f"[{stage}] running")
     state.set(stage, "running", signature=signature, outputs=outputs)
     try:
         action()
     except Exception as error:
-        state.set(stage, "failed", signature=signature, outputs=outputs, message=str(error))
+        state.set(
+            stage,
+            "failed",
+            signature=signature,
+            outputs=outputs,
+            message=str(error),
+            elapsed_seconds=round(time.perf_counter() - started, 6),
+        )
         raise
-    state.set(stage, "completed", signature=signature, outputs=outputs)
+    elapsed = round(time.perf_counter() - started, 6)
+    state.set(
+        stage,
+        "completed",
+        signature=signature,
+        outputs=outputs,
+        elapsed_seconds=elapsed,
+    )
+    print(f"[{stage}] completed in {elapsed:.2f} s")
     return "completed"
 
 
@@ -524,9 +574,10 @@ def run_project(
     workflow = context.values.get("workflow") or {}
     settings = _settings(context)
     alignment_path = context.profiles.resolve(context.profiles.virus["strain_alignment"])
-    gff_path = context.profiles.resolve(context.profiles.virus["annotation_gff"])
+    gff_path = context.profiles.resolve(context.profiles.virus.get("annotation_gff"))
     reference_id = str(context.profiles.virus["reference_accession"])
-    assert alignment_path is not None and gff_path is not None
+    assert alignment_path is not None
+    sequence_only = bool(workflow.get("sequence_only", False))
     discovery_dir = context.output_root / "discovery"
     discovery_dir.mkdir(parents=True, exist_ok=True)
     discovery_outputs = [
@@ -539,10 +590,11 @@ def run_project(
     evidence_path = context.profiles.resolve(context.profiles.virus.get("evidence_table"))
     discovery_signature_paths = [
         alignment_path,
-        gff_path,
         context.ranking_config,
         context.profiles.source_paths[2],
     ]
+    if gff_path is not None:
+        discovery_signature_paths.append(gff_path)
     if evidence_path and evidence_path.is_file():
         discovery_signature_paths.append(evidence_path)
     discovery_signature = _signature(
@@ -556,32 +608,42 @@ def run_project(
 
     def discover() -> None:
         records = read_fasta(alignment_path)
-        features = read_gff3(gff_path)
         raw = scan_editor_candidates(
             records,
             reference_id,
             context.profiles.editor,
             float(workflow.get("minimum_strain_coverage", 0.95)),
         )
-        primary = annotate_candidates(raw, features, reference_id)
+        features = read_gff3(gff_path) if gff_path is not None else pd.DataFrame()
+        primary = annotate_candidates(raw, features, reference_id) if gff_path else raw
         ranked = rank_pre_human_candidates(primary, settings, evidence_path=evidence_path)
         retained = ranked[ranked["rejection_reasons"].fillna("").eq("")].copy()
         rejected = ranked[ranked["rejection_reasons"].fillna("").ne("")].copy()
-        feature_map = build_candidate_feature_map(
-            ranked, features, config=settings, annotation_source=gff_path
-        )
-        selection = select_balanced_discovery_panel(
-            retained,
-            feature_map,
-            features,
-            top_per_gene=int(workflow.get("balanced_top_per_gene", 50)),
-            global_top=int(workflow.get("global_top", 500)),
-        )
+        if gff_path is not None:
+            feature_map = build_candidate_feature_map(
+                ranked, features, config=settings, annotation_source=gff_path
+            )
+            selection = select_balanced_discovery_panel(
+                retained,
+                feature_map,
+                features,
+                top_per_gene=int(workflow.get("balanced_top_per_gene", 50)),
+                global_top=int(workflow.get("global_top", 500)),
+            )
+            panel_output, audit_output = selection.panel, selection.audit
+        else:
+            feature_map = pd.DataFrame(columns=["candidate_id", "feature_id", "gene_name"])
+            panel_output = retained.sort_values(
+                "pre_human_score", ascending=False, kind="mergesort"
+            ).head(int(workflow.get("global_top", 500)))
+            audit_output = pd.DataFrame(
+                [{"selection_mode": "sequence_only", "selected_count": len(panel_output)}]
+            )
         retained.to_csv(discovery_outputs[0], index=False)
         rejected.to_csv(discovery_outputs[1], index=False)
         feature_map.to_csv(discovery_outputs[2], index=False)
-        selection.panel.to_csv(discovery_outputs[3], index=False)
-        selection.audit.to_csv(discovery_outputs[4], index=False)
+        panel_output.to_csv(discovery_outputs[3], index=False)
+        audit_output.to_csv(discovery_outputs[4], index=False)
 
     _run_cached_stage(state, "discover", discovery_signature, discovery_outputs, discover)
     if stop_after == "discover":
@@ -701,10 +763,13 @@ def run_project(
         pair_dir / "pair_hypotheses_multi_target.csv",
     ]
     pair_signature = _signature(
-        [discovery_outputs[3], gff_path, alignment_path, context.ranking_config], {}
+        [discovery_outputs[3], alignment_path, context.ranking_config]
+        + ([gff_path] if gff_path else []),
+        {},
     )
 
     def pairs() -> None:
+        assert gff_path is not None
         features = read_gff3(gff_path)
         records = read_fasta(alignment_path)
         common = {
@@ -722,12 +787,17 @@ def run_project(
         same.to_csv(pair_outputs[0], index=False)
         multi.to_csv(pair_outputs[1], index=False)
 
-    _run_cached_stage(state, "pairs", pair_signature, pair_outputs, pairs)
+    if gff_path is None:
+        pd.DataFrame().to_csv(pair_outputs[0], index=False)
+        pd.DataFrame().to_csv(pair_outputs[1], index=False)
+        state.set("pairs", "unavailable", message="Sequence-only mode has no gene annotation.")
+    else:
+        _run_cached_stage(state, "pairs", pair_signature, pair_outputs, pairs)
     if stop_after == "pairs":
         return project_status(context)
 
     analysis_settings = context.values.get("analysis") or {}
-    analysis_enabled = bool(analysis_settings.get("enabled", True))
+    analysis_enabled = bool(analysis_settings.get("enabled", True)) and not sequence_only
     if analysis_enabled:
         from .virtual_analysis_workflow import (
             OUTPUT_NAMES,
@@ -845,6 +915,8 @@ def run_project(
         context.source,
         *context.profiles.source_paths,
     ]
+    if gff_path is not None:
+        report_inputs.append(gff_path)
     if evidence_path and evidence_path.is_file():
         report_inputs.append(evidence_path)
     if evidence_review_source.is_file():
@@ -908,6 +980,7 @@ def run_project(
             "input_sources": [
                 {"path": str(path), "sha256": sha256_file(path)}
                 for path in (alignment_path, gff_path, context.ranking_config)
+                if path is not None
             ],
             "stage_status": {
                 stage: record.get("status")
@@ -923,6 +996,35 @@ def run_project(
         )
 
     _run_cached_stage(state, "report", report_signature, report_outputs, report)
+    if stop_after == "report":
+        return project_status(context)
+
+    from .researcher import build_result_bundle
+
+    bundle_outputs = [
+        context.output_root / "START_HERE.html",
+        context.output_root / "SUMMARY.md",
+        context.output_root / "summary.json",
+        context.output_root / "top_guides.csv",
+        context.output_root / "top_genes.csv",
+        context.output_root / "research_shortlist.csv",
+        context.output_root / "multiplex_panels.csv",
+        context.output_root / "evidence_review_queue.tsv",
+        context.output_root / "export.zip",
+    ]
+    bundle_signature = _signature(
+        [report_outputs[0], report_outputs[6]],
+        {"bundle_schema": "1.0"},
+    )
+    _run_cached_stage(
+        state,
+        "bundle",
+        bundle_signature,
+        bundle_outputs,
+        lambda: build_result_bundle(context),
+    )
+    # Refresh the status embedded in the report after the bundle stage is committed.
+    build_result_bundle(context)
     return project_status(context)
 
 
@@ -950,5 +1052,9 @@ def project_status(project: ProjectContext | str | Path) -> dict[str, Any]:
         "output_root": str(context.output_root),
         "state_file": str(state_path),
         "stages": rows,
-        "report": str(context.output_root / "report" / "report.html"),
+        "report": str(
+            context.output_root / "START_HERE.html"
+            if (context.output_root / "START_HERE.html").is_file()
+            else context.output_root / "report" / "report.html"
+        ),
     }

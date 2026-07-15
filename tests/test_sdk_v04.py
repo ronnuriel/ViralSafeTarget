@@ -26,7 +26,7 @@ def test_public_sdk_imports_and_run_loading(tmp_path):
     assert len(run.human_hits) == 1
     assert len(run.same_gene_pairs) == 1
     assert len(run.candidate_table) == 1
-    assert vst.__version__ == "0.9.0"
+    assert vst.__version__ == "0.10.0"
     for public_name in [
         "CandidateTable",
         "ToolResultTable",

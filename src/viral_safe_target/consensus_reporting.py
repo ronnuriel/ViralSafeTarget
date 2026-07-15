@@ -49,9 +49,7 @@ def write_consensus_report(
         if column == "candidate_id" or column == "gene_name" or column.startswith("percentile__")
     ]
     top = comparison.consensus_candidates.head(20)
-    pending = comparison.tool_coverage[
-        comparison.tool_coverage["reported_candidates"].eq(0)
-    ].copy()
+    pending = comparison.tool_coverage[comparison.tool_coverage["reported_candidates"].eq(0)].copy()
     if not availability.empty and not pending.empty:
         pending = pending.merge(availability, on="tool_name", how="left")
     provenance_text = html.escape(json.dumps(provenance or {}, indent=2, sort_keys=True))

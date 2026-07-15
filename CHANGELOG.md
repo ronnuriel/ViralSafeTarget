@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.10.0 — 2026-07-15
+
+- Added the stable researcher interface: `vst init`, `plan`, `run`, `status`,
+  `resume`, `open`, `export`, and `quickstart`.
+- Added clean-wheel resources, preflight runtime/disk estimates, stage timings,
+  external-tool diagnostics, and a portable result bundle with per-guide explanations.
+- Added one canonical English notebook, a five-minute quickstart, and a generic
+  second-virus usability snapshot without changing the frozen HSV-2 findings.
+
 ## Unreleased
 
 - Added a publication-facing frozen-panel benchmark for ViralSafeTarget,

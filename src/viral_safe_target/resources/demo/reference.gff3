@@ -1,0 +1,5 @@
+##gff-version 3
+demo_reference	ViralSafeTarget	gene	1	75	.	+	.	ID=geneA;Name=DEMO_A;product=demo replication protein
+demo_reference	ViralSafeTarget	CDS	1	75	.	+	0	ID=cdsA;Parent=geneA;Name=DEMO_A;product=demo replication protein
+demo_reference	ViralSafeTarget	gene	76	170	.	+	.	ID=geneB;Name=DEMO_B;product=demo structural protein
+demo_reference	ViralSafeTarget	CDS	76	170	.	+	0	ID=cdsB;Parent=geneB;Name=DEMO_B;product=demo structural protein

@@ -1,0 +1,9 @@
+schema_version: "1.0"
+profile_type: host
+id: human_grch38
+display_name: Homo sapiens GRCh38.p14
+assembly_name: GRCh38.p14
+assembly_accession: GCF_000001405.40
+fasta_root: external/host
+annotation_gff: null
+notes: A host reference must be supplied separately; missing output is never zero hits.

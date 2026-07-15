@@ -107,6 +107,7 @@ def rank_pre_human_candidates(
     feature_types = output.get(
         "feature_type", pd.Series("intergenic_or_unannotated", index=output.index)
     ).fillna("intergenic_or_unannotated")
+    output["feature_type"] = feature_types
     output["annotation_score"] = feature_types.map(ranking["annotation_scores"]).fillna(0.0)
     evidence_levels = output.get("evidence_level", pd.Series(pd.NA, index=output.index))
     evidence_scores = ranking["evidence_scores"]

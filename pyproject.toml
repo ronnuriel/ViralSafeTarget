@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "viral-safe-target"
-version = "0.9.0"
+version = "0.10.0"
 description = "Reproducible research toolkit for conserved viral genome target prioritization and sequence-level disruption simulation"
 readme = "README.md"
 requires-python = ">=3.10"
-license = {text = "MIT"}
+license = "MIT"
 authors = [
   {name = "ViralSafeTarget contributors"}
 ]
@@ -16,7 +16,6 @@ keywords = ["bioinformatics", "viral genomics", "CRISPR", "off-target", "HSV"]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Science/Research",
-  "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
@@ -71,7 +70,21 @@ Issues = "https://github.com/ronnuriel/ViralSafeTarget/issues"
 where = ["src"]
 
 [tool.setuptools.package-data]
-viral_safe_target = ["data/*.yaml"]
+viral_safe_target = [
+  "data/*.yaml",
+  "resources/demo/*",
+  "resources/profiles/*.yaml",
+  "resources/schemas/*.json",
+  "resources/templates/*",
+  "resources/notebooks/*.ipynb",
+]
+
+[tool.setuptools.data-files]
+"share/viral-safe-target/schemas" = ["schemas/*.json"]
+"share/viral-safe-target/configs" = ["configs/research_v0.3.yaml"]
+"share/viral-safe-target/configs/hosts" = ["configs/hosts/*.yaml"]
+"share/viral-safe-target/configs/nucleases" = ["configs/nucleases/*.yaml"]
+"share/viral-safe-target/notebooks" = ["notebooks/00_VIRALSAFETARGET_END_TO_END_EN.ipynb"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -234,9 +234,7 @@ def environment_status(project_root: str | Path) -> pd.DataFrame:
                 "component": "Free disk",
                 "status": "ready" if free_gib >= 20 else "warning",
                 "details": f"{free_gib:.2f} GiB",
-                "action": "Free disk space before downloading genome data"
-                if free_gib < 20
-                else "",
+                "action": "Free disk space before downloading genome data" if free_gib < 20 else "",
             },
         ]
     )
