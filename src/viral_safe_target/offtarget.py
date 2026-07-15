@@ -321,9 +321,7 @@ def annotate_human_hits(hits: pd.DataFrame, human_gff: str | Path | None) -> pd.
             )
             for _, row_index in coordinate_rows[left:right]:
                 annotations[row_index].add(str(label))
-    output["human_annotation"] = [
-        ";".join(sorted(annotations[index])) for index in output.index
-    ]
+    output["human_annotation"] = [";".join(sorted(annotations[index])) for index in output.index]
     return output
 
 

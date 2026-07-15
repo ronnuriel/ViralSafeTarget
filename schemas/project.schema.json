@@ -36,7 +36,10 @@
         "minimum_strain_coverage": {"type": "number", "minimum": 0, "maximum": 1},
         "balanced_top_per_gene": {"type": "integer", "minimum": 1},
         "global_top": {"type": "integer", "minimum": 0},
-        "maximum_host_candidates": {"type": ["integer", "null"], "minimum": 1}
+        "maximum_host_candidates": {"type": ["integer", "null"], "minimum": 1},
+        "sequence_only": {"type": "boolean", "default": false},
+        "evidence_discovery_enabled": {"type": "boolean", "default": false},
+        "run_external_by_default": {"type": "boolean", "default": false}
       },
       "additionalProperties": false
     },

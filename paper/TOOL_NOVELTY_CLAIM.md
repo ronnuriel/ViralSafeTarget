@@ -29,6 +29,8 @@ contains complete ViralSafeTarget, Cas-OFFinder, and CRISPRitz metrics; CRISPOR,
 CHOPCHOP, and GuideScan2 remain export-required and therefore absent from quantitative
 rank comparisons.
 
-Committed exports from those three tools, a second-virus case study, external users,
-and experimental results are still required before making a stronger comparative,
-generalization, or predictive claim.
+Committed exports from those three tools, a multi-strain second-virus scientific case
+study, external users, and experimental results are still required before making a
+stronger comparative, generalization, or predictive claim. A reference-only BK
+polyomavirus run now demonstrates software portability, but not biological
+generalization.

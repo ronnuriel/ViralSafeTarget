@@ -1,0 +1,31 @@
+{
+  "created_utc": "2026-07-15T10:25:17.722589+00:00",
+  "inputs": [],
+  "ncbi": {
+    "requested_accession": "NC_001538.1",
+    "observed_accession": "NC_001538.1",
+    "retrieved_utc": "2026-07-15T10:27:19.326238+00:00",
+    "sources": [
+      {
+        "role": "reference_fasta",
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=NC_001538.1&rettype=fasta&retmode=text",
+        "path": "/private/tmp/vst-bk/data/reference.fasta",
+        "sha256": "148711a6a1a6686a79ad5c2606358f8034abd3dac4ae2d38cda68e7b553d3d0f"
+      },
+      {
+        "role": "reference_genbank",
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=NC_001538.1&rettype=gbwithparts&retmode=text",
+        "path": "/private/tmp/vst-bk/data/reference.gb",
+        "sha256": "12e1351b495548f323e4d680c5388c5bca70ae5137e1abd5a988db4d35923808"
+      },
+      {
+        "role": "derived_gff3",
+        "source": "/private/tmp/vst-bk/data/reference.gb",
+        "path": "/private/tmp/vst-bk/data/reference.gff3",
+        "sha256": "448a555cc4652b4a22151732335e63a19a4335361d4c4f029008b1b03c880143"
+      }
+    ],
+    "annotation_feature_count": 12,
+    "strain_panel_note": "Reference-only aligned panel; population conservation is not established."
+  }
+}

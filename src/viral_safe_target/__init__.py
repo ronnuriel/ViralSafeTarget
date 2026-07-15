@@ -1,6 +1,6 @@
 """ViralSafeTarget computational research package."""
 
-__version__ = "0.9.0"
+__version__ = "0.10.0"
 
 from .annotations import annotate_candidates, read_gff3
 from .config import EditorProfile, load_config

@@ -110,9 +110,7 @@ def test_crispritz_dry_run_records_command(monkeypatch, tmp_path):
     monkeypatch.setattr(
         adapter,
         "detect",
-        lambda: ToolAvailability(
-            "crispritz", True, "synthetic", "/usr/bin/crispritz.py", "native"
-        ),
+        lambda: ToolAvailability("crispritz", True, "synthetic", "/usr/bin/crispritz.py", "native"),
     )
     execution = adapter.run(manifest, tmp_path, dry_run=True)
     assert execution.command[0] == "/usr/bin/crispritz.py"

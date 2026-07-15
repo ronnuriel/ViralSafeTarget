@@ -28,9 +28,7 @@ def test_project_root_detection_from_nested_directory():
 
 
 def test_streaming_runner_uses_argument_list_and_surfaces_failure(tmp_path, capsys):
-    result = run_streaming(
-        [sys.executable, "-c", "print('streamed')"], cwd=tmp_path
-    )
+    result = run_streaming([sys.executable, "-c", "print('streamed')"], cwd=tmp_path)
     assert result.returncode == 0
     assert "streamed" in capsys.readouterr().out
     with pytest.raises(subprocess.CalledProcessError):
@@ -73,9 +71,7 @@ def test_force_rerun_helper_only_removes_repository_cache_stamps(tmp_path):
 def test_synthetic_notebook_data_and_funnel_use_bundled_outputs():
     data = load_notebook_run(ROOT, synthetic=True)
     assert not data["candidates"].empty
-    assert {"candidate_id", "guide_sequence", "gene_name"} <= set(
-        data["candidates"].columns
-    )
+    assert {"candidate_id", "guide_sequence", "gene_name"} <= set(data["candidates"].columns)
     funnel = result_funnel(data)
     assert funnel["stage"].str.contains("Selected pilot").any()
     assert funnel["count"].ge(0).all()

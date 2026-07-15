@@ -110,9 +110,7 @@ def _metric_rows(
     return output[RESULT_COLUMNS]
 
 
-def parse_crispritz_profile(
-    profile_path: str | Path, candidates: pd.DataFrame
-) -> pd.DataFrame:
+def parse_crispritz_profile(profile_path: str | Path, candidates: pd.DataFrame) -> pd.DataFrame:
     """Parse CRISPRitz ``*.profile.xls`` counts and map them by guide sequence."""
     path = Path(profile_path)
     profile = pd.read_csv(path, sep="\t")
@@ -184,9 +182,7 @@ def write_tool_inputs(candidates: pd.DataFrame, output_directory: str | Path) ->
         encoding="utf-8",
     )
     paths["crispor"] = output / "crispor_batch.tsv"
-    candidates[["candidate_id", "guide_sequence"]].to_csv(
-        paths["crispor"], sep="\t", index=False
-    )
+    candidates[["candidate_id", "guide_sequence"]].to_csv(paths["crispor"], sep="\t", index=False)
     paths["chopchop"] = output / "chopchop_targets.fasta"
     paths["chopchop"].write_text(
         "".join(
@@ -204,8 +200,7 @@ def write_tool_inputs(candidates: pd.DataFrame, output_directory: str | Path) ->
             for value in sorted(candidates["guide_sequence"].astype(str).str.len().unique())
         ],
         "files": {
-            label: {"path": path.name, "sha256": sha256_file(path)}
-            for label, path in paths.items()
+            label: {"path": path.name, "sha256": sha256_file(path)} for label, path in paths.items()
         },
         "interpretation": (
             "Input preparation only. A tool is completed only after its raw output is committed "
@@ -230,9 +225,7 @@ def _rank_agreement(results: pd.DataFrame, top_k: list[int]) -> tuple[pd.DataFra
             shared = matrix[[left, right]].dropna()
             correlation = (
                 shared[left].rank().corr(shared[right].rank(), method="pearson")
-                if len(shared) >= 3
-                and shared[left].nunique() > 1
-                and shared[right].nunique() > 1
+                if len(shared) >= 3 and shared[left].nunique() > 1 and shared[right].nunique() > 1
                 else np.nan
             )
             agreement.append(
@@ -300,9 +293,7 @@ def run_ablation(
                 "score": score.round(rank_precision_decimals),
                 "_index": candidates.index,
             }
-        ).sort_values(
-            ["score", "candidate_id"], ascending=[False, True], kind="mergesort"
-        )
+        ).sort_values(["score", "candidate_id"], ascending=[False, True], kind="mergesort")
         rank = pd.Series(index=candidates.index, dtype=float)
         rank.loc[order["_index"]] = range(1, len(order) + 1)
         detail_rows.append(
@@ -377,14 +368,18 @@ def _write_figures(
 ) -> None:
     figures = output / "figures"
     figures.mkdir(exist_ok=True)
-    colors = status["status"].map(
-        {
-            "completed": "#2a9d8f",
-            "partial": "#e9c46a",
-            "export_required": "#f4a261",
-            "pending": "#b0b0b0",
-        }
-    ).fillna("#b0b0b0")
+    colors = (
+        status["status"]
+        .map(
+            {
+                "completed": "#2a9d8f",
+                "partial": "#e9c46a",
+                "export_required": "#f4a261",
+                "pending": "#b0b0b0",
+            }
+        )
+        .fillna("#b0b0b0")
+    )
     labels = [TOOL_DISPLAY_NAMES.get(name, name) for name in status["tool_name"]]
     fig, axis = plt.subplots(figsize=(10, 5), constrained_layout=True)
     axis.bar(status["tool_name"], status["coverage_fraction"].fillna(0), color=colors)
@@ -503,9 +498,7 @@ def _write_findings(
 ) -> None:
     completed = status.loc[status["status"].eq("completed"), "tool_name"].tolist()
     incomplete = status.loc[~status["status"].eq("completed"), "tool_name"].tolist()
-    strongest = ablation.loc[
-        ablation["maximum_absolute_rank_shift"].idxmax()
-    ].to_dict()
+    strongest = ablation.loc[ablation["maximum_absolute_rank_shift"].idxmax()].to_dict()
     correlation_lines = []
     for row in agreement.itertuples(index=False):
         value = (
@@ -661,9 +654,7 @@ def run_tool_benchmark(config_path: str | Path) -> dict[str, object]:
         if result_frames
         else pd.DataFrame(columns=RESULT_COLUMNS)
     )
-    results["source_file"] = results["source_file"].map(
-        lambda value: _portable_path(value, root)
-    )
+    results["source_file"] = results["source_file"].map(lambda value: _portable_path(value, root))
     results.to_csv(output / "tool_results_long.csv", index=False)
     rank_matrix = results.pivot_table(
         index="candidate_id", columns="tool_name", values="rank", aggfunc="first"
@@ -731,9 +722,7 @@ def run_tool_benchmark(config_path: str | Path) -> dict[str, object]:
     _write_report(
         output, status, agreement, overlap, ablation_summary, capabilities, len(candidates)
     )
-    _write_findings(
-        output, status, agreement, overlap, ablation_summary, len(candidates)
-    )
+    _write_findings(output, status, agreement, overlap, ablation_summary, len(candidates))
 
     source_files = [candidate_path, config_file, capability_path, ranking_config_path]
     source_files.extend(

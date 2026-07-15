@@ -6,6 +6,10 @@ batch outputs remain excluded from Git. They can be regenerated with the version
 workflows and notebooks. Compact raw outputs required to audit the frozen-panel
 benchmark are an explicit exception.
 
+The compact [BK polyomavirus second-virus snapshot](second_virus_bk_polyomavirus/README.md)
+uses the same installed CLI and schemas without virus-specific core-code changes. It is
+a software usability proof, not a therapeutic case study.
+
 > These are computational research outputs. They do not establish editing,
 > safety, viral inhibition, latency clearance, treatment efficacy, or a cure.
 
@@ -88,7 +92,7 @@ Start with:
 - [`hsv2_virtual_knockout_escape/virtual_knockout_escape_report.html`](hsv2_virtual_knockout_escape/virtual_knockout_escape_report.html)
 - [`hsv2_virtual_knockout_escape/FINDINGS.md`](hsv2_virtual_knockout_escape/FINDINGS.md)
 - [`hsv2_virtual_knockout_escape/strategy_comparison.csv`](hsv2_virtual_knockout_escape/strategy_comparison.csv)
-- [`../notebooks/14_VIRTUAL_KNOCKOUT_AND_ESCAPE_EN.ipynb`](../notebooks/14_VIRTUAL_KNOCKOUT_AND_ESCAPE_EN.ipynb)
+- [`virtual knockout notebook`](../notebooks/advanced/disruption-escape/14_VIRTUAL_KNOCKOUT_AND_ESCAPE_EN.ipynb)
 
 ## Systematic multi-tool benchmark
 
@@ -111,17 +115,17 @@ Start with:
 - [`hsv2_tool_benchmark/multitool_benchmark_report.html`](hsv2_tool_benchmark/multitool_benchmark_report.html)
 - [`hsv2_tool_benchmark/tool_execution_status.csv`](hsv2_tool_benchmark/tool_execution_status.csv)
 - [`hsv2_tool_benchmark/rank_agreement.csv`](hsv2_tool_benchmark/rank_agreement.csv)
-- [`../notebooks/15_SYSTEMATIC_MULTITOOL_BENCHMARK_EN.ipynb`](../notebooks/15_SYSTEMATIC_MULTITOOL_BENCHMARK_EN.ipynb)
+- [`systematic benchmark notebook`](../notebooks/advanced/benchmarking/15_SYSTEMATIC_MULTITOOL_BENCHMARK_EN.ipynb)
 
 ## Reproduction notebooks
 
-- [`../notebooks/09_HSV2_GENOME_WIDE_DISCOVERY_EN.ipynb`](../notebooks/09_HSV2_GENOME_WIDE_DISCOVERY_EN.ipynb)
-- [`../notebooks/10_HSV2_GENE_FUNCTION_AND_DISRUPTION_EN.ipynb`](../notebooks/10_HSV2_GENE_FUNCTION_AND_DISRUPTION_EN.ipynb)
-- [`../notebooks/11_HSV2_RESEARCH_SHOWCASE_EN.ipynb`](../notebooks/11_HSV2_RESEARCH_SHOWCASE_EN.ipynb)
-- [`../notebooks/12_HSV2_HELDOUT_POPULATION_VALIDATION_EN.ipynb`](../notebooks/12_HSV2_HELDOUT_POPULATION_VALIDATION_EN.ipynb)
-- [`../notebooks/13_EVIDENCE_AGENT_HUMAN_REVIEW_EN.ipynb`](../notebooks/13_EVIDENCE_AGENT_HUMAN_REVIEW_EN.ipynb)
-- [`../notebooks/14_VIRTUAL_KNOCKOUT_AND_ESCAPE_EN.ipynb`](../notebooks/14_VIRTUAL_KNOCKOUT_AND_ESCAPE_EN.ipynb)
-- [`../notebooks/15_SYSTEMATIC_MULTITOOL_BENCHMARK_EN.ipynb`](../notebooks/15_SYSTEMATIC_MULTITOOL_BENCHMARK_EN.ipynb)
+- [`genome-wide discovery`](../notebooks/advanced/genome-wide/09_HSV2_GENOME_WIDE_DISCOVERY_EN.ipynb)
+- [`gene function and disruption`](../notebooks/advanced/disruption-escape/10_HSV2_GENE_FUNCTION_AND_DISRUPTION_EN.ipynb)
+- [`research showcase`](../notebooks/advanced/genome-wide/11_HSV2_RESEARCH_SHOWCASE_EN.ipynb)
+- [`held-out population validation`](../notebooks/advanced/genome-wide/12_HSV2_HELDOUT_POPULATION_VALIDATION_EN.ipynb)
+- [`evidence review`](../notebooks/advanced/evidence/13_EVIDENCE_AGENT_HUMAN_REVIEW_EN.ipynb)
+- [`virtual knockout and escape`](../notebooks/advanced/disruption-escape/14_VIRTUAL_KNOCKOUT_AND_ESCAPE_EN.ipynb)
+- [`systematic benchmark`](../notebooks/advanced/benchmarking/15_SYSTEMATIC_MULTITOOL_BENCHMARK_EN.ipynb)
 
 The notebooks and machine-readable tables are the reproducible record. The checked-in
 HTML files are convenience views of those outputs.

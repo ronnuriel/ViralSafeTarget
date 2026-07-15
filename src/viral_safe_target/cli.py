@@ -12,6 +12,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from . import __version__
 from .annotations import annotate_candidates, read_gff3
 from .benchmarking import run_benchmark, write_benchmark_outputs
 from .config import DEFAULT_CONFIG_PATH, get_editor, load_config
@@ -33,6 +34,7 @@ from .offtarget import (
     summarize_cas_offinder_hits,
     write_offtarget_metadata,
 )
+from .project_workflow import STAGE_ORDER
 from .provenance import sha256_file, write_run_manifest
 from .reporting import write_html_report, write_methods_and_limitations
 from .scoring import rank_post_human_candidates, rank_pre_human_candidates
@@ -550,6 +552,153 @@ def _project_status(args: argparse.Namespace) -> None:
     print(json.dumps(project_status(args.project), indent=2, sort_keys=True))
 
 
+def _prompt(label: str, default: str = "") -> str:
+    suffix = f" [{default}]" if default else ""
+    value = input(f"{label}{suffix}: ").strip()
+    return value or default
+
+
+def _simple_init(args: argparse.Namespace) -> None:
+    from .researcher import create_project
+
+    project_name = args.project_name
+    virus_name = args.virus_name
+    tax_id = args.tax_id
+    reference_accession = args.reference_accession
+    reference_fasta = args.reference_fasta
+    annotation_gff = args.annotation_gff
+    strains_fasta = args.strains_fasta
+    host_fasta = args.host_fasta
+    sequence_only = args.sequence_only
+    if args.interactive:
+        virus_name = virus_name or _prompt("Virus scientific name", project_name)
+        tax_id = tax_id or _prompt("NCBI tax ID (optional)") or None
+        if not reference_accession and not reference_fasta:
+            source = _prompt("Reference accession, or enter 'local'", "local")
+            if source.lower() == "local":
+                reference_fasta = _prompt("Local reference FASTA")
+            else:
+                reference_accession = source
+        if reference_fasta and not annotation_gff:
+            annotation_gff = _prompt("Local GFF3 (blank for sequence-only)") or None
+            sequence_only = not annotation_gff
+        if not strains_fasta:
+            strains_fasta = _prompt("Strain FASTA (optional; reference-only if blank)") or None
+        if not host_fasta:
+            host_fasta = _prompt("Local host FASTA (optional)") or None
+    virus_name = virus_name or project_name
+    output = Path(args.output_dir or project_name)
+    project_file = create_project(
+        output,
+        project_name=project_name,
+        virus_name=virus_name,
+        tax_id=tax_id,
+        reference_accession=reference_accession,
+        reference_fasta=reference_fasta,
+        annotation_gff=annotation_gff,
+        strains_fasta=strains_fasta,
+        strains_aligned=not args.strains_unaligned,
+        host_profile=args.host_profile,
+        host_fasta=host_fasta,
+        nuclease_profile=args.nuclease_profile,
+        evidence_enabled=args.enable_evidence,
+        run_external=args.run_external,
+        sequence_only=sequence_only,
+        force=args.force,
+    )
+    print(f"Created research project: {project_file}")
+    print(f"Next: vst plan {project_file}")
+
+
+def _quickstart(args: argparse.Namespace) -> None:
+    from .researcher import create_demo_project
+
+    project = create_demo_project(args.out, force=args.force)
+    print(f"Created synthetic demo project: {project}")
+    print(f"Next: vst run {project}")
+
+
+def _plan(args: argparse.Namespace) -> None:
+    from .researcher import plan_project
+
+    result = plan_project(args.project)
+    if args.json:
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return
+    print(f"Project: {result['project']}")
+    print(f"Candidate-count estimate: {result['candidate_count_estimate']}")
+    for row in result["stages"]:
+        estimate = row["estimated_seconds"]
+        rendered = "unavailable" if estimate is None else f"{estimate:.2f} s"
+        cached = " (cached)" if row["cached"] else ""
+        print(f"- {row['stage']}: {rendered}; {row['confidence']}{cached} — {row['reason']}")
+    total = result["total_estimated_seconds"]
+    print(f"Total estimate: {'unavailable' if total is None else f'{total:.2f} s'}")
+    print("Runtime estimates are best effort, hardware-dependent, and not guarantees.")
+
+
+def _simple_run(args: argparse.Namespace) -> None:
+    from .project_workflow import run_project
+
+    result = run_project(
+        args.project,
+        run_external=args.run_external,
+        restart=args.restart,
+        stop_after=args.stop_after,
+    )
+    print(json.dumps(result, indent=2, sort_keys=True))
+
+
+def _simple_status(args: argparse.Namespace) -> None:
+    from .project_workflow import project_status
+
+    print(json.dumps(project_status(args.project), indent=2, sort_keys=True))
+
+
+def _open_results(args: argparse.Namespace) -> None:
+    from .researcher import open_results
+
+    print(open_results(args.path, no_browser=args.no_browser))
+
+
+def _export_results(args: argparse.Namespace) -> None:
+    from .researcher import export_project
+
+    print(
+        export_project(
+            args.project,
+            output=args.output,
+            include_large_raw=args.include_large_raw,
+        )
+    )
+
+
+def _researcher_doctor(args: argparse.Namespace) -> None:
+    from .researcher import doctor_report
+
+    report = doctor_report(args.project)
+    if args.json:
+        print(json.dumps(report, indent=2, sort_keys=True))
+        return
+    print(f"ViralSafeTarget {report['viral_safe_target_version']}")
+    print(f"Python: {report['python']['version']} ({report['python']['executable']})")
+    print(f"Memory: {report['memory_gib']} GiB; disk free: {report['disk_free_gib']} GiB")
+    for name, value in report["tools"].items():
+        print(f"- {name}: {value['version']}")
+    if "project" in report:
+        print(f"Project sequence stages: {report['project']['can_run_sequence_stages']}")
+        print(f"Project external host stage: {report['project']['can_run_external_host_stage']}")
+
+
+def _tools_setup(args: argparse.Namespace) -> None:
+    del args
+    print("External tools are explicit optional dependencies.")
+    print("MAFFT: https://mafft.cbrc.jp/alignment/software/")
+    print("Cas-OFFinder: https://github.com/snugel/cas-offinder")
+    print("CRISPRitz: https://github.com/pinellolab/CRISPRitz")
+    print("After installation, run: vst tools status")
+
+
 def _reproduce_hsv2(args: argparse.Namespace) -> None:
     from .reproduction import reproduce_hsv2
 
@@ -623,7 +772,64 @@ def build_parser() -> argparse.ArgumentParser:
         prog="vst",
         description="Virus-first computational target discovery for research use",
     )
+    parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     subparsers = parser.add_subparsers(dest="command", required=True)
+
+    simple_init = subparsers.add_parser("init", help="create a new-virus research project")
+    simple_init.add_argument("project_name")
+    simple_init.add_argument("--interactive", action="store_true")
+    simple_init.add_argument("--virus-name")
+    simple_init.add_argument("--tax-id")
+    simple_init.add_argument("--reference-accession")
+    simple_init.add_argument("--reference-fasta")
+    simple_init.add_argument("--annotation-gff")
+    simple_init.add_argument("--strains-fasta")
+    simple_init.add_argument("--strains-unaligned", action="store_true")
+    simple_init.add_argument("--host-profile", default="human_grch38")
+    simple_init.add_argument("--host-fasta")
+    simple_init.add_argument("--nuclease-profile", default="spcas9")
+    simple_init.add_argument("--output-dir")
+    simple_init.add_argument("--enable-evidence", action="store_true")
+    simple_init.add_argument("--run-external", action="store_true")
+    simple_init.add_argument("--sequence-only", action="store_true")
+    simple_init.add_argument("--force", action="store_true")
+    simple_init.set_defaults(func=_simple_init)
+
+    quickstart = subparsers.add_parser("quickstart", help="create the bundled synthetic demo")
+    quickstart.add_argument("--out", required=True)
+    quickstart.add_argument("--force", action="store_true")
+    quickstart.set_defaults(func=_quickstart)
+
+    plan = subparsers.add_parser("plan", help="validate inputs and estimate a project run")
+    plan.add_argument("project")
+    plan.add_argument("--json", action="store_true")
+    plan.set_defaults(func=_plan)
+
+    for command, handler, help_text in (
+        ("run", _simple_run, "run a project with resumable stage caching"),
+        ("resume", _simple_run, "resume a project from valid cached stages"),
+    ):
+        simple_run = subparsers.add_parser(command, help=help_text)
+        simple_run.add_argument("project")
+        simple_run.add_argument("--run-external", action="store_true")
+        simple_run.add_argument("--restart", action="store_true")
+        simple_run.add_argument("--stop-after", choices=[*STAGE_ORDER, "bundle"])
+        simple_run.set_defaults(func=handler)
+
+    simple_status = subparsers.add_parser("status", help="show project stage status")
+    simple_status.add_argument("project")
+    simple_status.set_defaults(func=_simple_status)
+
+    open_command = subparsers.add_parser("open", help="open a project's START_HERE report")
+    open_command.add_argument("path")
+    open_command.add_argument("--no-browser", action="store_true")
+    open_command.set_defaults(func=_open_results)
+
+    export_command = subparsers.add_parser("export", help="create a portable result ZIP")
+    export_command.add_argument("project")
+    export_command.add_argument("--output")
+    export_command.add_argument("--include-large-raw", action="store_true")
+    export_command.set_defaults(func=_export_results)
 
     project = subparsers.add_parser(
         "project", help="single-entry workflows for reproducible virus projects"
@@ -673,6 +879,7 @@ def build_parser() -> argparse.ArgumentParser:
                 "escape",
                 "multiplex",
                 "report",
+                "bundle",
             ],
         )
         project_run.add_argument("--open-report", action="store_true")
@@ -920,6 +1127,14 @@ def build_parser() -> argparse.ArgumentParser:
 
     tools = subparsers.add_parser("tools", help="external-tool adapters and imports")
     tool_commands = tools.add_subparsers(dest="tools_command", required=True)
+    tools_status = tool_commands.add_parser("status", help="show external-tool availability")
+    tools_status.add_argument("--project")
+    tools_status.add_argument("--json", action="store_true")
+    tools_status.set_defaults(func=_researcher_doctor)
+    tools_setup = tool_commands.add_parser(
+        "setup", help="show supported external-tool installation resources"
+    )
+    tools_setup.set_defaults(func=_tools_setup)
     tools_doctor = tool_commands.add_parser("doctor", help="detect supported external tools")
     tools_doctor.set_defaults(func=_tools_doctor)
 
@@ -990,8 +1205,9 @@ def build_parser() -> argparse.ArgumentParser:
     crispresso.set_defaults(func=_crispresso_import)
 
     doctor = subparsers.add_parser("doctor", help="inspect the local research environment")
-    _add_config(doctor)
-    doctor.set_defaults(func=_doctor)
+    doctor.add_argument("--project")
+    doctor.add_argument("--json", action="store_true")
+    doctor.set_defaults(func=_researcher_doctor)
     return parser
 
 

@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "project_id": "bk-polyomavirus",
+  "created_utc": "2026-07-15T10:28:02.245965+00:00",
+  "candidate_count": 500,
+  "shortlist_count": 40,
+  "gene_count": 4,
+  "host_risk_status": "external_required",
+  "stage_status": [
+    {
+      "stage": "validate",
+      "status": "completed",
+      "message": ""
+    },
+    {
+      "stage": "discover",
+      "status": "completed",
+      "message": "Reused valid cached outputs."
+    },
+    {
+      "stage": "host_screen",
+      "status": "external_required",
+      "message": "Host reference is missing; no host-screen result was inferred."
+    },
+    {
+      "stage": "pairs",
+      "status": "completed",
+      "message": "Reused valid cached outputs."
+    },
+    {
+      "stage": "virtual_knockout",
+      "status": "completed",
+      "message": "Reused valid cached outputs."
+    },
+    {
+      "stage": "escape",
+      "status": "completed",
+      "message": "Reused valid cached outputs."
+    },
+    {
+      "stage": "multiplex",
+      "status": "completed",
+      "message": "Reused valid cached outputs."
+    },
+    {
+      "stage": "report",
+      "status": "completed",
+      "message": "Reused valid cached outputs."
+    },
+    {
+      "stage": "bundle",
+      "status": "completed",
+      "message": "Reused valid cached outputs."
+    }
+  ],
+  "scientific_boundary": "Candidates for independent evaluation; not treatment recommendations."
+}

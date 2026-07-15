@@ -77,3 +77,14 @@ Conservation, viral uniqueness, annotation, and gene-evidence components produce
 rank change in this selected panel because those columns were constant there. The
 ablation therefore diagnoses the panel and scoring configuration; it does not establish
 which ranking better predicts editing or viral phenotype.
+
+## Researcher usability and second-virus proof
+
+Version 0.10.0 was installed as a non-editable wheel outside the source checkout and
+completed the synthetic quickstart, plan, run, status, resume, report, and export
+workflow. The same installed CLI retrieved and analyzed the public BK polyomavirus
+reference NC_001538.1 without virus-specific core-code changes. It estimated 543
+editor-compatible sites before the configured 500-row discovery cap and completed
+annotation mapping, virtual analyses, multiplex comparison, reporting, caching, and
+export. Host screening remained explicitly `external_required`, and the reference-only
+run was not interpreted as population conservation or a biological case study.

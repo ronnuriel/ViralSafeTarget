@@ -14,7 +14,7 @@ ViralSafeTarget הוא כלי מחקר חישובי שמתחיל מגנומים 
 
 | המטרה | נקודת הכניסה |
 |---|---|
-| ללמוד בעברית | [`notebooks/00_START_HERE.ipynb`](notebooks/00_START_HERE.ipynb) |
+| ללמוד בעברית | [`notebooks/learning/he/00_START_HERE.ipynb`](notebooks/learning/he/00_START_HERE.ipynb) |
 | לראות מה כבר מצאנו | [`reports/README.md`](reports/README.md) |
 | להריץ דמו קטן | `make demo` |
 | לשחזר את מחקר HSV-2 | `vst reproduce hsv2` |

@@ -67,7 +67,7 @@ compensate for missing evidence on another.
 9. Discovery-excluded population validation and balanced-versus-exhaustive sensitivity.
 10. Limitations, validation plan and generic-platform roadmap.
 
-Open `notebooks/11_HSV2_RESEARCH_SHOWCASE_EN.ipynb` for a guided English
+Open `notebooks/advanced/genome-wide/11_HSV2_RESEARCH_SHOWCASE_EN.ipynb` for a guided English
 walkthrough of the generated artifacts.
-Open `notebooks/12_HSV2_HELDOUT_POPULATION_VALIDATION_EN.ipynb` for the independent
+Open `notebooks/advanced/genome-wide/12_HSV2_HELDOUT_POPULATION_VALIDATION_EN.ipynb` for the independent
 population-panel audit.

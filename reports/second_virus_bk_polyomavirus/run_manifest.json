@@ -1,0 +1,46 @@
+{
+  "created_utc": "2026-07-15T10:27:39.561847+00:00",
+  "input_sources": [
+    {
+      "path": "/private/tmp/vst-bk/data/strains.aligned.fasta",
+      "sha256": "148711a6a1a6686a79ad5c2606358f8034abd3dac4ae2d38cda68e7b553d3d0f"
+    },
+    {
+      "path": "/private/tmp/vst-bk/data/reference.gff3",
+      "sha256": "448a555cc4652b4a22151732335e63a19a4335361d4c4f029008b1b03c880143"
+    },
+    {
+      "path": "/private/tmp/vst-bk/profiles/ranking.yaml",
+      "sha256": "de62dca93a56d94fc79b96eed6f7a9e7632cb4d03218cf5b93cc22835c8fe49d"
+    }
+  ],
+  "interpretation": "Computational target-prioritization hypotheses only; no wet-lab protocol, editing, safety, efficacy, delivery, or therapeutic claim.",
+  "profile_sources": [
+    {
+      "path": "/private/tmp/vst-bk/profiles/virus.yaml",
+      "sha256": "c9664fdfbf92b696d6c98cbdaacaa62065fa5cf9b9d3f8b737af48aef7824fcb"
+    },
+    {
+      "path": "/private/tmp/vst-bk/profiles/host.yaml",
+      "sha256": "de45d758f86006b6b08ba0a14e9290b416ca8b2a16b7091d6b2e23c71af1812a"
+    },
+    {
+      "path": "/private/tmp/vst-bk/profiles/nuclease.yaml",
+      "sha256": "1469d30c0c808454cd2a45694eb7fde04369d9ec16cc1613a091a55fd5ccf723"
+    }
+  ],
+  "project_file": "/private/tmp/vst-bk/project.yaml",
+  "project_file_sha256": "cebca383b8719dd018459c2667d2b6ec27ab364c8cda3e1e914b5cc244aa1455",
+  "project_id": "bk-polyomavirus",
+  "schema_version": "1.0",
+  "stage_status": {
+    "discover": "completed",
+    "escape": "completed",
+    "host_screen": "external_required",
+    "multiplex": "completed",
+    "pairs": "completed",
+    "report": "running",
+    "validate": "completed",
+    "virtual_knockout": "completed"
+  }
+}

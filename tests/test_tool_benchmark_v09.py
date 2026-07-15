@@ -78,9 +78,7 @@ def test_ablation_reports_rank_sensitivity_without_therapeutic_score() -> None:
 def test_end_to_end_benchmark_keeps_unavailable_tools_pending(tmp_path: Path) -> None:
     candidates = _candidates()
     candidates.to_csv(tmp_path / "candidates.csv", index=False)
-    ranking = {
-        "ranking": {"weights": {"conservation": 0.7, "viral_uniqueness": 0.3}}
-    }
+    ranking = {"ranking": {"weights": {"conservation": 0.7, "viral_uniqueness": 0.3}}}
     (tmp_path / "ranking.yaml").write_text(yaml.safe_dump(ranking), encoding="utf-8")
     (tmp_path / "capabilities.tsv").write_text(
         "tool_name\tcapability\tstatus\tnote\tofficial_source\taccessed_date\n"
