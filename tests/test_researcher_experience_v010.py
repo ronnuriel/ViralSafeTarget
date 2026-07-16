@@ -87,3 +87,9 @@ def test_canonical_notebook_is_english_and_output_free() -> None:
         for cell in notebook["cells"]
         if cell["cell_type"] == "code"
     )
+    source = "".join(
+        "".join(cell.get("source", []))
+        for cell in notebook["cells"]
+        if cell["cell_type"] == "code"
+    )
+    assert 'Path(sys.executable).with_name("vst")' in source
