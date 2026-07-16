@@ -459,7 +459,20 @@ def build_admin_files():
 
 
 def build_review_queue():
-    evidence = pd.read_csv(ROOT / "reports/hsv2_gene_function/gene_evidence.tsv", sep="\t")
+    evidence_path = ROOT / "reports/hsv2_gene_function/gene_evidence.tsv"
+    if not evidence_path.exists():
+        existing = FINAL / "HUMAN_REVIEW_REQUIRED.csv"
+        if not existing.exists():
+            raise FileNotFoundError(
+                "Neither the local evidence source nor the committed review queue is available"
+            )
+        review = pd.read_csv(existing)
+        if review.empty or set(review["status"]) != {"pending"}:
+            raise AssertionError("Committed review queue must remain non-empty and pending")
+        review.to_csv(existing, index=False)
+        return
+
+    evidence = pd.read_csv(evidence_path, sep="\t")
     rows = []
     for i, row in evidence.iterrows():
         source_id = str(row.get("source_identifier", ""))
@@ -582,6 +595,7 @@ def build_additional_files():
         for relative in tables:
             zf.write(ROOT / relative, relative)
         zf.write(FINAL / "verified_statistics.json", "verified_statistics.json")
+        zf.write(FINAL / "raw_source_checksums.json", "raw_source_checksums.json")
     source_zip = ADDITIONAL / "Additional_file_3_ViralSafeTarget_0.10.0_Source.zip"
     subprocess.run(
         [

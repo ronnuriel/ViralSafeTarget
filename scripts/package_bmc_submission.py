@@ -45,6 +45,7 @@ def build_release_archives() -> None:
         ROOT / "reports/hsv2_tool_benchmark/top_k_overlap.csv",
         ROOT / "reports/hsv2_tool_benchmark/ablation_summary.csv",
         FINAL / "verified_statistics.json",
+        FINAL / "raw_source_checksums.json",
         FINAL / "build_metadata.json",
         ROOT / ".zenodo.json",
     ]

@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -23,6 +24,33 @@ ORANGE = "#E07A2D"
 LIGHT = "#EAF2F8"
 GRAY = "#6B7280"
 RED = "#B42318"
+
+EXPECTED_COUNTS = {
+    "initial_candidates": 28578,
+    "eligible_candidates": 23108,
+    "unique_guides": 21654,
+    "completed_batches": 109,
+    "total_batches": 109,
+    "human_matches": 440341,
+    "zero_hit_rows": 2668,
+    "deep_guides": 257,
+    "cds_mappings": 271,
+    "mapped_guides": 250,
+    "indel_hypotheses": 5691,
+    "snv_counterfactuals": 17733,
+}
+
+RAW_SOURCE_SHA256 = {
+    "reports/hsv2_genome_wide_exhaustive/provenance.json": (
+        "dfe88939a5bccfc7b9d1b524f16c04a4f35bcbd5108f900aa99640d1d1e75cb7"
+    ),
+    "reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv": (
+        "165c9706a3c8bc7a64b0cbb6821b0c637e7b2bd9546ac530afbdf37c70aefeac"
+    ),
+    "reports/hsv2_genome_wide_exhaustive/genome_wide_human_hits.csv": (
+        "4fadded91d229e21026bb675b3f228ddfb2fffcc1482a0cb9ddc8547a73918b8"
+    ),
+}
 
 
 def _style() -> None:
@@ -54,18 +82,66 @@ def _save(fig: plt.Figure, number: int, *, supplementary: bool = False) -> None:
     plt.close(fig)
 
 
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
 def validate_sources() -> dict[str, float | int]:
-    provenance = json.loads(
-        (ROOT / "reports/hsv2_genome_wide_exhaustive/provenance.json").read_text()
-    )
-    post = pd.read_csv(
-        ROOT / "reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv",
-        usecols=["guide_sequence", "human_total_predicted_hits"],
-    )
-    hits = pd.read_csv(
-        ROOT / "reports/hsv2_genome_wide_exhaustive/genome_wide_human_hits.csv",
-        usecols=["candidate_id"],
-    )
+    raw_paths = {relative: ROOT / relative for relative in RAW_SOURCE_SHA256}
+    raw_available = {relative: path.exists() for relative, path in raw_paths.items()}
+    if any(raw_available.values()) and not all(raw_available.values()):
+        missing = [relative for relative, available in raw_available.items() if not available]
+        raise FileNotFoundError(f"Partial raw publication source set; missing: {missing}")
+
+    if all(raw_available.values()):
+        for relative, expected_hash in RAW_SOURCE_SHA256.items():
+            observed_hash = _sha256(raw_paths[relative])
+            if observed_hash != expected_hash:
+                raise AssertionError(
+                    f"Raw publication source checksum changed: {relative}: {observed_hash}"
+                )
+        provenance = json.loads(raw_paths[next(iter(RAW_SOURCE_SHA256))].read_text())
+        post = pd.read_csv(
+            raw_paths["reports/hsv2_genome_wide_exhaustive/genome_wide_candidates_post_human.csv"],
+            usecols=["guide_sequence", "human_total_predicted_hits"],
+        )
+        hits = pd.read_csv(
+            raw_paths["reports/hsv2_genome_wide_exhaustive/genome_wide_human_hits.csv"],
+            usecols=["candidate_id"],
+        )
+        primary = {
+            "initial_candidates": int(provenance["initial_candidate_count"]),
+            "eligible_candidates": len(post),
+            "unique_guides": int(post["guide_sequence"].nunique()),
+            "completed_batches": int(provenance["completed_batches"]),
+            "total_batches": int(provenance["total_batches"]),
+            "human_matches": len(hits),
+            "zero_hit_rows": int(pd.to_numeric(post["human_total_predicted_hits"]).eq(0).sum()),
+        }
+    else:
+        snapshot_path = FINAL / "verified_statistics.json"
+        if not snapshot_path.exists():
+            raise FileNotFoundError(
+                "Raw sources are not present and the committed verified snapshot is missing"
+            )
+        snapshot = json.loads(snapshot_path.read_text())
+        primary = {
+            key: int(snapshot[key])
+            for key in (
+                "initial_candidates",
+                "eligible_candidates",
+                "unique_guides",
+                "completed_batches",
+                "total_batches",
+                "human_matches",
+                "zero_hit_rows",
+            )
+        }
+
     virtual = json.loads(
         (ROOT / "reports/hsv2_virtual_knockout_escape/run_manifest.json").read_text()
     )
@@ -73,36 +149,16 @@ def validate_sources() -> dict[str, float | int]:
     overlap = pd.read_csv(ROOT / "reports/hsv2_tool_benchmark/top_k_overlap.csv")
 
     observed = {
-        "initial_candidates": int(provenance["initial_candidate_count"]),
-        "eligible_candidates": len(post),
-        "unique_guides": int(post["guide_sequence"].nunique()),
-        "completed_batches": int(provenance["completed_batches"]),
-        "total_batches": int(provenance["total_batches"]),
-        "human_matches": len(hits),
-        "zero_hit_rows": int(pd.to_numeric(post["human_total_predicted_hits"]).eq(0).sum()),
+        **primary,
         "deep_guides": int(virtual["outputs"]["virtual_knockout"]["candidate_count"]),
         "cds_mappings": int(virtual["outputs"]["virtual_knockout"]["mapping_row_count"]),
         "mapped_guides": int(virtual["outputs"]["virtual_knockout"]["mapped_candidate_count"]),
         "indel_hypotheses": int(virtual["outputs"]["virtual_knockout"]["hypothesis_count"]),
         "snv_counterfactuals": int(virtual["outputs"]["escape"]["counterfactual_count"]),
     }
-    expected = {
-        "initial_candidates": 28578,
-        "eligible_candidates": 23108,
-        "unique_guides": 21654,
-        "completed_batches": 109,
-        "total_batches": 109,
-        "human_matches": 440341,
-        "zero_hit_rows": 2668,
-        "deep_guides": 257,
-        "cds_mappings": 271,
-        "mapped_guides": 250,
-        "indel_hypotheses": 5691,
-        "snv_counterfactuals": 17733,
-    }
-    if observed != expected:
+    if observed != EXPECTED_COUNTS:
         raise AssertionError(
-            f"Publication source mismatch: observed={observed}, expected={expected}"
+            f"Publication source mismatch: observed={observed}, expected={EXPECTED_COUNTS}"
         )
 
     row = benchmark[(benchmark.tool_a == "cas-offinder") & (benchmark.tool_b == "crispritz")].iloc[
@@ -128,6 +184,7 @@ def validate_sources() -> dict[str, float | int]:
     summary["vst_pre_post_spearman"] = float(prepost.spearman_rank_correlation)
     (FINAL / "verified_statistics.json").parent.mkdir(parents=True, exist_ok=True)
     (FINAL / "verified_statistics.json").write_text(json.dumps(summary, indent=2) + "\n")
+    (FINAL / "raw_source_checksums.json").write_text(json.dumps(RAW_SOURCE_SHA256, indent=2) + "\n")
     return summary
 
 

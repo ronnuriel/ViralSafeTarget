@@ -24,6 +24,7 @@ def test_bmc_source_statistics_are_frozen() -> None:
     assert observed["unique_guides"] == 21_654
     assert observed["human_matches"] == 440_341
     assert observed["zero_hit_rows"] == 2_668
+    assert (FINAL / "raw_source_checksums.json").exists()
 
 
 def test_bmc_manuscript_has_required_software_article_sections() -> None:
