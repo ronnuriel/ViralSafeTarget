@@ -5,8 +5,16 @@
   "authors": [
     {
       "name": "Ron Nuriel",
-      "affiliation": "[REQUIRED]",
-      "email": "[REQUIRED]"
+      "affiliation": "[AFFILIATION 1 REQUIRED]",
+      "email": "ron.nuriel01@post.runi.ac.il",
+      "orcid": "0009-0008-3970-2591",
+      "corresponding": true
+    },
+    {
+      "name": "Sarel Cohen",
+      "affiliation": "[AFFILIATION 1 REQUIRED]",
+      "orcid": "0000-0003-4578-1245",
+      "corresponding": false
     }
   ],
   "software_version": "0.10.0",

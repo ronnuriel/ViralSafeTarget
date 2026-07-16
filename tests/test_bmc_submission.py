@@ -1,4 +1,5 @@
 import importlib.util
+import json
 from pathlib import Path
 
 import pandas as pd
@@ -47,6 +48,12 @@ def test_bmc_manuscript_has_required_software_article_sections() -> None:
         assert heading in source
     assert "DO NOT SUBMIT" in source
     assert "*" in source
+    assert "Ron Nuriel" in source
+    assert "0009-0008-3970-2591" in source
+    assert "Sarel Cohen" in source
+    assert "0000-0003-4578-1245" in source
+    assert "ron.nuriel01@post.runi.ac.il" in source
+    assert "[EMAIL REQUIRED]" not in source
 
 
 def test_human_evidence_review_is_unresolved() -> None:
@@ -79,3 +86,22 @@ def test_bmc_working_files_remain_blocked() -> None:
     for name in required:
         assert (FINAL / name).exists()
     assert "DO NOT SUBMIT" in (FINAL / "BMC_PreSubmission_Checklist.md").read_text()
+
+
+def test_bmc_author_metadata_is_synchronized() -> None:
+    metadata = json.loads((FINAL / "BMC_Submission_Metadata.json").read_text())
+    assert metadata["authors"] == [
+        {
+            "name": "Ron Nuriel",
+            "affiliation": "[AFFILIATION 1 REQUIRED]",
+            "email": "ron.nuriel01@post.runi.ac.il",
+            "orcid": "0009-0008-3970-2591",
+            "corresponding": True,
+        },
+        {
+            "name": "Sarel Cohen",
+            "affiliation": "[AFFILIATION 1 REQUIRED]",
+            "orcid": "0000-0003-4578-1245",
+            "corresponding": False,
+        },
+    ]

@@ -8,7 +8,9 @@
 - [x] Tables are editable and unshaded.
 - [x] Figures are separate PDF/PNG files and below 10 MB.
 - [x] Numerical claims are asserted from committed sources.
-- [ ] Affiliation and corresponding-author email supplied.
+- [x] Corresponding-author email and both ORCID identifiers supplied.
+- [ ] Shared Affiliation 1 supplied for both authors.
+- [ ] Sarel Cohen's contribution statement supplied and confirmed.
 - [ ] All human-review rows resolved by named domain-qualified reviewer(s).
 - [ ] Asterisks removed only for resolved claims.
 - [ ] DOI minted and DOI placeholders replaced.

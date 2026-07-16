@@ -1,11 +1,11 @@
 # ViralSafeTarget: evidence-aware, virus-first CRISPR target prioritization with an exhaustive HSV-2 case study
 
-**Article type:** Software Article  
-**Journal:** BMC Bioinformatics  
-**Submission status:** **DO NOT SUBMIT — HUMAN REVIEW PENDING**  
-**Author:** Ron Nuriel¹*  
-**Affiliation:** ¹[AFFILIATION REQUIRED]  
-**Corresponding author:** [EMAIL REQUIRED]
+**Article type:** Software Article
+**Journal:** BMC Bioinformatics
+**Submission status:** **DO NOT SUBMIT — HUMAN REVIEW PENDING**
+**Authors:** Ron Nuriel¹* (ORCID: 0009-0008-3970-2591); Sarel Cohen¹ (ORCID: 0000-0003-4578-1245)
+**Affiliation:** ¹[AFFILIATION 1 REQUIRED]
+**Corresponding author:** ron.nuriel01@post.runi.ac.il
 
 ## Abstract
 
@@ -344,7 +344,7 @@ and additional files.
 
 ### Competing interests
 
-The author declares no competing interests. [AUTHOR CONFIRMATION REQUIRED]
+The authors declare no competing interests. [AUTHOR CONFIRMATION REQUIRED]
 
 ### Funding
 
@@ -353,7 +353,9 @@ No external funding was reported for this work. [AUTHOR CONFIRMATION REQUIRED]
 ### Authors' contributions
 
 RN conceived the project, implemented and evaluated the software, interpreted the
-computational findings and prepared the manuscript. [AUTHOR CONFIRMATION REQUIRED]
+computational findings and prepared the manuscript. SC's contribution statement is
+[SAREL COHEN CONTRIBUTION REQUIRED]. Both authors reviewed and approved the final
+manuscript. [AUTHOR CONFIRMATION REQUIRED]
 
 ### Acknowledgements
 

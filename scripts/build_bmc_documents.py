@@ -313,9 +313,11 @@ def build_manuscript() -> Path:
     for line, size, bold in (
         ("Software Article — BMC Bioinformatics", 12, True),
         ("DO NOT SUBMIT — HUMAN REVIEW PENDING", 12, True),
-        ("Ron Nuriel¹*", 12, False),
-        ("¹[AFFILIATION REQUIRED]", 11, False),
-        ("*Correspondence: [EMAIL REQUIRED]", 11, False),
+        ("Ron Nuriel¹* · Sarel Cohen¹", 12, False),
+        ("Ron Nuriel ORCID: 0009-0008-3970-2591", 10, False),
+        ("Sarel Cohen ORCID: 0000-0003-4578-1245", 10, False),
+        ("¹[AFFILIATION 1 REQUIRED]", 11, False),
+        ("*Correspondence: ron.nuriel01@post.runi.ac.il", 11, False),
     ):
         p = doc.add_paragraph()
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -420,12 +422,15 @@ def build_admin_files():
                 "editing, safety, viral inhibition, delivery, treatment or cure."
             ),
             (
-                "The author declares no competing interests. [AUTHOR CONFIRMATION REQUIRED] "
+                "The authors declare no competing interests. [AUTHOR CONFIRMATION REQUIRED] "
                 "All authors have approved the manuscript and its submission. "
                 "[AUTHOR CONFIRMATION REQUIRED] The manuscript has not been published or "
                 "submitted elsewhere. [AUTHOR CONFIRMATION REQUIRED]"
             ),
-            "Sincerely,\nRon Nuriel\n[AFFILIATION REQUIRED]\n[EMAIL REQUIRED]",
+            (
+                "Sincerely,\nRon Nuriel\nCorresponding author, on behalf of all authors\n"
+                "[AFFILIATION 1 REQUIRED]\nron.nuriel01@post.runi.ac.il"
+            ),
         ],
         letter=True,
     )
@@ -435,10 +440,12 @@ def build_admin_files():
         [
             f"Title: {ARTICLE_TITLE}",
             "Article type: Software Article",
-            "Author: Ron Nuriel",
-            "Affiliation: [AFFILIATION REQUIRED]",
-            "Corresponding author email: [EMAIL REQUIRED]",
-            "ORCID: [ORCID OPTIONAL/REQUIRED IF AVAILABLE]",
+            "Authors: Ron Nuriel; Sarel Cohen",
+            "Affiliation 1: [AFFILIATION 1 REQUIRED]",
+            "Corresponding author: Ron Nuriel",
+            "Corresponding author email: ron.nuriel01@post.runi.ac.il",
+            "Ron Nuriel ORCID: 0009-0008-3970-2591",
+            "Sarel Cohen ORCID: 0000-0003-4578-1245",
             (
                 "Submission status: DO NOT SUBMIT — human evidence review, author metadata, "
                 "DOI and declarations remain pending."
@@ -449,7 +456,21 @@ def build_admin_files():
         "journal": "BMC Bioinformatics",
         "article_type": "Software Article",
         "title": ARTICLE_TITLE,
-        "authors": [{"name": "Ron Nuriel", "affiliation": "[REQUIRED]", "email": "[REQUIRED]"}],
+        "authors": [
+            {
+                "name": "Ron Nuriel",
+                "affiliation": "[AFFILIATION 1 REQUIRED]",
+                "email": "ron.nuriel01@post.runi.ac.il",
+                "orcid": "0009-0008-3970-2591",
+                "corresponding": True,
+            },
+            {
+                "name": "Sarel Cohen",
+                "affiliation": "[AFFILIATION 1 REQUIRED]",
+                "orcid": "0000-0003-4578-1245",
+                "corresponding": False,
+            },
+        ],
         "software_version": "0.10.0",
         "frozen_source_commit": FROZEN_COMMIT,
         "doi": "[DOI PENDING]",
@@ -516,7 +537,9 @@ def build_text_admin():
 - [x] Tables are editable and unshaded.
 - [x] Figures are separate PDF/PNG files and below 10 MB.
 - [x] Numerical claims are asserted from committed sources.
-- [ ] Affiliation and corresponding-author email supplied.
+- [x] Corresponding-author email and both ORCID identifiers supplied.
+- [ ] Shared Affiliation 1 supplied for both authors.
+- [ ] Sarel Cohen's contribution statement supplied and confirmed.
 - [ ] All human-review rows resolved by named domain-qualified reviewer(s).
 - [ ] Asterisks removed only for resolved claims.
 - [ ] DOI minted and DOI placeholders replaced.
@@ -560,7 +583,18 @@ Do not upload until the checklist has no unresolved blocking items.
             "Reproducible virus-first CRISPR target prioritization software and compact "
             "computational result snapshots. No experimental or therapeutic claim."
         ),
-        "creators": [{"name": "Nuriel, Ron", "affiliation": "[AFFILIATION REQUIRED]"}],
+        "creators": [
+            {
+                "name": "Nuriel, Ron",
+                "affiliation": "[AFFILIATION 1 REQUIRED]",
+                "orcid": "0009-0008-3970-2591",
+            },
+            {
+                "name": "Cohen, Sarel",
+                "affiliation": "[AFFILIATION 1 REQUIRED]",
+                "orcid": "0000-0003-4578-1245",
+            },
+        ],
         "license": "MIT",
         "upload_type": "software",
         "version": "0.10.0",
