@@ -1,0 +1,27 @@
+{
+  "title": "ViralSafeTarget 0.10.0: source and HSV-2 computational case-study artifacts",
+  "description": "Reproducible virus-first CRISPR target prioritization software and compact computational result snapshots. No experimental or therapeutic claim.",
+  "creators": [
+    {
+      "name": "Nuriel, Ron",
+      "affiliation": "[AFFILIATION REQUIRED]"
+    }
+  ],
+  "license": "MIT",
+  "upload_type": "software",
+  "version": "0.10.0",
+  "keywords": [
+    "bioinformatics",
+    "viral genomics",
+    "CRISPR",
+    "HSV-2",
+    "reproducibility"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/ronnuriel/ViralSafeTarget",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}
