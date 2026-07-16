@@ -1,0 +1,16 @@
+{
+  "journal": "BMC Bioinformatics",
+  "article_type": "Software Article",
+  "title": "ViralSafeTarget: evidence-aware, virus-first CRISPR target prioritization with an exhaustive HSV-2 case study",
+  "authors": [
+    {
+      "name": "Ron Nuriel",
+      "affiliation": "[REQUIRED]",
+      "email": "[REQUIRED]"
+    }
+  ],
+  "software_version": "0.10.0",
+  "frozen_source_commit": "de7868a83d3d1e30729323e53a735615d43fc231",
+  "doi": "[DOI PENDING]",
+  "status": "DO NOT SUBMIT"
+}
