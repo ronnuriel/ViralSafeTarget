@@ -47,6 +47,16 @@ case-study runs, data preparation, and maintenance operations.
 - `summarize_cas_offinder.py`
 - `write_hsv2_pilot_manifest.py`
 
+## Publication-package helpers
+
+- `build_bmc_figures.py` — rebuilds Figures 1–6 and Supplementary Figure S1 from
+  committed source tables, with count assertions.
+- `build_bmc_documents.py` — builds the BMC Bioinformatics working manuscript,
+  administrative files, review queue, and additional files. It requires the bundled
+  document runtime described in the document-production skill.
+- `package_bmc_submission.py` — assembles the rendered working submission ZIP and
+  DOI-preparation source/data archives with SHA-256 checksums.
+
 Helpers may have stricter input assumptions than the `vst project` interface. Before
 running a long external stage, use `vst project validate`, `vst doctor`, or
 `bash scripts/doctor.sh` and inspect the generated command/input files.

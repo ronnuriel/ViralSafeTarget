@@ -1,0 +1,16 @@
+{
+  "initial_candidates": 28578,
+  "eligible_candidates": 23108,
+  "unique_guides": 21654,
+  "completed_batches": 109,
+  "total_batches": 109,
+  "human_matches": 440341,
+  "zero_hit_rows": 2668,
+  "deep_guides": 257,
+  "cds_mappings": 271,
+  "mapped_guides": 250,
+  "indel_hypotheses": 5691,
+  "snv_counterfactuals": 17733,
+  "cas_crispritz_spearman": 0.8804128188049333,
+  "vst_pre_post_spearman": 0.9619751745996608
+}
