@@ -55,6 +55,13 @@ Documentation is grouped by the question a researcher is trying to answer. The r
 - [`SIMULATION.md`](research/SIMULATION.md)
 - [`SIMULATION_LIMITS.md`](research/SIMULATION_LIMITS.md)
 
+## Maintenance and releases
+
+- [`RELEASE_CHECKLIST.md`](maintenance/RELEASE_CHECKLIST.md) — guarded TestPyPI and
+  production release process.
+- [`SERVER_VALIDATION.md`](maintenance/SERVER_VALIDATION.md) — isolated clean-wheel
+  validation on a compute server.
+
 ## Other indexes
 
 - [`../notebooks/README.md`](../notebooks/README.md)

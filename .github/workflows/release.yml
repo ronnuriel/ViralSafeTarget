@@ -2,6 +2,16 @@ name: Build release artifacts
 
 on:
   workflow_dispatch:
+    inputs:
+      publish_target:
+        description: "Build only, publish to TestPyPI, or publish to production PyPI"
+        required: true
+        default: "none"
+        type: choice
+        options:
+          - none
+          - testpypi
+          - pypi
   push:
     tags: ["v*"]
 
@@ -15,42 +25,84 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
       - run: python -m pip install --upgrade pip build twine
-      - run: python -m build
-      - run: python -m twine check dist/*
-      - name: Install wheel outside checkout
-        run: |
-          cd "$(mktemp -d)"
-          python -m venv smoke-env
-          source smoke-env/bin/activate
-          python -m pip install "$GITHUB_WORKSPACE"/dist/*.whl
-          vst --version
-          vst doctor --json
-          vst quickstart --out demo-project
-          vst plan demo-project/project.yaml --json
-          vst run demo-project/project.yaml
-          vst status demo-project/project.yaml
-          vst open demo-project/results --no-browser
-          vst export demo-project/project.yaml
-      - uses: actions/upload-artifact@v4
+      - name: Build, metadata-check, clean-install, and run researcher smoke flow
+        run: >-
+          PYTHON_BIN=python DIST_DIR="$GITHUB_WORKSPACE/dist"
+          bash scripts/validate_release_candidate.sh
+      - uses: actions/upload-artifact@v7
         if: matrix.os == 'ubuntu-latest'
         with:
           name: viral-safe-target-distributions
           path: dist/*
 
-  publish:
-    if: startsWith(github.ref, 'refs/tags/v')
+  canonical-notebook:
     needs: build-and-smoke-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+      - uses: actions/download-artifact@v8
+        with:
+          name: viral-safe-target-distributions
+          path: dist
+      - name: Install the wheel with notebook dependencies
+        run: |
+          WHEEL="$(find dist -maxdepth 1 -name '*.whl' -print -quit)"
+          python -m pip install "${WHEEL}[notebooks]"
+      - name: Execute canonical notebook in demo mode
+        env:
+          VST_NOTEBOOK_MODE: demo
+          VST_REPOSITORY_ROOT: ${{ github.workspace }}
+        run: >-
+          jupyter nbconvert --execute --to notebook
+          --ExecutePreprocessor.timeout=600
+          --output /tmp/ViralSafeTarget_demo.executed.ipynb
+          notebooks/00_VIRALSAFETARGET_END_TO_END_EN.ipynb
+      - name: Verify the frozen HSV-2 snapshot in the canonical notebook
+        env:
+          VST_NOTEBOOK_MODE: hsv2_snapshot
+          VST_REPOSITORY_ROOT: ${{ github.workspace }}
+        run: >-
+          jupyter nbconvert --execute --to notebook
+          --ExecutePreprocessor.timeout=600
+          --output /tmp/ViralSafeTarget_hsv2_snapshot.executed.ipynb
+          notebooks/00_VIRALSAFETARGET_END_TO_END_EN.ipynb
+
+  publish-testpypi:
+    if: github.event_name == 'workflow_dispatch' && inputs.publish_target == 'testpypi'
+    needs: [build-and-smoke-test, canonical-notebook]
+    runs-on: ubuntu-latest
+    environment: testpypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: viral-safe-target-distributions
+          path: dist
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+
+  publish-pypi:
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      inputs.publish_target == 'pypi' &&
+      startsWith(github.ref, 'refs/tags/v')
+    needs: [build-and-smoke-test, canonical-notebook]
     runs-on: ubuntu-latest
     environment: pypi
     permissions:
       id-token: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: viral-safe-target-distributions
           path: dist

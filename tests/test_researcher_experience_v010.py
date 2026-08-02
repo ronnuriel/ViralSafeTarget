@@ -4,6 +4,7 @@ import json
 import zipfile
 from pathlib import Path
 
+import viral_safe_target.researcher as researcher
 from viral_safe_target.project_workflow import run_project
 from viral_safe_target.researcher import (
     create_demo_project,
@@ -12,6 +13,7 @@ from viral_safe_target.researcher import (
     export_project,
     open_results,
     plan_project,
+    tool_setup_report,
 )
 
 
@@ -38,6 +40,10 @@ def test_demo_plan_run_bundle_resume_and_export(tmp_path: Path) -> None:
     }
     assert required <= {path.name for path in results.iterdir()}
     assert open_results(results, no_browser=True) == results / "START_HERE.html"
+    start_here = (results / "START_HERE.html").read_text(encoding="utf-8")
+    assert "What to do next" in start_here
+    assert "guide_explanations/" in start_here
+    assert "vst tools setup --tool cas-offinder" in start_here
 
     second = run_project(project)
     assert all(row["status"] in {"completed", "external_required"} for row in second["stages"])
@@ -57,6 +63,29 @@ def test_doctor_preserves_external_tool_missingness() -> None:
     assert set(report["tools"]) >= {"mafft", "cas_offinder", "docker", "podman"}
     for tool in report["tools"].values():
         assert isinstance(tool["available"], bool)
+
+
+def test_doctor_uses_supported_crispritz_version_probe(monkeypatch) -> None:
+    calls: dict[str, list[str]] = {}
+
+    def fake_program(command: str, version_args: list[str]) -> dict[str, object]:
+        calls[command] = version_args
+        return {"available": True, "path": f"/tools/{command}", "version": "test"}
+
+    monkeypatch.setattr(researcher, "_program", fake_program)
+    doctor_report()
+
+    assert calls["crispritz.py"] == []
+
+
+def test_tool_setup_guidance_is_scoped_actionable_and_non_mutating() -> None:
+    report = tool_setup_report("cas-offinder")
+    assert report["safety"].endswith("never executed by vst tools setup.")
+    assert report["next_check"] == "vst tools status"
+    assert [tool["id"] for tool in report["tools"]] == ["cas-offinder"]
+    tool = report["tools"][0]
+    assert tool["official_url"].startswith("https://github.com/")
+    assert "source_build" in tool["commands"]
 
 
 def test_sequence_only_mode_preserves_unavailable_annotation_stages(tmp_path: Path) -> None:

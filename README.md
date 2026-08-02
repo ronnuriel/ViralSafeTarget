@@ -10,6 +10,17 @@ exact-target escape robustness, multiplex comparison, and source-linked evidence
 
 ## Five-minute installation
 
+The package is prepared for PyPI but the first public release is still pending. Before
+the first PyPI release is visible, install the current reviewed source directly from GitHub:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install "viral-safe-target[notebooks] @ git+https://github.com/ronnuriel/ViralSafeTarget.git@main"
+```
+
+After the public release, the stable installation will be:
+
 ```bash
 python -m venv .venv
 source .venv/bin/activate
@@ -28,6 +39,7 @@ vst open demo-project/results
 ```
 
 See the tested [five-minute quick start](docs/getting-started/FIVE_MINUTE_QUICKSTART.md).
+Release maintainers should use the guarded [release checklist](docs/maintenance/RELEASE_CHECKLIST.md).
 
 ## New-virus quick start
 

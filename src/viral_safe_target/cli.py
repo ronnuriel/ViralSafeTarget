@@ -684,19 +684,38 @@ def _researcher_doctor(args: argparse.Namespace) -> None:
     print(f"Python: {report['python']['version']} ({report['python']['executable']})")
     print(f"Memory: {report['memory_gib']} GiB; disk free: {report['disk_free_gib']} GiB")
     for name, value in report["tools"].items():
-        print(f"- {name}: {value['version']}")
+        state = "available" if value["available"] else "missing"
+        print(f"- {name}: {state} — {value['version']}")
     if "project" in report:
         print(f"Project sequence stages: {report['project']['can_run_sequence_stages']}")
         print(f"Project external host stage: {report['project']['can_run_external_host_stage']}")
+    if any(not value["available"] for value in report["tools"].values()):
+        print("Setup guidance: vst tools setup")
 
 
 def _tools_setup(args: argparse.Namespace) -> None:
-    del args
-    print("External tools are explicit optional dependencies.")
-    print("MAFFT: https://mafft.cbrc.jp/alignment/software/")
-    print("Cas-OFFinder: https://github.com/snugel/cas-offinder")
-    print("CRISPRitz: https://github.com/pinellolab/CRISPRitz")
-    print("After installation, run: vst tools status")
+    from .researcher import tool_setup_report
+
+    report = tool_setup_report(args.tool)
+    if args.json:
+        print(json.dumps(report, indent=2, sort_keys=True))
+        return
+    print(report["safety"])
+    for tool in report["tools"]:
+        state = "available" if tool["available"] else "missing"
+        print(f"\n{tool['name']}: {state}")
+        print(f"Purpose: {tool['required_for']}")
+        print(f"Official source: {tool['official_url']}")
+        recipe = tool["recommended_recipe"]
+        if recipe == "already available":
+            print(f"Detected: {tool['detected_version']} ({tool['detected_path']})")
+        else:
+            print(f"Suggested path: {recipe}")
+            for command in tool["commands"].get(recipe, []):
+                print(f"  {command}")
+        if tool.get("note"):
+            print(f"Note: {tool['note']}")
+    print(f"\nAfter setup, run: {report['next_check']}")
 
 
 def _reproduce_hsv2(args: argparse.Namespace) -> None:
@@ -1134,6 +1153,10 @@ def build_parser() -> argparse.ArgumentParser:
     tools_setup = tool_commands.add_parser(
         "setup", help="show supported external-tool installation resources"
     )
+    tools_setup.add_argument(
+        "--tool", choices=["all", "mafft", "cas-offinder", "crispritz"], default="all"
+    )
+    tools_setup.add_argument("--json", action="store_true")
     tools_setup.set_defaults(func=_tools_setup)
     tools_doctor = tool_commands.add_parser("doctor", help="detect supported external tools")
     tools_doctor.set_defaults(func=_tools_doctor)

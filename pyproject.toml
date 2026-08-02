@@ -10,7 +10,8 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
 authors = [
-  {name = "ViralSafeTarget contributors"}
+  {name = "Ron Nuriel", email = "ron.nuriel01@post.runi.ac.il"},
+  {name = "Sarel Cohen"}
 ]
 keywords = ["bioinformatics", "viral genomics", "CRISPR", "off-target", "HSV"]
 classifiers = [
@@ -65,6 +66,7 @@ vst = "viral_safe_target.cli:main"
 Homepage = "https://github.com/ronnuriel/ViralSafeTarget"
 Documentation = "https://github.com/ronnuriel/ViralSafeTarget/tree/main/docs"
 Issues = "https://github.com/ronnuriel/ViralSafeTarget/issues"
+Changelog = "https://github.com/ronnuriel/ViralSafeTarget/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
 where = ["src"]
