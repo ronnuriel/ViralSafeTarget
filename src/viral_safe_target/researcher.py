@@ -438,7 +438,9 @@ def doctor_report(project: str | Path | None = None) -> dict[str, Any]:
     tools = {
         "mafft": _program("mafft", ["--version"]),
         "cas_offinder": _program("cas-offinder", ["--help"]),
-        "crispritz": _program("crispritz.py", ["--help"]),
+        # CRISPRitz prints its version/help banner when called without arguments and
+        # rejects the conventional ``--help`` flag.
+        "crispritz": _program("crispritz.py", []),
         "docker": _program("docker", ["--version"]),
         "podman": _program("podman", ["--version"]),
         "ncbi_datasets": _program("datasets", ["version"]),

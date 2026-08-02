@@ -31,7 +31,9 @@ class CrispritzAdapter:
 
     def detect(self) -> ToolAvailability:
         for executable in ("crispritz.py", "crispritz"):
-            result = detect_executable(self.name, executable, ("--help",))
+            # CRISPRitz prints its version/help banner with no arguments and treats
+            # ``--help`` as an invalid command.
+            result = detect_executable(self.name, executable, ())
             if result.available:
                 return result
         docker = shutil.which("docker")

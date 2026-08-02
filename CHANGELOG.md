@@ -14,6 +14,8 @@
 - Hardened the public release workflow so tag pushes build artifacts but PyPI publication
   requires an explicit manual target and protected environment; added a TestPyPI path.
 - Added actionable, non-mutating external-tool setup guidance and clearer doctor output.
+- Made native CRISPRitz detection use its supported no-argument version banner instead
+  of the rejected conventional `--help` flag.
 - Improved `START_HERE.html` navigation, stage status, and next-step guidance.
 - Added verified author metadata and truthful pre-PyPI installation documentation.
 
