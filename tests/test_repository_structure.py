@@ -50,6 +50,7 @@ def test_documentation_has_a_single_indexed_root() -> None:
     assert root_documents == ["README.md"]
     assert {path.name for path in (ROOT / "docs").iterdir() if path.is_dir()} == {
         "getting-started",
+        "maintenance",
         "reference",
         "research",
         "workflows",

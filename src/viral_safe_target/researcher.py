@@ -307,6 +307,14 @@ def create_demo_project(out_dir: str | Path, *, force: bool = False) -> Path:
 
 def _program(command: str, version_args: list[str]) -> dict[str, Any]:
     executable = shutil.which(command)
+    if command == "cas-offinder":
+        configured = os.environ.get("CAS_OFFINDER_PATH")
+        if (
+            configured
+            and Path(configured).expanduser().is_file()
+            and os.access(Path(configured).expanduser(), os.X_OK)
+        ):
+            executable = str(Path(configured).expanduser().resolve())
     if not executable:
         return {"available": False, "path": None, "version": "not found"}
     try:
@@ -318,6 +326,106 @@ def _program(command: str, version_args: list[str]) -> dict[str, Any]:
     except (OSError, subprocess.TimeoutExpired) as error:
         version = f"version unavailable: {error}"
     return {"available": True, "path": executable, "version": version}
+
+
+def tool_setup_report(selected_tool: str = "all") -> dict[str, Any]:
+    """Return actionable, non-mutating setup guidance for external programs."""
+    system = platform.system().lower()
+    managers = {
+        "brew": bool(shutil.which("brew")),
+        "apt": bool(shutil.which("apt-get")),
+        "conda": bool(
+            shutil.which("conda") or shutil.which("mamba") or shutil.which("micromamba")
+        ),
+        "docker": bool(shutil.which("docker")),
+        "podman": bool(shutil.which("podman")),
+    }
+    status = doctor_report()["tools"]
+    recipes: dict[str, dict[str, Any]] = {
+        "mafft": {
+            "name": "MAFFT",
+            "required_for": "aligning an unaligned viral strain panel",
+            "official_url": "https://mafft.cbrc.jp/alignment/software/",
+            "commands": {
+                "macos_homebrew": ["brew install mafft"],
+                "ubuntu_debian": ["sudo apt-get update", "sudo apt-get install -y mafft"],
+                "conda": ["conda install -c bioconda mafft"],
+            },
+        },
+        "cas-offinder": {
+            "name": "Cas-OFFinder",
+            "required_for": "the configured genome-scale host-search stage",
+            "official_url": "https://github.com/snugel/cas-offinder",
+            "commands": {
+                "source_build": [
+                    "git clone https://github.com/snugel/cas-offinder.git",
+                    "cmake -S cas-offinder -B cas-offinder/build",
+                    "cmake --build cas-offinder/build --parallel",
+                    "export CAS_OFFINDER_PATH=$PWD/cas-offinder/build/cas-offinder",
+                ]
+            },
+            "note": (
+                "OpenCL and a C++ build toolchain are required; follow the official "
+                "repository for platform prerequisites."
+            ),
+        },
+        "crispritz": {
+            "name": "CRISPRitz",
+            "required_for": (
+                "optional independent host-search comparison, bulges, and "
+                "variant-aware analyses"
+            ),
+            "official_url": "https://github.com/pinellolab/CRISPRitz",
+            "commands": {
+                "docker": ["docker pull pinellolab/crispritz:latest"],
+                "native": [
+                    "Follow the pinned release instructions in the official CRISPRitz repository"
+                ],
+            },
+            "note": (
+                "Input-only and import modes remain available; unavailable output remains "
+                "pending, never zero."
+            ),
+        },
+    }
+    if selected_tool != "all" and selected_tool not in recipes:
+        raise ValueError(f"Unknown tool: {selected_tool}")
+    selected = recipes if selected_tool == "all" else {selected_tool: recipes[selected_tool]}
+    tools: list[dict[str, Any]] = []
+    for tool_id, recipe in selected.items():
+        status_key = "cas_offinder" if tool_id == "cas-offinder" else tool_id
+        detected = status[status_key]
+        recommendation = "already available"
+        if not detected["available"]:
+            if tool_id == "mafft" and system == "darwin" and managers["brew"]:
+                recommendation = "macos_homebrew"
+            elif tool_id == "mafft" and managers["apt"]:
+                recommendation = "ubuntu_debian"
+            elif tool_id == "mafft" and managers["conda"]:
+                recommendation = "conda"
+            elif tool_id == "crispritz" and managers["docker"]:
+                recommendation = "docker"
+            elif tool_id == "crispritz":
+                recommendation = "native"
+            else:
+                recommendation = "source_build"
+        tools.append(
+            {
+                "id": tool_id,
+                **recipe,
+                "available": detected["available"],
+                "detected_path": detected["path"],
+                "detected_version": detected["version"],
+                "recommended_recipe": recommendation,
+            }
+        )
+    return {
+        "platform": platform.platform(),
+        "detected_package_managers": managers,
+        "tools": tools,
+        "next_check": "vst tools status",
+        "safety": "Commands are printed for review and are never executed by vst tools setup.",
+    }
 
 
 def doctor_report(project: str | Path | None = None) -> dict[str, Any]:
@@ -343,6 +451,7 @@ def doctor_report(project: str | Path | None = None) -> dict[str, Any]:
         "disk_free_gib": round(disk.free / 1024**3, 2),
         "tools": tools,
         "scientific_boundary": "Missing external tools remain external_required, never zero hits.",
+        "setup_help": "Run `vst tools setup` for platform-aware, non-mutating guidance.",
     }
     if project:
         context = load_project(project)
@@ -630,7 +739,8 @@ def build_result_bundle(project: ProjectContext | str | Path) -> dict[str, Any]:
         "export.zip",
     ]
     stage_html = "".join(
-        f"<tr><td>{escape(row['stage'])}</td><td>{escape(row['status'])}</td><td>{escape(row['message'])}</td></tr>"
+        f"<tr><td>{escape(row['stage'])}</td><td><span class='status {escape(row['status'])}'>"
+        f"{escape(row['status'])}</span></td><td>{escape(row['message'])}</td></tr>"
         for row in state["stages"]
     )
     top_guide_columns = [
@@ -639,22 +749,59 @@ def build_result_bundle(project: ProjectContext | str | Path) -> dict[str, Any]:
         if column and column in top_guides
     ]
     top_gene_columns = [column for column in genes.columns if column][:4]
-    top_guide_html = top_guides[top_guide_columns].head(10).to_html(index=False, escape=True)
+    top_guide_display = top_guides[top_guide_columns].head(10).copy()
+    if "candidate_id" in top_guide_display:
+        top_guide_display["candidate_id"] = top_guide_display["candidate_id"].map(
+            lambda value: (
+                f"<a href='guide_explanations/{escape(str(value))}.html'>"
+                f"{escape(str(value))}</a>"
+            )
+        )
+    top_guide_html = top_guide_display.to_html(index=False, escape=False)
     top_gene_html = genes[top_gene_columns].head(10).to_html(index=False, escape=True)
     missing_stages = [row["stage"] for row in state["stages"] if row["status"] != "completed"]
     link_html = "".join(f"<li><a href='{name}'>{name}</a></li>" for name in links)
+    next_actions: list[str] = []
+    if summary["host_risk_status"] == "external_required":
+        next_actions.append(
+            "Install or configure Cas-OFFinder (`vst tools setup --tool cas-offinder`), "
+            f"then run `vst resume {context.source} --run-external`."
+        )
+    if missing_stages:
+        next_actions.append(
+            "Review the stage table before interpreting rankings; partial or unavailable stages "
+            "must not be treated as favorable results."
+        )
+    next_actions.append(
+        "Open the evidence review queue and obtain named human review before biological evidence "
+        "affects interpretation."
+    )
+    next_actions_html = "".join(f"<li>{escape(action)}</li>" for action in next_actions)
     (root / "START_HERE.html").write_text(
         "<!doctype html><html lang='en'><meta charset='utf-8'>"
         "<title>ViralSafeTarget results</title>"
-        "<style>body{font:16px Arial;max-width:1100px;margin:2rem auto;line-height:1.5}"
-        "table{border-collapse:collapse;width:100%}td,th{border:1px solid #ddd;padding:.5rem}"
-        ".warning{background:#fff4d6;padding:1rem;border-left:5px solid #d99b20}</style>"
+        "<style>:root{color-scheme:light}body{font:16px system-ui,-apple-system,sans-serif;"
+        "max-width:1120px;margin:2rem auto;padding:0 1rem;line-height:1.55;color:#172033}"
+        "h1,h2{line-height:1.2}a{color:#0756a8}table{border-collapse:collapse;width:100%;"
+        "display:block;overflow-x:auto}td,th{border:1px solid #d7dce5;padding:.55rem;"
+        "text-align:left}th{background:#f3f6fa}.warning{background:#fff4d6;padding:1rem;"
+        "border-left:5px solid #d99b20}.cards{display:grid;grid-template-columns:repeat(3,1fr);"
+        "gap:1rem;margin:1.25rem 0}.card{background:#f3f6fa;border-radius:.5rem;padding:1rem}"
+        ".card b{display:block;font-size:1.5rem}.status{border-radius:1rem;padding:.2rem .55rem;"
+        "font-size:.85rem;background:#e8edf4}.status.completed{background:#dff4e6;color:#155d32}"
+        ".status.external_required,.status.unavailable{background:#fff0cf;color:#704d00}"
+        "code,pre{background:#f5f6f8;border-radius:.35rem;padding:.15rem .3rem}"
+        "pre{padding:1rem;overflow:auto}@media(max-width:700px){.cards{grid-template-columns:1fr}}"
+        "</style>"
         f"<h1>{escape(str(context.values.get('display_name', context.values['id'])))}</h1>"
         "<div class='warning'><b>Research boundary.</b> This is a computational research "
         "shortlist, "
         "not evidence of editing, safety, viral inhibition, treatment, or cure.</div>"
-        f"<p>{len(candidates)} candidate rows; {len(shortlist)} shortlisted for independent "
-        "evaluation.</p>"
+        "<div class='cards'>"
+        f"<div class='card'><b>{len(candidates)}</b>candidate rows</div>"
+        f"<div class='card'><b>{len(shortlist)}</b>research shortlist</div>"
+        f"<div class='card'><b>{escape(summary['host_risk_status'])}</b>host-risk stage</div>"
+        "</div>"
         "<h2>Research question and inputs</h2><p>Which conserved editor-compatible "
         "viral sites merit independent evaluation after preserving host-risk status, gene "
         "targetability, disruption hypotheses, escape robustness, and evidence as separate "
@@ -669,6 +816,7 @@ def build_result_bundle(project: ProjectContext | str | Path) -> dict[str, Any]:
         "<h2>Stage status</h2><table><tr><th>Stage</th><th>Status</th><th>Message</th></tr>"
         f"{stage_html}</table><h2>Start with these files</h2><ul>{link_html}</ul>"
         f"<h2>Missing or partial stages</h2><p>{escape(', '.join(missing_stages) or 'None')}</p>"
+        f"<h2>What to do next</h2><ol>{next_actions_html}</ol>"
         "<h2>Detailed analyses</h2><p>The linked virtual-knockout/escape report and "
         "multiplex table preserve predicted disruption and exact-target escape as separate "
         "sequence-level hypotheses. The evidence queue requires explicit human approval.</p>"

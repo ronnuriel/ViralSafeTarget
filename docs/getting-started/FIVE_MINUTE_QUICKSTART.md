@@ -2,6 +2,20 @@
 
 ## A. Install
 
+### Current reviewed source (before the first PyPI release)
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install "viral-safe-target[notebooks] @ git+https://github.com/ronnuriel/ViralSafeTarget.git@main"
+vst --version
+vst doctor
+```
+
+### Stable PyPI release
+
+Use this form only after the release is visible on the public PyPI project page:
+
 ```bash
 python -m venv .venv
 source .venv/bin/activate
@@ -62,7 +76,8 @@ sequence-only stages and the partial report will still be produced.
 
 ```bash
 vst tools status
-vst tools setup --help
+vst tools setup
+vst tools setup --tool cas-offinder
 vst status my-virus/project.yaml
 ```
 

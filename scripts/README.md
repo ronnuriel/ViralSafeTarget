@@ -45,6 +45,8 @@ case-study runs, data preparation, and maintenance operations.
 - `cache_stage.py`
 - `compare_discovery_modes.py`
 - `summarize_cas_offinder.py`
+- `validate_release_candidate.sh` — build, metadata-check, clean-install, and execute the
+  complete five-minute researcher smoke flow outside the repository
 - `write_hsv2_pilot_manifest.py`
 
 Helpers may have stricter input assumptions than the `vst project` interface. Before

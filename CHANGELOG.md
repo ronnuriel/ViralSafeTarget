@@ -11,6 +11,12 @@
 
 ## Unreleased
 
+- Hardened the public release workflow so tag pushes build artifacts but PyPI publication
+  requires an explicit manual target and protected environment; added a TestPyPI path.
+- Added actionable, non-mutating external-tool setup guidance and clearer doctor output.
+- Improved `START_HERE.html` navigation, stage status, and next-step guidance.
+- Added verified author metadata and truthful pre-PyPI installation documentation.
+
 - Added a publication-facing frozen-panel benchmark for ViralSafeTarget,
   Cas-OFFinder, CRISPRitz, CRISPOR, CHOPCHOP, and GuideScan2.
 - Added explicit execution status, raw-output provenance, rank agreement, top-K
