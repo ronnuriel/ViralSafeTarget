@@ -64,8 +64,9 @@ vst = "viral_safe_target.cli:main"
 vst-ui = "viral_safe_target.ui_launcher:main"
 
 [project.urls]
-Homepage = "https://github.com/ronnuriel/ViralSafeTarget"
+Homepage = "https://ronnuriel.github.io/ViralSafeTarget/"
 Documentation = "https://github.com/ronnuriel/ViralSafeTarget/tree/main/docs"
+Source = "https://github.com/ronnuriel/ViralSafeTarget"
 Issues = "https://github.com/ronnuriel/ViralSafeTarget/issues"
 
 [tool.setuptools.packages.find]

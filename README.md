@@ -4,6 +4,16 @@ ViralSafeTarget is a virus-first computational research toolkit for conserved gu
 discovery, explicit host-search status, virtual-knockout sequence hypotheses,
 exact-target escape robustness, multiplex comparison, and source-linked evidence review.
 
+**Public entry point:** [Explore the ViralSafeTarget research website](https://ronnuriel.github.io/ViralSafeTarget/)
+
+| I want to… | Start here |
+|---|---|
+| Understand the scientific idea and HSV-2 findings | [Research website](https://ronnuriel.github.io/ViralSafeTarget/) |
+| Try the software locally | [Five-minute quick start](docs/getting-started/FIVE_MINUTE_QUICKSTART.md) |
+| Follow the complete research analysis | [Canonical notebook](notebooks/00_VIRALSAFETARGET_END_TO_END_EN.ipynb) |
+| Inspect frozen results | [Results index](reports/README.md) |
+| Integrate another research tool | [Interoperability guide](docs/reference/TOOL_ECOSYSTEM_AND_INTEROPERABILITY.md) |
+
 > The outputs are computational research hypotheses. They do not establish editing,
 > safety, viral inhibition, delivery, treatment, clearance, or cure. No wet-lab protocol
 > is provided.
