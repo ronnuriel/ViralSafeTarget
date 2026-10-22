@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import tempfile
+import time
 from html import escape
 from pathlib import Path
 from typing import Any
@@ -66,8 +67,13 @@ def _inject_styles(st: Any) -> None:
     .vst-status { display:inline-block; border-radius:999px; padding:.2rem .58rem;
         font-weight:650; font-size:.78rem; }
     .vst-completed { color:#116149; background:#e6f6f0; }
+    .vst-running { color:#0b5793; background:#e6f2ff; }
     .vst-pending { color:#765c10; background:#fff6d9; }
     .vst-required { color:#873c32; background:#fdece9; }
+    .vst-muted-status { color:#52606d; background:#edf2f7; }
+    .vst-stage.running { border-color:#2b7bbb; box-shadow:0 0 0 2px rgba(43,123,187,.12); }
+    .vst-stage.completed { border-color:#73c6ad; }
+    .vst-stage.external_required, .vst-stage.failed { border-color:#ef9a8d; }
     .vst-empty { text-align:center; padding:2rem; border:1px dashed var(--vst-line);
         border-radius:14px; color:var(--vst-muted); background:rgba(255,255,255,.7); }
     [data-testid="stMetric"] { background:white; border:1px solid var(--vst-line);
@@ -153,11 +159,83 @@ def _status_badge(status: str) -> str:
     css = (
         "vst-completed"
         if status == "completed"
+        else "vst-running"
+        if status == "running"
         else "vst-required"
         if status in {"external_required", "failed"}
+        else "vst-muted-status"
+        if status in {"disabled", "unavailable"}
         else "vst-pending"
     )
     return f'<span class="vst-status {css}">{normalized}</span>'
+
+
+STAGE_PRESENTATION = {
+    "validate": ("Inputs & QC", "Validate project files, profiles, and declared boundaries."),
+    "discover": (
+        "Guide discovery & conservation",
+        "Enumerate editor-compatible viral sites and measure strain support.",
+    ),
+    "host_screen": (
+        "Host-risk search",
+        "Run or await the declared Cas-OFFinder/host-reference search.",
+    ),
+    "pairs": ("Guide pairs", "Build same-gene and multi-target pair hypotheses."),
+    "virtual_knockout": (
+        "Predicted disruption",
+        "Map bounded indel hypotheses to CDS, protein, and domain context.",
+    ),
+    "escape": (
+        "Exact-target escape",
+        "Enumerate sequence changes that remove an exact guide/PAM target.",
+    ),
+    "multiplex": (
+        "Multiplex comparison",
+        "Compare configured multi-guide strategies without claiming efficacy.",
+    ),
+    "report": (
+        "Report & evidence assembly",
+        "Assemble results and preserve evidence-review status and missingness.",
+    ),
+    "bundle": ("Shortlist & export", "Create START_HERE, tables, explanations, and ZIP."),
+}
+
+
+def _workflow_cards(
+    statuses: dict[str, str],
+    messages: dict[str, str] | None = None,
+    estimates: dict[str, float | None] | None = None,
+) -> str:
+    messages = messages or {}
+    estimates = estimates or {}
+    cards = []
+    for stage, (title, description) in STAGE_PRESENTATION.items():
+        status = statuses.get(stage, "pending")
+        runtime = estimates.get(stage)
+        estimate = (
+            f"Estimated: {_format_seconds(runtime)}" if runtime is not None else "ETA unavailable"
+        )
+        detail = messages.get(stage) or description
+        cards.append(
+            f"<div class='vst-stage {escape(status)}'>"
+            f"<strong>{escape(title)}</strong>{_status_badge(status)}<br><br>"
+            f"<span>{escape(detail)}</span><br><span><b>{escape(estimate)}</b></span></div>"
+        )
+    return "<div class='vst-grid'>" + "".join(cards) + "</div>"
+
+
+def _remaining_estimate(
+    statuses: dict[str, str], estimates: dict[str, float | None]
+) -> float | None:
+    terminal = {"completed", "external_required", "failed", "unavailable", "disabled"}
+    remaining = [
+        estimates.get(stage)
+        for stage in STAGE_PRESENTATION
+        if statuses.get(stage, "pending") not in terminal
+    ]
+    if not remaining or any(value is None for value in remaining):
+        return 0.0 if not remaining else None
+    return float(sum(value for value in remaining if value is not None))
 
 
 def _render_overview(st: Any) -> None:
@@ -336,15 +414,84 @@ def _render_project_workspace(st: Any) -> None:
         value=False,
         help="Leave off when Cas-OFFinder/host references are unavailable. Missing stays explicit.",
     )
+    current_status = project_status(project)
+    live_statuses = {row["stage"]: row["status"] for row in current_status["stages"]}
+    live_messages = {row["stage"]: row["message"] for row in current_status["stages"]}
     try:
-        if show_plan:
+        if show_plan or run or resume:
             st.session_state["project_plan"] = plan_project(project)
+        plan = st.session_state.get("project_plan")
+        estimates = (
+            {row["stage"]: row.get("estimated_seconds") for row in plan["stages"]}
+            if plan and plan.get("project") == str(project)
+            else {}
+        )
+        st.subheader("Live workflow")
+        current_stage = st.empty()
+        progress = st.progress(
+            sum(
+                value
+                in {"completed", "external_required", "failed", "unavailable", "disabled"}
+                for value in live_statuses.values()
+            )
+            / len(STAGE_PRESENTATION),
+            text="Ready to run or resume",
+        )
+        eta = st.empty()
+        workflow_view = st.empty()
+        workflow_view.markdown(
+            _workflow_cards(live_statuses, live_messages, estimates), unsafe_allow_html=True
+        )
+        remaining = _remaining_estimate(live_statuses, estimates)
+        eta.caption(
+            "Best-effort remaining estimate: "
+            + _format_seconds(remaining)
+            + ". Hardware, external tools, and cache state can change this estimate."
+        )
         if run or resume:
+            started = time.perf_counter()
+
+            def update_progress(event: dict[str, Any]) -> None:
+                live_statuses.update(event["stages"])
+                if event.get("message"):
+                    live_messages[event["stage"]] = str(event["message"])
+                title = STAGE_PRESENTATION.get(
+                    event["stage"], (event["stage"].replace("_", " ").title(), "")
+                )[0]
+                current_stage.info(
+                    f"Current stage: {title} — {event['status'].replace('_', ' ')}"
+                )
+                workflow_view.markdown(
+                    _workflow_cards(live_statuses, live_messages, estimates),
+                    unsafe_allow_html=True,
+                )
+                progress.progress(
+                    min(1.0, float(event["progress_fraction"])),
+                    text=(
+                        f"Resolved {event['resolved_count']} of {event['total_count']} stages; "
+                        f"elapsed {_format_seconds(time.perf_counter() - started)}"
+                    ),
+                )
+                live_remaining = _remaining_estimate(live_statuses, estimates)
+                eta.caption(
+                    "Best-effort remaining estimate: "
+                    + _format_seconds(live_remaining)
+                    + ". A missing external tool resolves as external_required, not success."
+                )
+
             with st.status("Running the project workflow…", expanded=True) as status_box:
-                result = run_project(project, run_external=external, restart=False)
+                result = run_project(
+                    project,
+                    run_external=external,
+                    restart=False,
+                    progress_callback=update_progress,
+                )
                 status_box.write("Completed available stages and refreshed the result bundle.")
                 status_box.update(label="Workflow finished", state="complete")
             st.session_state["project_result"] = result
+            current_stage.success(
+                "Workflow finished. Review completed and external-required stages below."
+            )
         if export:
             bundle = export_project(project)
             st.success(f"Portable bundle created: {bundle}")
@@ -368,15 +515,31 @@ def _render_project_workspace(st: Any) -> None:
         st.caption(plan["warning"])
 
     status = project_status(project)
-    st.subheader("Stage status")
-    stage_cards = "".join(
-        "<div class='vst-stage'>"
-        f"<strong>{escape(row['stage'].replace('_', ' ').title())}</strong>"
-        f"{_status_badge(row['status'])}<br><br>"
-        f"<span>{escape(row['message'] or 'No message recorded.')}</span></div>"
-        for row in status["stages"]
+    st.subheader("Recorded stage status")
+    st.markdown(
+        _workflow_cards(
+            {row["stage"]: row["status"] for row in status["stages"]},
+            {row["stage"]: row["message"] for row in status["stages"]},
+            {
+                row["stage"]: row.get("estimated_seconds")
+                for row in (plan or {}).get("stages", [])
+            },
+        ),
+        unsafe_allow_html=True,
     )
-    st.markdown(f"<div class='vst-grid'>{stage_cards}</div>", unsafe_allow_html=True)
+    st.markdown("### Evidence Agent (optional, separately reviewed)")
+    evidence_queue = Path(status["output_root"]) / "evidence_review_queue.tsv"
+    if evidence_queue.is_file() and evidence_queue.stat().st_size:
+        st.success(
+            "An evidence review queue exists. Agent proposals remain pending until a named "
+            "human reviewer records a decision."
+        )
+    else:
+        st.info(
+            "Evidence discovery has not produced a review queue for this project. It is a "
+            "separate, opt-in workflow using PubMed, Europe PMC, and UniProt; absence is not "
+            "negative evidence."
+        )
     report = Path(status["report"])
     if report.is_file():
         st.success(f"Researcher report is ready: {report}")
@@ -488,6 +651,140 @@ def _render_results(st: Any) -> None:
             )
 
 
+def _render_tool_hub(st: Any) -> None:
+    from viral_safe_target.integrations.external_import import load_external_results
+    from viral_safe_target.researcher import doctor_report, resource_path
+
+    st.header("Tool & evidence hub")
+    st.caption(
+        "ViralSafeTarget orchestrates documented tools and exports. It does not silently "
+        "replace their algorithms or scrape their public web interfaces."
+    )
+    project = _resolve_project(st.session_state.get("project_path", ""))
+    detected = doctor_report(project).get("tools", {})
+    rows = [
+        {
+            "system": "MAFFT",
+            "role": "Viral strain alignment",
+            "connection": "Native executable",
+            "status": "available" if detected.get("mafft", {}).get("available") else "optional",
+        },
+        {
+            "system": "Cas-OFFinder",
+            "role": "Host-genome similarity search",
+            "connection": "Native executable + parser",
+            "status": "available"
+            if detected.get("cas_offinder", {}).get("available")
+            else "external required",
+        },
+        {
+            "system": "CRISPRitz",
+            "role": "Mismatch, bulge, and variant-aware host search",
+            "connection": "Native/container execution + import",
+            "status": "available"
+            if detected.get("crispritz", {}).get("available")
+            else "external required",
+        },
+        {
+            "system": "CRISPOR",
+            "role": "Independent guide scores and off-target metrics",
+            "connection": "Researcher-supplied CSV/TSV/JSON export",
+            "status": "import ready",
+        },
+        {
+            "system": "CHOPCHOP",
+            "role": "Independent guide ranking and design context",
+            "connection": "Researcher-supplied CSV/TSV/JSON export",
+            "status": "import ready",
+        },
+        {
+            "system": "GuideScan2",
+            "role": "Independent specificity and guide-database results",
+            "connection": "Researcher-supplied CSV/TSV/JSON export",
+            "status": "import ready",
+        },
+        {
+            "system": "CRISPResso2",
+            "role": "Measured editing outcomes from an existing result directory",
+            "connection": "Measured-result import; kept separate from predictions",
+            "status": "import ready",
+        },
+    ]
+    st.dataframe(pd.DataFrame(rows), width="stretch", hide_index=True)
+
+    st.markdown("### Import an independent design-tool export")
+    st.write(
+        "Match a documented export back to stable ViralSafeTarget candidate IDs. Raw values, "
+        "unmatched rows, ambiguity, hashes, and missingness remain visible."
+    )
+    tool = st.selectbox("External tool", ["crispor", "chopchop", "guidescan2"])
+    candidates_path = st.text_input(
+        "Candidate table path",
+        help="For example, results/discovery/discovery_panel.csv",
+    )
+    exported = st.file_uploader("CSV, TSV, or JSON export", type=["csv", "tsv", "txt", "json"])
+    if st.button("Validate and normalize export", width="stretch"):
+        candidate_file = Path(candidates_path).expanduser().resolve()
+        if not candidate_file.is_file() or exported is None:
+            st.error("Provide an existing candidate table and an external-tool export.")
+        else:
+            with tempfile.TemporaryDirectory(prefix="vst-import-") as temporary:
+                suffix = Path(exported.name).suffix or ".csv"
+                source = Path(temporary) / f"external{suffix}"
+                source.write_bytes(exported.getvalue())
+                result = load_external_results(
+                    tool,
+                    source,
+                    resource_path("import_maps", f"{tool}.yaml"),
+                    pd.read_csv(candidate_file),
+                )
+                normalized = result.results.dataframe
+                c1, c2, c3 = st.columns(3)
+                c1.metric("Normalized metrics", len(normalized))
+                c2.metric("Unmatched rows", len(result.unmatched_rows))
+                c3.metric("Ambiguous rows", len(result.ambiguous_rows))
+                st.dataframe(normalized.head(100), width="stretch", hide_index=True)
+                st.download_button(
+                    "Download normalized long-format results",
+                    normalized.to_csv(index=False).encode("utf-8"),
+                    file_name=f"{tool}_normalized_results.csv",
+                    mime="text/csv",
+                )
+                if not result.unmatched_rows.empty:
+                    st.download_button(
+                        "Download unmatched rows",
+                        result.unmatched_rows.to_csv(index=False).encode("utf-8"),
+                        file_name=f"{tool}_unmatched_rows.csv",
+                        mime="text/csv",
+                    )
+
+    st.markdown("### Evidence Agent")
+    evidence_rows = [
+        ("PubMed / NCBI E-utilities", "Article discovery and PMID-linked metadata", "connected"),
+        ("Europe PMC REST API", "Life-science publications, abstracts, and OA links", "connected"),
+        (
+            "UniProt REST API",
+            "Protein function, domains, organism, and literature links",
+            "connected",
+        ),
+        ("Human reviewer", "Approve, reject, or qualify every biological claim", "required"),
+    ]
+    st.dataframe(
+        pd.DataFrame(evidence_rows, columns=["source", "role", "status"]),
+        width="stretch",
+        hide_index=True,
+    )
+    st.warning(
+        "The agent discovers and structures candidate evidence. It cannot approve a claim, "
+        "turn ortholog evidence into direct-virus evidence, or treat no search result as "
+        "evidence of absence."
+    )
+    st.markdown(
+        "See `docs/reference/TOOL_ECOSYSTEM_AND_INTEROPERABILITY.md` for official sources, "
+        "exchange formats, current support, and the audited roadmap."
+    )
+
+
 def _render_environment(st: Any) -> None:
     from viral_safe_target.researcher import doctor_report
 
@@ -528,7 +825,14 @@ def render_app() -> None:
         st.caption("Auditable viral target research")
         page = st.radio(
             "Workspace",
-            ["Overview", "Create project", "Project workspace", "Results explorer", "Environment"],
+            [
+                "Overview",
+                "Create project",
+                "Project workspace",
+                "Results explorer",
+                "Tool & evidence hub",
+                "Environment",
+            ],
             label_visibility="collapsed",
         )
         st.divider()
@@ -544,6 +848,8 @@ def render_app() -> None:
         _render_project_workspace(st)
     elif page == "Results explorer":
         _render_results(st)
+    elif page == "Tool & evidence hub":
+        _render_tool_hub(st)
     else:
         _render_environment(st)
 

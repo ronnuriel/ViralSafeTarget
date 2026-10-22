@@ -39,6 +39,8 @@ Documentation is grouped by the question a researcher is trying to answer. The r
 - [`OUTPUT_INTERPRETATION.md`](reference/OUTPUT_INTERPRETATION.md)
 - [`PYTHON_SDK.md`](reference/PYTHON_SDK.md)
 - [`INTEGRATIONS.md`](reference/INTEGRATIONS.md)
+- [`TOOL_ECOSYSTEM_AND_INTEROPERABILITY.md`](reference/TOOL_ECOSYSTEM_AND_INTEROPERABILITY.md)
+  — audited tool roles, exchange formats, evidence APIs, and roadmap connectors.
 - [`IMPORTING_EXTERNAL_TOOL_RESULTS.md`](reference/IMPORTING_EXTERNAL_TOOL_RESULTS.md)
 - [`CUSTOM_SCORERS.md`](reference/CUSTOM_SCORERS.md)
 - [`BENCHMARKING.md`](reference/BENCHMARKING.md)

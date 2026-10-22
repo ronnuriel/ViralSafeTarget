@@ -21,7 +21,14 @@ def test_demo_plan_run_bundle_resume_and_export(tmp_path: Path) -> None:
     assert plan["candidate_count_estimate"] > 0
     assert plan["warning"].startswith("Runtime estimates")
 
-    first = run_project(project)
+    events = []
+    first = run_project(project, progress_callback=events.append)
+    assert events
+    assert events[0]["stage"] == "validate"
+    assert any(event["status"] == "running" for event in events)
+    assert events[-1]["stage"] == "bundle"
+    assert events[-1]["progress_fraction"] == 1.0
+    assert events[-1]["resolved_count"] == events[-1]["total_count"]
     results = Path(first["output_root"])
     required = {
         "START_HERE.html",

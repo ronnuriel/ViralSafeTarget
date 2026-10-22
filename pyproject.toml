@@ -10,7 +10,8 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
 authors = [
-  {name = "ViralSafeTarget contributors"}
+  {name = "Ron Nuriel", email = "ron.nuriel01@post.runi.ac.il"},
+  {name = "Sarel Cohen"},
 ]
 keywords = ["bioinformatics", "viral genomics", "CRISPR", "off-target", "HSV"]
 classifiers = [
@@ -74,6 +75,7 @@ where = ["src"]
 viral_safe_target = [
   "data/*.yaml",
   "resources/demo/*",
+  "resources/import_maps/*.yaml",
   "resources/profiles/*.yaml",
   "resources/schemas/*.json",
   "resources/templates/*",

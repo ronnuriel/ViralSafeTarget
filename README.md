@@ -25,7 +25,8 @@ vst ui
 ```
 
 The interface creates projects, previews runtime and disk estimates, runs or resumes
-available stages, exposes missing external results, and opens the final research bundle.
+available stages, shows the active stage in a live workflow map with best-effort ETA,
+exposes missing external results, and opens the final research bundle.
 It runs locally; no retired server or remote service is assumed.
 
 Create and run the bundled demonstration:
@@ -176,6 +177,18 @@ vst reproduce hsv2 --execute
 No combined therapeutic score is produced. The benchmark compares compatible exported
 results from CRISPOR, CHOPCHOP, CRISPRitz, GuideScan2 and other tools while preserving
 missingness and provenance.
+
+## Tool and evidence ecosystem
+
+The local UI includes a **Tool & evidence hub**. It detects MAFFT, Cas-OFFinder, and
+CRISPRitz; validates researcher-supplied exports from CRISPOR, CHOPCHOP, and GuideScan2;
+and keeps measured CRISPResso2 results separate from predictions. The Evidence Agent uses
+documented PubMed/NCBI, Europe PMC, and UniProt APIs and always routes proposed biological
+claims through human review.
+
+See the audited [tool ecosystem and interoperability guide](docs/reference/TOOL_ECOSYSTEM_AND_INTEROPERABILITY.md)
+for exchange formats, current support, official sources, and explicitly labelled roadmap
+connectors for protein annotation and intervention evidence.
 
 ## Documentation and development
 
