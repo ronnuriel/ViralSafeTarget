@@ -68,6 +68,24 @@ Start with:
 - [`hsv2_evidence_agent/review_queue.tsv`](hsv2_evidence_agent/review_queue.tsv)
 - [`hsv2_evidence_agent/evidence_manifest.json`](hsv2_evidence_agent/evidence_manifest.json)
 
+## Target-to-intervention evidence snapshot
+
+[`hsv2_intervention_landscape/`](hsv2_intervention_landscape/) keeps pharmacological
+evidence separate from guide and gene targetability. Its initial source-linked records
+cover the approved acyclovir/valacyclovir mechanism around UL23/UL30 and the
+investigational pritelivir helicase-primase route around UL5/UL52/UL8.
+
+All nine records are marked `pending` and `*` until a named human reviewer checks the
+primary source. UL3 and other genes without rows are labeled `not located in supplied
+evidence`, not “no drug exists.” This snapshot is not a treatment recommendation.
+
+Start with:
+
+- [`hsv2_intervention_landscape/intervention_landscape.html`](hsv2_intervention_landscape/intervention_landscape.html)
+- [`hsv2_intervention_landscape/intervention_landscape.tsv`](hsv2_intervention_landscape/intervention_landscape.tsv)
+- [`hsv2_intervention_landscape/intervention_review_queue.tsv`](hsv2_intervention_landscape/intervention_review_queue.tsv)
+- [`hsv2_intervention_landscape/intervention_queries.tsv`](hsv2_intervention_landscape/intervention_queries.tsv)
+
 ## Presentation snapshot
 
 The balanced-panel presentation materials remain available under

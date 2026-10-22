@@ -782,6 +782,50 @@ def _evidence_apply(args: argparse.Namespace) -> None:
     print("Only approved rows were exported. Re-run the project to refresh evidence-aware outputs.")
 
 
+def _evidence_interventions(args: argparse.Namespace) -> None:
+    from .interventions import write_intervention_outputs
+    from .project_workflow import load_project
+
+    context = load_project(args.project)
+    configured = context.profiles.resolve(
+        context.profiles.virus.get("intervention_evidence_table")
+    )
+    evidence_path = Path(args.input).resolve() if args.input else configured
+    if evidence_path is None:
+        raise ValueError(
+            "No intervention evidence table is configured; pass --input or set "
+            "intervention_evidence_table in the virus profile"
+        )
+    out_dir = (
+        Path(args.out_dir).resolve()
+        if args.out_dir
+        else context.output_root / "interventions"
+    )
+    discovery = context.output_root / "discovery" / "discovery_panel.csv"
+    genes: list[str] = []
+    if discovery.is_file():
+        candidates = pd.read_csv(discovery)
+        gene_column = "gene_name" if "gene_name" in candidates else "feature_name"
+        if gene_column in candidates:
+            genes = sorted(
+                set(candidates[gene_column].dropna().astype(str)) - {"", "intergenic"}
+            )
+    virus_names = [
+        str(context.profiles.virus.get("display_name", "")),
+        str(context.profiles.virus.get("scientific_name", "")),
+        *[str(value) for value in context.profiles.virus.get("literature_search_names", [])],
+    ]
+    result = write_intervention_outputs(
+        evidence_path,
+        out_dir,
+        genes=genes,
+        virus_names=list(dict.fromkeys(name for name in virus_names if name)),
+    )
+    print(json.dumps({key: str(value) for key, value in result.items()}, indent=2))
+    if args.open_report:
+        webbrowser.open(result["report"].as_uri())
+
+
 def _add_config(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--config", default=str(DEFAULT_CONFIG_PATH))
 
@@ -962,6 +1006,16 @@ def build_parser() -> argparse.ArgumentParser:
     evidence_apply.add_argument("--output")
     evidence_apply.add_argument("--append", action="store_true")
     evidence_apply.set_defaults(func=_evidence_apply)
+
+    evidence_interventions = evidence_commands.add_parser(
+        "interventions",
+        help="validate and summarize target-to-intervention evidence with human-review status",
+    )
+    evidence_interventions.add_argument("--project", required=True)
+    evidence_interventions.add_argument("--input")
+    evidence_interventions.add_argument("--out-dir")
+    evidence_interventions.add_argument("--open-report", action="store_true")
+    evidence_interventions.set_defaults(func=_evidence_interventions)
 
     discover = subparsers.add_parser(
         "discover", help="advanced case-study discovery commands; prefer `vst project`"

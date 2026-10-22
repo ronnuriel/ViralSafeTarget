@@ -3,6 +3,8 @@
 ViralSafeTarget is a virus-first computational research toolkit for conserved guide
 discovery, explicit host-search status, virtual-knockout sequence hypotheses,
 exact-target escape robustness, multiplex comparison, and source-linked evidence review.
+It also keeps target-to-intervention evidence (approved drugs, investigational compounds,
+resistance observations, and genome-editing hypotheses) in a separate, human-reviewed layer.
 
 > The outputs are computational research hypotheses. They do not establish editing,
 > safety, viral inhibition, delivery, treatment, clearance, or cure. No wet-lab protocol
@@ -51,6 +53,7 @@ vst status my-virus/project.yaml
 vst resume my-virus/project.yaml
 vst open my-virus/results
 vst export my-virus/project.yaml
+vst evidence interventions --project my-virus/project.yaml
 ```
 
 The wizard supports an NCBI accession or local FASTA/GFF3 files, aligned or unaligned
@@ -98,8 +101,11 @@ vst reproduce hsv2 --execute
 4. Size-defined protein-disruption hypotheses.
 5. Exact-target sequence escape robustness.
 6. Direct-virus, ortholog, pending, and unknown biological evidence.
+7. Genetic-editing targetability and pharmacological intervention evidence.
 
-No combined therapeutic score is produced. The benchmark compares compatible exported
+No combined therapeutic score or treatment recommendation is produced. Intervention records
+marked `*` require named human review, and “not located in supplied evidence” never means
+that no drug exists. The benchmark compares compatible exported
 results from CRISPOR, CHOPCHOP, CRISPRitz, GuideScan2 and other tools while preserving
 missingness and provenance.
 
@@ -109,6 +115,7 @@ missingness and provenance.
 - [New-virus workflow](docs/getting-started/NEW_VIRUS_WORKFLOW.md)
 - [Notebook index](notebooks/README.md)
 - [Scientific boundaries](DISCLAIMER.md)
+- [Target-to-intervention evidence](docs/research/TARGET_TO_INTERVENTION_EVIDENCE.md)
 - [Contributing](CONTRIBUTING.md)
 
 ```bash

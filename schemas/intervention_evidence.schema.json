@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://viral-safe-target.example/schemas/intervention_evidence.schema.json",
+  "title": "ViralSafeTarget intervention evidence record",
+  "type": "object",
+  "required": [
+    "record_id",
+    "gene_name",
+    "target_virus",
+    "evidence_virus",
+    "intervention_name",
+    "intervention_type",
+    "target_role",
+    "development_status",
+    "evidence_category",
+    "evidence_scope",
+    "source_database",
+    "source_identifier",
+    "source_url",
+    "finding",
+    "review_status"
+  ],
+  "properties": {
+    "record_id": {"type": "string", "minLength": 1},
+    "gene_name": {"type": "string", "minLength": 1},
+    "target_virus": {"type": "string", "minLength": 1},
+    "evidence_virus": {"type": "string", "minLength": 1},
+    "intervention_name": {"type": "string", "minLength": 1},
+    "intervention_type": {
+      "enum": ["small_molecule", "biologic", "genome_editor", "other"]
+    },
+    "target_role": {
+      "enum": [
+        "direct_target",
+        "prodrug_activation",
+        "resistance_marker",
+        "complex_component",
+        "pathway_association",
+        "unknown"
+      ]
+    },
+    "development_status": {
+      "enum": [
+        "approved_for_target_virus",
+        "approved_other_indication",
+        "clinical_investigation",
+        "preclinical",
+        "tool_compound",
+        "unknown"
+      ]
+    },
+    "evidence_category": {
+      "enum": [
+        "regulatory_label",
+        "clinical_trial",
+        "biochemical",
+        "phenotypic",
+        "resistance",
+        "structural",
+        "database_record",
+        "other"
+      ]
+    },
+    "evidence_scope": {
+      "enum": ["direct_target_virus", "ortholog", "related_virus", "unknown"]
+    },
+    "source_database": {"type": "string", "minLength": 1},
+    "source_identifier": {"type": "string", "minLength": 1},
+    "source_url": {"type": "string", "pattern": "^https://"},
+    "finding": {"type": "string", "minLength": 1},
+    "directness_notes": {"type": "string"},
+    "review_status": {"enum": ["pending", "approved", "rejected"]},
+    "reviewer": {"type": "string"},
+    "review_date": {"type": "string"},
+    "review_notes": {"type": "string"},
+    "retrieved_utc": {"type": "string"},
+    "source_record_sha256": {"type": "string", "pattern": "^$|^[a-f0-9]{64}$"}
+  },
+  "additionalProperties": false
+}

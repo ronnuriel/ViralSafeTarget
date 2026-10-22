@@ -99,3 +99,19 @@ Send `results/export.zip` and ask collaborators to open `START_HERE.html`. The p
 archive excludes reference genomes and large raw host-search outputs by default. It
 includes the research shortlist, stage status, evidence queue, methods, limitations,
 timings, and provenance.
+
+## G. Add target-to-intervention evidence
+
+Each new project contains `evidence/intervention_evidence.tsv`. Add only source-linked
+records using the supplied columns, then run:
+
+```bash
+vst evidence interventions --project my-virus/project.yaml
+vst run my-virus/project.yaml
+```
+
+The first command validates the evidence, produces reproducible PubMed/ChEMBL/
+ClinicalTrials.gov search leads, and writes a human-review queue. The final report keeps
+genetic-editing targetability and pharmacological evidence separate. A missing record is
+reported as `not located in supplied evidence`; it is never interpreted as proof that no
+drug or intervention exists.

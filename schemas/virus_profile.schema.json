@@ -27,6 +27,7 @@
     "annotation_gff": {"type": "string", "minLength": 1},
     "strain_alignment": {"type": "string", "minLength": 1},
     "evidence_table": {"type": ["string", "null"]},
+    "intervention_evidence_table": {"type": ["string", "null"]},
     "domain_table": {"type": ["string", "null"]},
     "disorder_table": {"type": ["string", "null"]},
     "conserved_region_table": {"type": ["string", "null"]},
