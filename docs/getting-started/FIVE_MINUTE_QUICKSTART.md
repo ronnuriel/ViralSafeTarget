@@ -5,13 +5,22 @@
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install "viral-safe-target[notebooks]"
+pip install "viral-safe-target[ui,notebooks]"
 vst --version
 vst doctor
 ```
 
 MAFFT, Cas-OFFinder, and CRISPRitz are explicit external programs. A pip install does
 not pretend they are present.
+
+For the visual local workspace:
+
+```bash
+vst ui
+```
+
+The UI and command line call the same project workflow and produce the same result bundle.
+No remote server is required.
 
 ## B. Run the synthetic demonstration
 

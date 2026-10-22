@@ -36,7 +36,7 @@ notebooks = [
   "nbformat>=5.9",
 ]
 ui = [
-  "streamlit>=1.38",
+  "streamlit>=1.52",
 ]
 dev = [
   "pytest>=8.0",
@@ -51,7 +51,7 @@ population = [
 all = [
   "jupyterlab>=4.0",
   "nbformat>=5.9",
-  "streamlit>=1.38",
+  "streamlit>=1.52",
   "pytest>=8.0",
   "ruff>=0.6",
   "mappy>=2.31",
@@ -60,6 +60,7 @@ all = [
 [project.scripts]
 viral-safe-target = "viral_safe_target.cli:main"
 vst = "viral_safe_target.cli:main"
+vst-ui = "viral_safe_target.ui_launcher:main"
 
 [project.urls]
 Homepage = "https://github.com/ronnuriel/ViralSafeTarget"

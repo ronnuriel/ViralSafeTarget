@@ -38,6 +38,10 @@ def test_demo_plan_run_bundle_resume_and_export(tmp_path: Path) -> None:
     }
     assert required <= {path.name for path in results.iterdir()}
     assert open_results(results, no_browser=True) == results / "START_HERE.html"
+    report_html = (results / "START_HERE.html").read_text(encoding="utf-8")
+    assert "VIRALSAFETARGET RESEARCH BUNDLE" in report_html
+    assert "status-external_required" in report_html
+    assert "not evidence of editing, safety" in report_html
 
     second = run_project(project)
     assert all(row["status"] in {"completed", "external_required"} for row in second["stages"])

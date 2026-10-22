@@ -8,15 +8,25 @@ exact-target escape robustness, multiplex comparison, and source-linked evidence
 > safety, viral inhibition, delivery, treatment, clearance, or cure. No wet-lab protocol
 > is provided.
 
-## Five-minute installation
+## Five-minute start
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install "viral-safe-target[notebooks]"
+pip install "viral-safe-target[ui,notebooks]"
 vst --version
 vst doctor
 ```
+
+Prefer a visual workspace? Launch the installed local interface:
+
+```bash
+vst ui
+```
+
+The interface creates projects, previews runtime and disk estimates, runs or resumes
+available stages, exposes missing external results, and opens the final research bundle.
+It runs locally; no retired server or remote service is assumed.
 
 Create and run the bundled demonstration:
 
@@ -28,6 +38,61 @@ vst open demo-project/results
 ```
 
 See the tested [five-minute quick start](docs/getting-started/FIVE_MINUTE_QUICKSTART.md).
+
+## How the research pipeline works
+
+```mermaid
+flowchart LR
+    A[Reference genome<br/>and viral strains] --> B[Input QC<br/>and alignment]
+    B --> C[Editor-compatible<br/>guide discovery]
+    C --> D[Cross-strain<br/>conservation]
+    D --> E[Gene, CDS, protein<br/>and domain mapping]
+    E --> F[Host-genome<br/>risk screening]
+    F --> G[Guide ranking and<br/>gene targetability]
+    G --> H[Virtual knockout and<br/>exact-target escape]
+    H --> I[Biological evidence<br/>and intervention context]
+    I --> J[Human review]
+    J --> K[Research shortlist,<br/>multiplex panels and export]
+
+    F -. unavailable tool .-> X[external_required<br/>never zero hits]
+    I -. unreviewed source .-> Y[pending or unknown<br/>never favorable evidence]
+```
+
+The workflow asks a different question at every layer:
+
+| Layer | Question | Research output |
+|---|---|---|
+| Inputs and QC | Are the reference, strains, annotation, host, and editor compatible? | Validated project and provenance |
+| Discovery | Where can the selected editor target the viral genome? | Candidate guide coordinates |
+| Conservation | Which exact guide/PAM sites persist across strains? | Population-support measurements |
+| Annotation | What gene, coding sequence, protein, or domain is affected? | One-to-many biological mappings |
+| Host-risk | Which host similarities were found under the declared search model? | Explicit hits or `external_required` |
+| Disruption and escape | What bounded sequence outcomes and exact-target losses are possible? | Testable computational hypotheses |
+| Evidence | What was shown directly, in an ortholog, or not yet reviewed? | Source-linked human-review queues |
+| Decision support | Which guides and multiplex panels merit independent evaluation? | Auditable shortlist and portable report |
+
+These layers are deliberately **not collapsed into a therapeutic score**. A technically
+strong guide, a targetable gene, strong biological evidence, and sequence-level escape
+robustness are related but different properties.
+
+## Researcher workflow
+
+```mermaid
+flowchart LR
+    A[pip install] --> B[vst init<br/>or UI project form]
+    B --> C[vst plan<br/>validate and estimate]
+    C --> D[vst run]
+    D --> E{All stages<br/>available?}
+    E -- yes --> F[Review START_HERE.html]
+    E -- no --> G[Install tool or<br/>preserve missing status]
+    G --> H[vst resume]
+    H --> F
+    F --> I[Human evidence review]
+    I --> J[vst export<br/>shareable ZIP]
+```
+
+The UI, command line, and canonical notebook call the same public workflow rather than
+implementing separate scientific logic.
 
 ## New-virus quick start
 
@@ -45,6 +110,27 @@ The wizard supports an NCBI accession or local FASTA/GFF3 files, aligned or unal
 strain panels, a host profile or local host FASTA, and explicit sequence-only mode.
 MAFFT, Cas-OFFinder, and CRISPRitz remain external programs; missing results remain
 `external_required`, never zero.
+
+### What a researcher receives
+
+Every completed or partial project produces one readable entry point and machine-readable
+supporting files:
+
+```text
+results/
+├── START_HERE.html
+├── SUMMARY.md
+├── summary.json
+├── top_guides.csv
+├── top_genes.csv
+├── research_shortlist.csv
+├── multiplex_panels.csv
+├── evidence_review_queue.tsv
+├── guide_explanations/
+├── stage_timings.json
+├── run_manifest.json
+└── export.zip
+```
 
 ## Canonical notebook
 
