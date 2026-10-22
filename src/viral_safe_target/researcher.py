@@ -27,6 +27,7 @@ from Bio import SeqIO
 
 from . import __version__
 from .crispr import scan_editor_candidates
+from .interventions import empty_intervention_evidence, write_intervention_outputs
 from .io_utils import read_fasta
 from .project_workflow import (
     STAGE_ORDER,
@@ -639,6 +640,33 @@ def build_result_bundle(project: ProjectContext | str | Path) -> dict[str, Any]:
     else:
         genes = pd.DataFrame(columns=["gene_name", "guide_count", "best_guide_score"])
     genes.to_csv(root / "top_genes.csv", index=False)
+    gene_names = (
+        sorted(set(genes[gene_column].dropna().astype(str)))
+        if gene_column and gene_column in genes
+        else []
+    )
+    intervention_source = context.profiles.resolve(
+        context.profiles.virus.get("intervention_evidence_table")
+    )
+    virus_names = [
+        str(context.profiles.virus.get("display_name", "")),
+        str(context.profiles.virus.get("scientific_name", "")),
+        *[str(value) for value in context.profiles.virus.get("literature_search_names", [])],
+    ]
+    intervention_outputs = write_intervention_outputs(
+        intervention_source
+        if intervention_source and intervention_source.is_file()
+        else empty_intervention_evidence(),
+        root,
+        genes=gene_names,
+        virus_names=list(dict.fromkeys(name for name in virus_names if name)),
+    )
+    intervention_evidence = pd.read_csv(
+        intervention_outputs["evidence"], sep="\t", dtype=str
+    ).fillna("")
+    intervention_landscape = pd.read_csv(
+        intervention_outputs["landscape"], sep="\t", dtype=str
+    ).fillna("")
     virtual_dir = root / str(
         (context.values.get("analysis") or {}).get("output_dir", "virtual_knockout_escape")
     )
@@ -690,6 +718,15 @@ def build_result_bundle(project: ProjectContext | str | Path) -> dict[str, Any]:
             "escape_summary": escape_rows.to_dict("records"),
             "direct_virus_evidence": record.get("direct_virus_evidence", "unknown"),
             "ortholog_evidence": record.get("ortholog_evidence", "unknown"),
+            "intervention_evidence": intervention_evidence[
+                intervention_evidence["gene_name"].eq(
+                    str(record.get("gene_name", record.get("feature_name", "unknown")))
+                )
+            ].to_dict("records"),
+            "intervention_boundary": (
+                "Target-to-intervention records are source-linked evidence, not treatment "
+                "recommendations. Pending records require named human review."
+            ),
             "limitations": "Computational explanation only; missing fields remain unknown.",
             "source_candidate_table": str(
                 (post if post.is_file() else pre).relative_to(context.root)
@@ -714,6 +751,10 @@ def build_result_bundle(project: ProjectContext | str | Path) -> dict[str, Any]:
         "candidate_count": len(candidates),
         "shortlist_count": len(shortlist),
         "gene_count": len(genes),
+        "intervention_evidence_records": len(intervention_evidence),
+        "intervention_evidence_pending": int(
+            intervention_evidence["review_status"].eq("pending").sum()
+        ),
         "host_risk_status": next(
             (row["status"] for row in state["stages"] if row["stage"] == "host_screen"), "pending"
         ),
@@ -727,6 +768,9 @@ def build_result_bundle(project: ProjectContext | str | Path) -> dict[str, Any]:
         f"# {context.values.get('display_name', context.values['id'])} research summary\n\n"
         f"- Candidate rows: {len(candidates)}\n- Research shortlist: {len(shortlist)}\n"
         f"- Gene rows: {len(genes)}\n- Host-risk stage: {summary['host_risk_status']}\n\n"
+        f"- Intervention evidence records: {len(intervention_evidence)}\n"
+        f"- Intervention records pending human review: "
+        f"{summary['intervention_evidence_pending']}\n\n"
         "These outputs are computational hypotheses for independent evaluation.\n",
         encoding="utf-8",
     )
@@ -736,6 +780,10 @@ def build_result_bundle(project: ProjectContext | str | Path) -> dict[str, Any]:
         "research_shortlist.csv",
         "multiplex_panels.csv",
         "evidence_review_queue.tsv",
+        "intervention_landscape.html",
+        "intervention_landscape.tsv",
+        "intervention_review_queue.tsv",
+        "intervention_queries.tsv",
         "stage_timings.json",
         "run_manifest.json",
         "export.zip",
@@ -761,6 +809,7 @@ def build_result_bundle(project: ProjectContext | str | Path) -> dict[str, Any]:
         )
     top_guide_html = top_guide_display.to_html(index=False, escape=False)
     top_gene_html = genes[top_gene_columns].head(10).to_html(index=False, escape=True)
+    intervention_html = intervention_landscape.head(20).to_html(index=False, escape=True)
     missing_stages = [row["stage"] for row in state["stages"] if row["status"] != "completed"]
     link_html = "".join(f"<li><a href='{name}'>{name}</a></li>" for name in links)
     next_actions: list[str] = []
@@ -815,6 +864,12 @@ def build_result_bundle(project: ProjectContext | str | Path) -> dict[str, Any]:
         f"{len(top_guides)} are shown in top_guides.csv and {len(shortlist)} form the research "
         "shortlist.</p>"
         f"<h2>Top guides</h2>{top_guide_html}<h2>Top genes</h2>{top_gene_html}"
+        "<h2>Target-to-intervention evidence</h2><p>This layer keeps genetic-editing "
+        "targetability separate from pharmacological evidence. An asterisk marks records "
+        "pending human review; absence means only that no record was located in the supplied "
+        "evidence table.</p>"
+        f"{intervention_html}<p><a href='intervention_landscape.html'>Open the detailed "
+        "intervention evidence report</a></p>"
         "<h2>Stage status</h2><table><tr><th>Stage</th><th>Status</th><th>Message</th></tr>"
         f"{stage_html}</table><h2>Start with these files</h2><ul>{link_html}</ul>"
         f"<h2>Missing or partial stages</h2><p>{escape(', '.join(missing_stages) or 'None')}</p>"

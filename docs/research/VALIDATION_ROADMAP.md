@@ -26,6 +26,11 @@ Use only information published before a chosen date to rank candidates, then tes
 
 A collaborating virology laboratory selects a blinded, preregistered candidate set and measures editing, intact viral DNA, infectious replication, cell viability and experimentally detected off-targets.
 
+In parallel, pharmacology collaborators should review the target-to-intervention records,
+separate direct binding from complex membership or resistance association, and compare any
+candidate compound with the relevant approved standard of care. Computational linkage is
+not evidence of target engagement or antiviral efficacy.
+
 ## Phase 4 — latency-relevant validation
 
 Evaluate delivery and editing in a biologically relevant latency/reactivation model. A simple lytic cell culture result is not evidence of latent-reservoir elimination.

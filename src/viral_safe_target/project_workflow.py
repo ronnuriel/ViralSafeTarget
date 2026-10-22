@@ -28,6 +28,7 @@ from .config import DEFAULT_CONFIG_PATH, load_config
 from .crispr import scan_editor_candidates
 from .discovery import build_candidate_feature_map, select_balanced_discovery_panel
 from .disruption import rank_candidate_pairs
+from .interventions import INTERVENTION_EVIDENCE_COLUMNS
 from .io_utils import read_fasta, require_aligned
 from .offtarget import (
     build_cas_offinder_input,
@@ -218,6 +219,7 @@ def initialize_project(
         "annotation_gff": "data/reference.gff3",
         "strain_alignment": "data/strains.aligned.fasta",
         "evidence_table": "evidence/gene_evidence.tsv",
+        "intervention_evidence_table": "evidence/intervention_evidence.tsv",
         "domain_table": None,
         "disorder_table": None,
         "conserved_region_table": None,
@@ -258,6 +260,9 @@ def initialize_project(
     pd.DataFrame(columns=SOURCE_LINKED_EVIDENCE_COLUMNS).to_csv(
         root / "evidence" / "gene_evidence.tsv", sep="\t", index=False
     )
+    pd.DataFrame(columns=INTERVENTION_EVIDENCE_COLUMNS).to_csv(
+        root / "evidence" / "intervention_evidence.tsv", sep="\t", index=False
+    )
     (root / "data" / "README.md").write_text(
         "# Required inputs\n\n"
         "- `reference.fasta`: the frozen reference record.\n"
@@ -268,13 +273,15 @@ def initialize_project(
     (root / "README.md").write_text(
         f"# {display_name}\n\n"
         "1. Add the three files documented in `data/README.md`.\n"
-        "2. Edit the profiles and source-linked evidence table.\n"
+        "2. Edit the profiles and source-linked gene/intervention evidence tables.\n"
         "3. Run `vst project validate --project project.yaml`.\n"
         "4. Run `vst project run --project project.yaml`.\n"
         "5. If the host stage is external, run Cas-OFFinder and then use "
         "`vst project resume --project project.yaml`.\n"
         "6. Run `vst evidence discover --project project.yaml`, review "
-        "`results/evidence/review_queue.tsv`, and explicitly apply approved rows.\n\n"
+        "`results/evidence/review_queue.tsv`, and explicitly apply approved rows.\n"
+        "7. Run `vst evidence interventions --project project.yaml` to validate and summarize "
+        "target-to-intervention evidence without creating a therapeutic score.\n\n"
         "Outputs are computational hypotheses, not validated interventions.\n",
         encoding="utf-8",
     )
@@ -1010,11 +1017,21 @@ def run_project(
         context.output_root / "research_shortlist.csv",
         context.output_root / "multiplex_panels.csv",
         context.output_root / "evidence_review_queue.tsv",
+        context.output_root / "intervention_landscape.html",
+        context.output_root / "intervention_landscape.tsv",
+        context.output_root / "intervention_review_queue.tsv",
+        context.output_root / "intervention_queries.tsv",
         context.output_root / "export.zip",
     ]
+    intervention_evidence_path = context.profiles.resolve(
+        context.profiles.virus.get("intervention_evidence_table")
+    )
+    bundle_inputs = [report_outputs[0], report_outputs[6]]
+    if intervention_evidence_path and intervention_evidence_path.is_file():
+        bundle_inputs.append(intervention_evidence_path)
     bundle_signature = _signature(
-        [report_outputs[0], report_outputs[6]],
-        {"bundle_schema": "1.0"},
+        bundle_inputs,
+        {"bundle_schema": "1.1"},
     )
     _run_cached_stage(
         state,

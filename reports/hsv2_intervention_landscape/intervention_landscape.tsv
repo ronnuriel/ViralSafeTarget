@@ -1,0 +1,12 @@
+gene_name	evidence_records	approved_records	pending_records	rejected_records	direct_target_records	interventions	development_statuses	evidence_scopes	source_count	review_marker	interpretation
+UL10	0	0	0	0	0	not located in supplied evidence	unknown	unknown	0		not located in supplied evidence
+UL18	0	0	0	0	0	not located in supplied evidence	unknown	unknown	0		not located in supplied evidence
+UL20	0	0	0	0	0	not located in supplied evidence	unknown	unknown	0		not located in supplied evidence
+UL23	1	0	1	0	0	valacyclovir/acyclovir	approved_for_target_virus	direct_target_virus	1	*	pending human review
+UL3	0	0	0	0	0	not located in supplied evidence	unknown	unknown	0		not located in supplied evidence
+UL30	1	0	1	0	1	valacyclovir/acyclovir	approved_for_target_virus	direct_target_virus	1	*	pending human review
+UL36	0	0	0	0	0	not located in supplied evidence	unknown	unknown	0		not located in supplied evidence
+UL47	0	0	0	0	0	not located in supplied evidence	unknown	unknown	0		not located in supplied evidence
+UL5	3	0	3	0	0	pritelivir	clinical_investigation	direct_target_virus; ortholog	3	*	pending human review
+UL52	3	0	3	0	0	pritelivir	clinical_investigation	direct_target_virus; ortholog	3	*	pending human review
+UL8	1	0	1	0	0	pritelivir	clinical_investigation	direct_target_virus	1	*	pending human review

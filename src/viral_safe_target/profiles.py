@@ -105,6 +105,7 @@ def validate_profile_bundle(
         "annotation_gff",
         "strain_alignment",
         "evidence_table",
+        "intervention_evidence_table",
         "domain_table",
         "disorder_table",
         "conserved_region_table",
@@ -167,4 +168,20 @@ def validate_profile_bundle(
             "pass" if not absent and not uncited else "fail",
             f"rows={len(table)}; missing_columns={absent}; uncited_rows={uncited}",
         )
+    intervention_evidence = bundle.resolve(bundle.virus.get("intervention_evidence_table"))
+    if intervention_evidence and intervention_evidence.is_file():
+        from .interventions import read_intervention_evidence
+
+        try:
+            intervention_table = read_intervention_evidence(intervention_evidence)
+        except ValueError as error:
+            add("intervention evidence schema", "fail", str(error))
+        else:
+            add(
+                "intervention evidence schema",
+                "pass",
+                f"rows={len(intervention_table)}; pending="
+                f"{int(intervention_table['review_status'].eq('pending').sum())}; "
+                f"approved={int(intervention_table['review_status'].eq('approved').sum())}",
+            )
     return pd.DataFrame(checks)

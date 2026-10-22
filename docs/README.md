@@ -54,6 +54,8 @@ Documentation is grouped by the question a researcher is trying to answer. The r
 - [`KNOWN_LIMITATIONS.md`](research/KNOWN_LIMITATIONS.md)
 - [`SIMULATION.md`](research/SIMULATION.md)
 - [`SIMULATION_LIMITS.md`](research/SIMULATION_LIMITS.md)
+- [`TARGET_TO_INTERVENTION_EVIDENCE.md`](research/TARGET_TO_INTERVENTION_EVIDENCE.md)
+- [`CURRENT_STATUS_AND_TRANSLATIONAL_PATH.md`](research/CURRENT_STATUS_AND_TRANSLATIONAL_PATH.md)
 
 ## Maintenance and releases
 

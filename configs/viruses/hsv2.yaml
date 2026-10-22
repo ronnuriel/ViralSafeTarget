@@ -22,6 +22,7 @@ reference_genbank: data/raw/hsv2_reference.gb
 annotation_gff: data/processed/hsv2_reference.gff3
 strain_alignment: data/processed/hsv2_aligned_25.fasta
 evidence_table: data/curated/hsv_gene_function_evidence.tsv
+intervention_evidence_table: data/curated/hsv2_intervention_evidence.tsv
 domain_table: data/curated/hsv2_target_domains.tsv
 disorder_table: data/curated/hsv2_target_disorder.tsv
 gene_category_table: data/curated/hsv2_gene_categories.tsv
