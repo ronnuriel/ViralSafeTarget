@@ -690,6 +690,12 @@ def _researcher_doctor(args: argparse.Namespace) -> None:
         print(f"Project external host stage: {report['project']['can_run_external_host_stage']}")
 
 
+def _launch_ui(args: argparse.Namespace) -> None:
+    from .ui_launcher import launch_ui
+
+    raise SystemExit(launch_ui(port=args.port, headless=args.headless))
+
+
 def _tools_setup(args: argparse.Namespace) -> None:
     del args
     print("External tools are explicit optional dependencies.")
@@ -1208,6 +1214,11 @@ def build_parser() -> argparse.ArgumentParser:
     doctor.add_argument("--project")
     doctor.add_argument("--json", action="store_true")
     doctor.set_defaults(func=_researcher_doctor)
+
+    ui = subparsers.add_parser("ui", help="open the researcher-friendly local interface")
+    ui.add_argument("--port", type=int, default=8501)
+    ui.add_argument("--headless", action="store_true")
+    ui.set_defaults(func=_launch_ui)
     return parser
 
 

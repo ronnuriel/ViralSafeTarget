@@ -10,7 +10,8 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
 authors = [
-  {name = "ViralSafeTarget contributors"}
+  {name = "Ron Nuriel", email = "ron.nuriel01@post.runi.ac.il"},
+  {name = "Sarel Cohen"},
 ]
 keywords = ["bioinformatics", "viral genomics", "CRISPR", "off-target", "HSV"]
 classifiers = [
@@ -36,7 +37,7 @@ notebooks = [
   "nbformat>=5.9",
 ]
 ui = [
-  "streamlit>=1.38",
+  "streamlit>=1.52",
 ]
 dev = [
   "pytest>=8.0",
@@ -51,7 +52,7 @@ population = [
 all = [
   "jupyterlab>=4.0",
   "nbformat>=5.9",
-  "streamlit>=1.38",
+  "streamlit>=1.52",
   "pytest>=8.0",
   "ruff>=0.6",
   "mappy>=2.31",
@@ -60,10 +61,12 @@ all = [
 [project.scripts]
 viral-safe-target = "viral_safe_target.cli:main"
 vst = "viral_safe_target.cli:main"
+vst-ui = "viral_safe_target.ui_launcher:main"
 
 [project.urls]
-Homepage = "https://github.com/ronnuriel/ViralSafeTarget"
+Homepage = "https://ronnuriel.github.io/ViralSafeTarget/"
 Documentation = "https://github.com/ronnuriel/ViralSafeTarget/tree/main/docs"
+Source = "https://github.com/ronnuriel/ViralSafeTarget"
 Issues = "https://github.com/ronnuriel/ViralSafeTarget/issues"
 
 [tool.setuptools.packages.find]
@@ -73,6 +76,7 @@ where = ["src"]
 viral_safe_target = [
   "data/*.yaml",
   "resources/demo/*",
+  "resources/import_maps/*.yaml",
   "resources/profiles/*.yaml",
   "resources/schemas/*.json",
   "resources/templates/*",

@@ -1,0 +1,14 @@
+tool_version: researcher supplied
+editor: SpCas9
+columns:
+  guide_sequence: guide_sequence
+  pam: pam
+  strand: strand
+  coordinate: coordinate
+metrics:
+  efficiency_score:
+    name: predicted_efficiency
+    direction: higher
+  specificity_score:
+    name: predicted_specificity
+    direction: higher

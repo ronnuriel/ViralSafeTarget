@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="ViralSafeTarget is an open, virus-first platform for auditable CRISPR target prioritization across viral populations.">
+  <meta name="theme-color" content="#071a2b">
+  <meta property="og:title" content="ViralSafeTarget — virus-first CRISPR target intelligence">
+  <meta property="og:description" content="From viral genomes to an auditable research shortlist—without hiding uncertainty.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ronnuriel.github.io/ViralSafeTarget/">
+  <title>ViralSafeTarget — virus-first CRISPR target intelligence</title>
+  <link rel="icon" href="assets/landing/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/landing/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header" data-header>
+    <a class="brand" href="#top" aria-label="ViralSafeTarget home">
+      <span class="brand-mark" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </span>
+      <span>ViralSafeTarget</span>
+    </a>
+    <button class="menu-button" type="button" aria-expanded="false" aria-controls="site-nav">
+      <span></span><span></span><span></span><span class="sr-only">Open navigation</span>
+    </button>
+    <nav id="site-nav" class="site-nav" aria-label="Primary navigation">
+      <a href="#why">Why</a>
+      <a href="#workflow">Workflow</a>
+      <a href="#results">HSV-2 study</a>
+      <a href="#ecosystem">Ecosystem</a>
+      <a href="#collaborate">Collaborate</a>
+      <a class="nav-cta" href="https://github.com/ronnuriel/ViralSafeTarget">View GitHub</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section id="top" class="hero section-shell">
+      <div class="hero-copy reveal">
+        <div class="eyebrow"><span class="pulse-dot"></span> Open-source viral target research</div>
+        <h1>From viral genomes to <span>auditable CRISPR target hypotheses.</span></h1>
+        <p class="hero-lede">ViralSafeTarget connects multi-strain conservation, host-genome risk,
+          gene context, predicted disruption, escape robustness, and source-linked evidence—without
+          hiding uncertainty inside a single therapeutic score.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#workflow">Explore the workflow <span aria-hidden="true">→</span></a>
+          <a class="button button-secondary" href="https://github.com/ronnuriel/ViralSafeTarget">Use the project</a>
+        </div>
+        <div class="trust-row" aria-label="Project qualities">
+          <span>Open source</span><span>Local-first</span><span>Reproducible</span><span>Human-reviewed evidence</span>
+        </div>
+      </div>
+
+      <div class="helix-card reveal" aria-label="Animated DNA target discovery illustration">
+        <div class="helix-glow"></div>
+        <svg class="helix" viewBox="0 0 520 580" role="img" aria-labelledby="helix-title helix-desc">
+          <title id="helix-title">A stylized animated DNA helix</title>
+          <desc id="helix-desc">Two DNA strands with a highlighted guide target and transparent analysis layers.</desc>
+          <defs>
+            <linearGradient id="strandA" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#75f1df"/><stop offset="1" stop-color="#438cff"/>
+            </linearGradient>
+            <linearGradient id="strandB" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#a890ff"/><stop offset="1" stop-color="#ff8ab7"/>
+            </linearGradient>
+            <filter id="softGlow"><feGaussianBlur stdDeviation="5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <g class="orbit orbit-one"><ellipse cx="260" cy="290" rx="228" ry="116"/></g>
+          <g class="orbit orbit-two"><ellipse cx="260" cy="290" rx="176" ry="246"/></g>
+          <g class="dna-rungs" stroke-linecap="round">
+            <line x1="150" y1="68" x2="370" y2="68"/><line x1="111" y1="108" x2="409" y2="108"/>
+            <line x1="101" y1="151" x2="419" y2="151"/><line x1="132" y1="194" x2="388" y2="194"/>
+            <line x1="195" y1="237" x2="325" y2="237"/><line class="target-rung" x1="237" y1="280" x2="283" y2="280"/>
+            <line x1="195" y1="323" x2="325" y2="323"/><line x1="132" y1="366" x2="388" y2="366"/>
+            <line x1="101" y1="409" x2="419" y2="409"/><line x1="111" y1="452" x2="409" y2="452"/>
+            <line x1="150" y1="495" x2="370" y2="495"/>
+          </g>
+          <path class="strand strand-a" d="M150 68 C55 130 60 210 237 280 C415 350 466 430 370 495"/>
+          <path class="strand strand-b" d="M370 68 C465 130 460 210 283 280 C105 350 54 430 150 495"/>
+          <g class="guide-target" filter="url(#softGlow)">
+            <rect x="186" y="260" width="148" height="40" rx="20"/>
+            <text x="260" y="285" text-anchor="middle">GUIDE TARGET</text>
+          </g>
+          <g class="scan-ring"><circle cx="260" cy="280" r="74"/></g>
+          <g class="data-tag tag-a"><rect width="120" height="38" rx="19"/><text x="60" y="24" text-anchor="middle">Conservation</text></g>
+          <g class="data-tag tag-b"><rect width="104" height="38" rx="19"/><text x="52" y="24" text-anchor="middle">Host-risk</text></g>
+          <g class="data-tag tag-c"><rect width="116" height="38" rx="19"/><text x="58" y="24" text-anchor="middle">Evidence</text></g>
+        </svg>
+        <div class="helix-caption">
+          <span class="caption-index">01</span>
+          <p><strong>One target. Multiple decision layers.</strong><br>Every signal stays visible and traceable.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="metric-band" aria-label="HSV-2 case study metrics">
+      <div class="metric" data-count="28578"><strong>28,578</strong><span>initial sites</span></div>
+      <div class="metric" data-count="23108"><strong>23,108</strong><span>eligible coordinates</span></div>
+      <div class="metric" data-count="21654"><strong>21,654</strong><span>unique guides</span></div>
+      <div class="metric"><strong>109 / 109</strong><span>host-search batches</span></div>
+    </section>
+
+    <section id="why" class="content-section section-shell">
+      <div class="section-heading reveal">
+        <p class="kicker">The decision gap</p>
+        <h2>A good guide is not automatically a good biological target.</h2>
+        <p>Most design tools optimize sequence properties. Viral research also needs population
+          coverage, host-search boundaries, gene context, disruption hypotheses, evidence provenance,
+          and resistance to exact-target loss.</p>
+      </div>
+      <div class="principle-grid">
+        <article class="principle-card reveal"><span>01</span><h3>Guide quality</h3><p>Is the sequence targetable, conserved, and technically plausible?</p></article>
+        <article class="principle-card reveal"><span>02</span><h3>Gene targetability</h3><p>Does the gene offer a robust portfolio, not merely one exceptional guide?</p></article>
+        <article class="principle-card reveal"><span>03</span><h3>Biological evidence</h3><p>Was the role shown in this virus, an ortholog, or not yet reviewed?</p></article>
+        <article class="principle-card reveal"><span>04</span><h3>Escape robustness</h3><p>How many independent exact targets must be lost across a multiplex panel?</p></article>
+      </div>
+      <div class="equation reveal" aria-label="Core project principle">
+        <span>Guide quality</span><b>≠</b><span>Gene priority</span><b>≠</b><span>Evidence strength</span><b>≠</b><span>Therapeutic efficacy</span>
+      </div>
+    </section>
+
+    <section id="workflow" class="content-section workflow-section">
+      <div class="section-shell">
+        <div class="section-heading inverse reveal">
+          <p class="kicker">Transparent by design</p>
+          <h2>A visible workflow from input to handoff.</h2>
+          <p>Each stage produces machine-readable outputs, provenance, status, timing, and explicit
+            missingness. Select a stage to see what it contributes.</p>
+        </div>
+        <div class="workflow-layout">
+          <div class="workflow-rail" role="tablist" aria-label="Research workflow">
+            <button class="workflow-step active" role="tab" aria-selected="true" data-step="0"><span>01</span><b>Viral population</b><small>Reference, strains, annotation</small></button>
+            <button class="workflow-step" role="tab" aria-selected="false" data-step="1"><span>02</span><b>Guide discovery</b><small>Editor-compatible sites</small></button>
+            <button class="workflow-step" role="tab" aria-selected="false" data-step="2"><span>03</span><b>Conservation & context</b><small>Genes, CDS, proteins, domains</small></button>
+            <button class="workflow-step" role="tab" aria-selected="false" data-step="3"><span>04</span><b>Host-risk search</b><small>Model-bounded similarity</small></button>
+            <button class="workflow-step" role="tab" aria-selected="false" data-step="4"><span>05</span><b>Disruption & escape</b><small>Bounded sequence hypotheses</small></button>
+            <button class="workflow-step" role="tab" aria-selected="false" data-step="5"><span>06</span><b>Evidence review</b><small>Agents propose, humans decide</small></button>
+            <button class="workflow-step" role="tab" aria-selected="false" data-step="6"><span>07</span><b>Research shortlist</b><small>Reports, tables, portable ZIP</small></button>
+          </div>
+          <div class="workflow-detail reveal" role="tabpanel" aria-live="polite">
+            <div class="workflow-status"><span></span> Inspectable stage</div>
+            <div class="workflow-visual" aria-hidden="true"><div class="flow-node">INPUT</div><div class="flow-line"><i></i></div><div class="flow-node accent">QC</div></div>
+            <p class="workflow-number">Stage <span data-detail-number>01</span></p>
+            <h3 data-detail-title>Build the viral population model</h3>
+            <p data-detail-copy>Validate the reference, strain panel, annotation, host profile, and editor. Record accessions, versions, checksums, and rejected genomes.</p>
+            <ul data-detail-list><li>FASTA and GFF3 validation</li><li>Reference-coordinate control</li><li>Input provenance and QC</li></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="results" class="content-section section-shell">
+      <div class="section-heading reveal">
+        <p class="kicker">Exhaustive HSV-2 case study</p>
+        <h2>The genome-wide screen changed the order of attention.</h2>
+        <p>Computational targetability elevated genes that are not identical to the classical
+          replication targets—showing why sequence quality and biological importance must remain separate.</p>
+      </div>
+      <div class="results-grid">
+        <article class="rank-card reveal">
+          <div class="card-label">Gene-level targetability</div>
+          <div class="rank-row"><b>UL3</b><div><i style="--width:100%"></i></div><span>#1</span></div>
+          <div class="rank-row"><b>UL10</b><div><i style="--width:91%"></i></div><span>#2</span></div>
+          <div class="rank-row"><b>UL52</b><div><i style="--width:90%"></i></div><span>#3</span></div>
+          <div class="rank-row"><b>UL47</b><div><i style="--width:88%"></i></div><span>#4</span></div>
+          <div class="rank-row"><b>UL11</b><div><i style="--width:82%"></i></div><span>#5</span></div>
+          <div class="rank-row muted"><b>UL30</b><div><i style="--width:80%"></i></div><span>#8</span></div>
+          <p class="chart-note">Relative bars visualize targetability scores; they are not therapeutic scores.</p>
+        </article>
+        <article class="finding-card reveal">
+          <div class="card-label">A central finding</div>
+          <p class="finding-kicker">Top guide ≠ top gene</p>
+          <h3>UL36 contains the leading individual guide, yet ranks 21st as a gene portfolio.</h3>
+          <p>One technically strong site does not establish a robust target. ViralSafeTarget keeps
+            single-guide excellence, gene-wide targetability, and biological evidence distinct.</p>
+          <a href="https://github.com/ronnuriel/ViralSafeTarget/tree/main/reports/hsv2_genome_wide_exhaustive">Inspect the frozen results <span>→</span></a>
+        </article>
+      </div>
+      <div class="evidence-strip reveal">
+        <div><strong>2,668</strong><span>candidate rows with no predicted human hit under the declared model*</span></div>
+        <div><strong>0.880</strong><span>Cas-OFFinder / CRISPRitz rank correlation</span></div>
+        <div><strong>49 / 50</strong><span>shared top-50 host-search guides</span></div>
+        <div><strong>≥ 3</strong><span>exact-target changes across four multiplex strategies</span></div>
+      </div>
+      <p class="footnote">*No predicted hit under a configured search model is not proof of safety.</p>
+    </section>
+
+    <section id="ecosystem" class="content-section ecosystem-section">
+      <div class="section-shell">
+        <div class="section-heading reveal">
+          <p class="kicker">Connect, do not replace</p>
+          <h2>One workspace around established research tools.</h2>
+          <p>Raw values, versions, source files, hashes, missingness, and disagreements remain available for audit.</p>
+        </div>
+        <div class="tool-cloud reveal" aria-label="Supported tool ecosystem">
+          <span class="native">MAFFT<small>alignment</small></span>
+          <span class="native">Cas-OFFinder<small>host search</small></span>
+          <span class="native">CRISPRitz<small>bulges & variants</small></span>
+          <span>CRISPOR<small>export import</small></span>
+          <span>CHOPCHOP<small>export import</small></span>
+          <span>GuideScan2<small>export import</small></span>
+          <span class="measured">CRISPResso2<small>measured results</small></span>
+        </div>
+        <div class="agent-panel reveal">
+          <div class="agent-copy">
+            <div class="card-label">Evidence Agent + human review</div>
+            <h3>AI can find and structure evidence. It cannot approve a biological claim.</h3>
+            <p>The agent searches documented APIs, connects genes to source records, distinguishes
+              direct-virus evidence from ortholog evidence, and prepares a review queue.</p>
+            <div class="source-pills"><span>PubMed</span><span>Europe PMC</span><span>UniProt</span></div>
+          </div>
+          <div class="review-stack" aria-label="Evidence review flow">
+            <div><span>1</span><b>Discover</b><small>Queries and records</small></div>
+            <i></i><div><span>2</span><b>Propose</b><small>Source-linked claim</small></div>
+            <i></i><div class="approved"><span>3</span><b>Human review</b><small>Approve, reject, qualify</small></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section use-section section-shell">
+      <div class="use-grid">
+        <div class="section-heading reveal">
+          <p class="kicker">Built for reuse</p>
+          <h2>Bring a different virus. Keep the same decision structure.</h2>
+          <p>Use an NCBI accession or local FASTA/GFF3 files, select a host and nuclease profile,
+            inspect the plan, then run or resume from valid caches.</p>
+        </div>
+        <div class="terminal reveal" aria-label="Installation commands">
+          <div class="terminal-top"><span></span><span></span><span></span><b>local research workspace</b></div>
+          <pre><code><em>$</em> git clone https://github.com/ronnuriel/ViralSafeTarget.git
+<em>$</em> cd ViralSafeTarget
+<em>$</em> pip install ".[ui,notebooks]"
+<em>$</em> vst ui</code></pre>
+          <div class="terminal-note">PyPI-ready packaging; public package release remains a separate approval step.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="collaborate" class="cta-section">
+      <div class="cta-orbit" aria-hidden="true"></div>
+      <div class="cta-content reveal">
+        <p class="kicker">Help test the next question</p>
+        <h2>Let’s turn transparent computation into better experiments.</h2>
+        <p>We are looking for collaborators in virology, CRISPR, bioinformatics, evidence review,
+          and experimental validation—both for HSV-2 and for new viral systems.</p>
+        <div class="hero-actions centered">
+          <a class="button button-light" href="mailto:ron.nuriel01@post.runi.ac.il?subject=ViralSafeTarget%20collaboration">Start a collaboration</a>
+          <a class="button button-ghost" href="https://github.com/ronnuriel/ViralSafeTarget">Review the repository</a>
+        </div>
+        <div class="authors"><span>Ron Nuriel <small>ORCID 0009-0008-3970-2591</small></span><span>Sarel Cohen <small>ORCID 0000-0003-4578-1245</small></span></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div><a class="brand footer-brand" href="#top"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span><span>ViralSafeTarget</span></a><p>Open computational infrastructure for auditable viral target research.</p></div>
+    <div class="footer-links"><a href="https://github.com/ronnuriel/ViralSafeTarget">GitHub</a><a href="https://github.com/ronnuriel/ViralSafeTarget/blob/main/README.md">Documentation</a><a href="https://github.com/ronnuriel/ViralSafeTarget/tree/main/reports">Results</a></div>
+    <p class="boundary">Computational hypotheses only. No claim of editing, safety, viral inhibition, delivery, treatment, clearance, or cure.</p>
+  </footer>
+
+  <script src="assets/landing/script.js"></script>
+</body>
+</html>

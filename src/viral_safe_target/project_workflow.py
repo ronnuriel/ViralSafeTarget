@@ -381,8 +381,15 @@ def _signature(paths: list[Path], parameters: dict[str, Any]) -> str:
 
 
 class _State:
-    def __init__(self, context: ProjectContext, *, restart: bool = False):
+    def __init__(
+        self,
+        context: ProjectContext,
+        *,
+        restart: bool = False,
+        progress_callback: Callable[[dict[str, Any]], None] | None = None,
+    ):
         self.context = context
+        self.progress_callback = progress_callback
         self.path = context.output_root / "workflow_state.json"
         context.output_root.mkdir(parents=True, exist_ok=True)
         if self.path.is_file() and not restart:
@@ -446,6 +453,37 @@ class _State:
             "updated_utc": _utc_now(),
         }
         self.write()
+        if self.progress_callback is not None:
+            visible = {
+                name: self.values["stages"].get(name, {}).get("status", "pending")
+                for name in STAGE_ORDER
+            }
+            terminal = {
+                "completed",
+                "external_required",
+                "failed",
+                "unavailable",
+                "disabled",
+            }
+            self.progress_callback(
+                {
+                    "stage": stage,
+                    "status": status,
+                    "message": message,
+                    "elapsed_seconds": elapsed_seconds,
+                    "cache_reused": cache_reused,
+                    "stages": visible,
+                    "completed_count": sum(
+                        value == "completed" for value in visible.values()
+                    ),
+                    "resolved_count": sum(value in terminal for value in visible.values()),
+                    "total_count": len(STAGE_ORDER),
+                    "progress_fraction": round(
+                        sum(value in terminal for value in visible.values()) / len(STAGE_ORDER),
+                        6,
+                    ),
+                }
+            )
 
 
 def _run_cached_stage(
@@ -550,12 +588,13 @@ def run_project(
     run_external: bool = False,
     restart: bool = False,
     stop_after: str | None = None,
+    progress_callback: Callable[[dict[str, Any]], None] | None = None,
 ) -> dict[str, Any]:
     """Run or resume the generic sequence-level project workflow."""
     if stop_after and stop_after not in STAGE_ORDER:
         raise ValueError("stop_after must be one of: " + ", ".join(STAGE_ORDER))
     context = load_project(project)
-    state = _State(context, restart=restart)
+    state = _State(context, restart=restart, progress_callback=progress_callback)
     checks = validate_project(context, require_host_reference=False)
     validation_path = context.output_root / "profile_validation.csv"
     checks.to_csv(validation_path, index=False)
