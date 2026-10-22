@@ -61,8 +61,8 @@ Documentation is grouped by the question a researcher is trying to answer. The r
 
 - [`RELEASE_CHECKLIST.md`](maintenance/RELEASE_CHECKLIST.md) — guarded TestPyPI and
   production release process.
-- [`SERVER_VALIDATION.md`](maintenance/SERVER_VALIDATION.md) — isolated clean-wheel
-  validation on a compute server.
+- [`LOCAL_VALIDATION.md`](maintenance/LOCAL_VALIDATION.md) — isolated clean-wheel
+  validation without a project server.
 
 ## Other indexes
 
